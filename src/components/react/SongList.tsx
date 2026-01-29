@@ -1,13 +1,13 @@
 import { useState, useMemo } from 'react';
-import { Search, Copy, Music } from 'lucide-react';
+import { Search, Copy, Music, ChevronDown, ChevronUp } from 'lucide-react';
 import { pinyin } from 'pinyin-pro';
 import { toast } from 'sonner';
+import VirtualList from './VirtualList';
 
 interface Song {
   title: string;
   artist: string;
   date: string;
-  url: string;
   tags: string[];
 }
 
@@ -19,6 +19,7 @@ export default function SongList({ songs }: SongListProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [copiedSongId, setCopiedSongId] = useState<string | null>(null);
+  const [isTagsCollapsed, setIsTagsCollapsed] = useState(true);
 
   // Get all unique tags with language tags first
   const allTags = useMemo(() => {
@@ -28,7 +29,7 @@ export default function SongList({ songs }: SongListProps) {
     });
 
     const tags = Array.from(tagSet);
-    const languageTags = ['中文', '日语', '英语', '韩语'];
+    const languageTags = ['中文', '日文', '英文', '韩文'];
 
     // Separate language tags and other tags
     const langTags = tags.filter(tag => languageTags.includes(tag));
@@ -84,11 +85,11 @@ export default function SongList({ songs }: SongListProps) {
     event.stopPropagation();
 
     // Flash effect
-    setCopiedSongId(song.url);
+    setCopiedSongId(`${song.title}-${song.artist}`);
     setTimeout(() => setCopiedSongId(null), 300);
 
     try {
-      await navigator.clipboard.writeText(song.title);
+      await navigator.clipboard.writeText(`点歌 ${song.title}`);
 
       // Themed toast message
       toast.success(`已复制: ${song.title}`, {
@@ -127,7 +128,36 @@ export default function SongList({ songs }: SongListProps) {
       </div>
 
       {/* Tag Filter */}
-      <div className="flex gap-3 overflow-x-auto pb-4 mb-8 scrollbar-hide">
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+            筛选标签
+          </h3>
+          <button
+            onClick={() => setIsTagsCollapsed(!isTagsCollapsed)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105"
+            style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
+          >
+            <span className="text-sm">{isTagsCollapsed ? '展开' : '收起'}</span>
+            {isTagsCollapsed ? (
+              <ChevronDown className="w-4 h-4" />
+            ) : (
+              <ChevronUp className="w-4 h-4" />
+            )}
+          </button>
+        </div>
+        <div
+          className={`transition-all duration-300 ease-in-out ${
+            isTagsCollapsed
+              ? 'max-h-12 overflow-hidden opacity-100 relative'
+              : 'max-h-50 md:max-h-125 overflow-y-auto opacity-100 scrollbar-thin'
+          }`}
+          style={isTagsCollapsed ? {
+            WebkitMaskImage: 'linear-gradient(to right, black 85%, transparent 100%)',
+            maskImage: 'linear-gradient(to right, black 85%, transparent 100%)'
+          } : {}}
+        >
+          <div className={`flex gap-3 ${isTagsCollapsed ? '' : 'flex-wrap'}`}>
         <button
           onClick={() => setSelectedTag(null)}
           className={`px-4 py-2 rounded-full whitespace-nowrap transition-all duration-300 ${
@@ -167,21 +197,24 @@ export default function SongList({ songs }: SongListProps) {
             {tag}
           </button>
         ))}
+          </div>
+        </div>
       </div>
 
       {/* Song List View */}
-      <ul className="divide-y divide-gray-200/20 dark:divide-blue-900/30">
-        {filteredSongs.map((song, index) => (
+      <VirtualList
+        items={filteredSongs}
+        itemHeight={90}
+        containerHeight={600}
+        renderItem={(song, index) => (
           <li
-            key={song.url}
+            key={`${song.title}-${song.artist}`}
             onClick={(e) => handleCopy(song, e)}
             className={`
               group relative flex items-center justify-between py-4 px-4 rounded-lg transition-all duration-200 cursor-pointer
-              ${copiedSongId === song.url ? 'song-item-copied' : 'song-item'}
+              ${copiedSongId === `${song.title}-${song.artist}` ? 'song-item-copied' : 'song-item'}
+              border-b border-gray-200/20 dark:border-blue-900/30
             `}
-            style={{
-              animationDelay: `${index * 30}ms`,
-            }}
           >
             {/* Click flash effect overlay */}
             <div className="absolute inset-0 bg-linear-to-r from-pink-500/10 to-blue-500/10 opacity-0 group-active:opacity-100 transition-opacity duration-150 pointer-events-none rounded-lg" />
@@ -226,8 +259,8 @@ export default function SongList({ songs }: SongListProps) {
               </button>
             </div>
           </li>
-        ))}
-      </ul>
+        )}
+      />
 
       {/* Empty State */}
       {filteredSongs.length === 0 && (
