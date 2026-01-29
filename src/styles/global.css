@@ -1,0 +1,493 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ========================================
+   Duality Theme: Angel (Light) & Demon (Dark)
+   ======================================== */
+
+@theme {
+  /* Dark Mode Configuration - Use class-based dark mode */
+  --tw-dark-mode: class;
+
+  /* Primary Pink - Angel/Hair Color (#ecb8c3) */
+  --color-pink-50: oklch(0.96 0.02 15);
+  --color-pink-100: oklch(0.93 0.04 15);
+  --color-pink-200: oklch(0.89 0.06 15);
+  --color-pink-300: oklch(0.84 0.08 15);
+  --color-pink-400: oklch(0.78 0.10 15);
+  --color-pink-500: oklch(0.72 0.12 15); /* Primary Pink */
+  --color-pink-600: oklch(0.65 0.14 15);
+  --color-pink-700: oklch(0.58 0.16 15);
+  --color-pink-800: oklch(0.50 0.18 15);
+  --color-pink-900: oklch(0.42 0.20 15);
+
+  /* Secondary Blue - Demon/Accent Color (#AEC6CF) */
+  --color-blue-50: oklch(0.98 0.01 240);
+  --color-blue-100: oklch(0.94 0.02 240);
+  --color-blue-200: oklch(0.88 0.04 240);
+  --color-blue-300: oklch(0.80 0.06 240);
+  --color-blue-400: oklch(0.72 0.08 240);
+  --color-blue-500: oklch(0.64 0.10 240); /* Secondary Blue */
+  --color-blue-600: oklch(0.56 0.12 240);
+  --color-blue-700: oklch(0.48 0.14 240);
+  --color-blue-800: oklch(0.40 0.16 240);
+  --color-blue-900: oklch(0.32 0.18 240);
+
+  /* Angel Mode (Light) - Holy Surfaces */
+  --color-surface-angel: oklch(0.98 0.01 350); /* Lavender Blush */
+  --color-surface-angel-soft: oklch(1.00 0.00 0); /* Pure White */
+  --color-glow-angel: oklch(0.72 0.12 15 / 0.3); /* Pink Glow */
+
+  /* Demon Mode (Dark) - Abyssal Surfaces */
+  --color-surface-demon: oklch(0.15 0.02 270); /* Deep Navy */
+  --color-surface-demon-deep: oklch(0.08 0.01 270); /* Deep Black */
+  --color-glow-demon: oklch(0.64 0.10 240 / 0.4); /* Blue Neon Glow */
+
+  /* Font Families */
+  --font-serif: "Noto Serif SC", serif;
+  --font-sans: "Noto Sans SC", system-ui, sans-serif;
+}
+
+/* Override default dark mode to use class-based selector */
+@variant dark (&:where(.dark, .dark *));
+
+/* ========================================
+   Base Styles (Lowest Priority)
+   ======================================== */
+@layer base {
+  :root {
+    /* Default: Angel Mode (Light) */
+    --bg-primary: var(--color-surface-angel);
+    --bg-secondary: var(--color-surface-angel-soft);
+    --text-primary: oklch(0.20 0.01 15);
+    --text-secondary: oklch(0.45 0.02 15);
+    --accent-primary: var(--color-pink-500);
+    --accent-secondary: var(--color-blue-500);
+    --glow-color: var(--color-glow-angel);
+    --glass-bg: oklch(1.00 0.00 0 / 0.7);
+    --glass-border: oklch(0.95 0.01 15 / 0.3);
+    --glass-blur: 12px;
+  }
+
+  /* Demon Mode (Dark) */
+  :root.dark {
+    --bg-primary: var(--color-surface-demon);
+    --bg-secondary: var(--color-surface-demon-deep);
+    --text-primary: oklch(0.95 0.01 240);
+    --text-secondary: oklch(0.70 0.02 240);
+    --accent-primary: var(--color-blue-500);
+    --accent-secondary: var(--color-pink-500);
+    --glow-color: var(--color-glow-demon);
+    --glass-bg: oklch(0.15 0.02 270 / 0.7);
+    --glass-border: oklch(0.25 0.03 270 / 0.4);
+    --glass-blur: 16px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.4s ease, color 0.4s ease;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Typography Base Styles */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.3;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    line-height: 1.4;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent-primary);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-secondary);
+  }
+}
+
+/* ========================================
+   Component Styles (Medium Priority)
+   ======================================== */
+@layer components {
+  .glass-holy {
+    /* Angel Mode - Holy Glass */
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px oklch(0.72 0.12 15 / 0.1);
+  }
+
+  .glass-abyssal {
+    /* Demon Mode - Abyssal Glass */
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px oklch(0.64 0.10 240 / 0.15);
+  }
+
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s ease;
+  }
+
+  .glow-pink {
+    box-shadow: 0 0 20px var(--color-glow-angel), 0 0 40px oklch(0.72 0.12 15 / 0.2);
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 20px var(--color-glow-demon), 0 0 40px oklch(0.64 0.10 240 / 0.3);
+  }
+
+  .glow {
+    box-shadow: 0 0 20px var(--glow-color);
+  }
+
+  /* Theme Transition */
+  * {
+    transition-property: background-color, border-color, color, fill, stroke, opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+
+  /* Exclude animation elements from theme transition */
+  *:where(.animate-levitation, .animate-float-1, .animate-float-2, .animate-float-3, .animate-float-4, .animate-float-5, .animate-float-6, .animate-halo-glow, .animate-horn-glow, .animate-light-ray, .animate-neon-glow, .animate-pulse-slow, .animate-glow-pulse, .animate-title-glow) {
+    transition: none;
+  }
+}
+
+/* ========================================
+   Utility Styles (Highest Priority)
+   ======================================== */
+@layer utilities {
+  /* Custom utilities that need highest priority */
+
+  /* Song List Item Hover - Proper Dark Mode Support */
+  .song-item {
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+  }
+
+  .song-item:hover {
+    background-color: var(--color-pink-100);
+  }
+
+  /* Dark mode overrides */
+  :root.dark .song-item {
+    background-color: transparent;
+  }
+
+  :root.dark .song-item:hover {
+    background-color: color-mix(in oklab, var(--color-blue-900) 30%, transparent);
+  }
+
+  /* Copied state */
+  .song-item-copied {
+    background-color: color-mix(in oklab, var(--color-pink-200) 50%, transparent) !important;
+  }
+
+  :root.dark .song-item-copied {
+    background-color: color-mix(in oklab, var(--color-blue-800) 40%, transparent) !important;
+  }
+}
+
+/* ========================================
+   Sonner Toast - Duality Theme
+   ======================================== */
+/* Angel Mode (Light) - Pink Toast */
+:root .duality-toast {
+  background: oklch(0.72 0.12 15);
+  color: oklch(0.98 0.01 350);
+  border: 1px solid oklch(0.78 0.10 15);
+  box-shadow: 0 4px 20px oklch(0.72 0.12 15 / 0.3);
+}
+
+:root .duality-toast-description {
+  color: oklch(0.98 0.01 350);
+  opacity: 0.9;
+}
+
+:root .duality-toast-icon {
+  color: oklch(0.98 0.01 350);
+}
+
+/* Demon Mode (Dark) - Blue Toast */
+:root.dark .duality-toast {
+  background: oklch(0.32 0.18 240);
+  color: oklch(0.95 0.01 240);
+  border: 1px solid oklch(0.40 0.16 240);
+  box-shadow: 0 4px 20px oklch(0.64 0.10 240 / 0.4), 0 0 15px oklch(0.64 0.10 240 / 0.3);
+}
+
+:root.dark .duality-toast-description {
+  color: oklch(0.95 0.01 240);
+  opacity: 0.9;
+}
+
+:root.dark .duality-toast-icon {
+  color: oklch(0.95 0.01 240);
+}
+
+/* ========================================
+   Hero Animations
+   ======================================== */
+
+/* Levitation Animation - Slow Floating */
+@keyframes levitation {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+.animate-levitation {
+  animation: levitation 6s ease-in-out infinite !important;
+}
+
+/* Floating Animations */
+@keyframes float-1 {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(5deg);
+  }
+}
+
+@keyframes float-2 {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(-5deg);
+  }
+}
+
+@keyframes float-3 {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-25px) rotate(3deg);
+  }
+}
+
+@keyframes float-4 {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(-3deg);
+  }
+}
+
+@keyframes float-5 {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-22px) rotate(4deg);
+  }
+}
+
+@keyframes float-6 {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(-4deg);
+  }
+}
+
+.animate-float-1 {
+  animation: float-1 6s ease-in-out infinite !important;
+}
+
+.animate-float-2 {
+  animation: float-2 7s ease-in-out infinite !important;
+}
+
+.animate-float-3 {
+  animation: float-3 8s ease-in-out infinite !important;
+}
+
+.animate-float-4 {
+  animation: float-4 5s ease-in-out infinite !important;
+}
+
+.animate-float-5 {
+  animation: float-5 9s ease-in-out infinite !important;
+}
+
+.animate-float-6 {
+  animation: float-6 6.5s ease-in-out infinite !important;
+}
+
+/* Halo Glow (Angel) */
+@keyframes halo-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 80px 20px oklch(0.72 0.12 15 / 0.5),
+                0 0 120px 40px oklch(0.72 0.12 15 / 0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+    box-shadow: 0 0 100px 30px oklch(0.72 0.12 15 / 0.6),
+                0 0 150px 50px oklch(0.72 0.12 15 / 0.4);
+  }
+}
+
+.animate-halo-glow {
+  animation: halo-glow 3s ease-in-out infinite !important;
+}
+
+/* Horn Glow (Demon) */
+@keyframes horn-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 80px 20px oklch(0.64 0.10 240 / 0.5),
+                0 0 120px 40px oklch(0.64 0.10 240 / 0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: 0 0 100px 30px oklch(0.64 0.10 240 / 0.6),
+                0 0 150px 50px oklch(0.64 0.10 240 / 0.4);
+  }
+}
+
+.animate-horn-glow {
+  animation: horn-glow 2s ease-in-out infinite !important;
+}
+
+/* Light Ray Animation (Angel Mode) */
+@keyframes light-ray {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translateY(-10px);
+  }
+}
+
+.animate-light-ray {
+  animation: light-ray 4s ease-in-out infinite !important;
+}
+
+/* Neon Glow Animation (Demon Mode) */
+@keyframes neon-glow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.4;
+    transform: translateY(-10px);
+  }
+}
+
+.animate-neon-glow {
+  animation: neon-glow 3s ease-in-out infinite !important;
+}
+
+/* Pulse Slow Animation */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s ease-in-out infinite !important;
+}
+
+/* Glow Pulse Animation */
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite !important;
+}
+
+/* Title Glow Animation */
+@keyframes title-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px oklch(0.72 0.12 15 / 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px oklch(0.72 0.12 15 / 0.3));
+  }
+}
+
+.animate-title-glow {
+  animation: title-glow 4s ease-in-out infinite !important;
+}
+
+/* Dark mode title glow override */
+:root.dark .animate-title-glow {
+  animation-name: title-glow-dark !important;
+}
+
+@keyframes title-glow-dark {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px oklch(0.64 0.10 240 / 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 25px oklch(0.64 0.10 240 / 0.5));
+  }
+}

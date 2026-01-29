@@ -1,0 +1,153 @@
+---
+import '../styles/global.css';
+import ThemeToggle from '../components/ui/ThemeToggle.tsx';
+import ToasterWrapper from '../components/ui/ToasterWrapper.tsx';
+import { Heart, Music as MusicIcon, User } from 'lucide-react';
+
+// Get current year dynamically
+const currentYear = new Date().getFullYear();
+const startYear = 2026;
+
+// Format year display: "2026" or "2026 - 2027"
+const yearDisplay = currentYear === startYear
+  ? `${startYear}`
+  : `${startYear} - ${currentYear}`;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Kloa 粉丝网站 - 从远古时期的天堂而来的恶魔&天使" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>克罗雅的粉丝网站</title>
+    <script is:inline>
+      // Apply theme immediately to prevent flash
+      (function() {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = saved === 'dark' || (!saved && prefersDark);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <!-- Desktop Navbar (Top) -->
+    <nav class="hidden md:flex fixed top-0 left-0 right-0 z-50 glass px-6 py-4 items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, oklch(0.78 0.10 15), oklch(0.72 0.08 240));">
+          <Heart className="w-5 h-5 text-white" fill="currentColor" />
+        </div>
+        <span class="font-serif text-xl font-semibold" style="color: var(--accent-primary);">
+          Kloa
+        </span>
+      </div>
+
+      <div class="flex items-center gap-8">
+        <a href="/" class="nav-link">首页</a>
+        <a href="/music" class="nav-link">歌单</a>
+        <a href="/about" class="nav-link">关于</a>
+      </div>
+
+      <ThemeToggle client:load />
+    </nav>
+
+    <!-- Mobile Theme Toggle (Top Right) -->
+    <div class="md:hidden fixed top-4 right-4 z-50">
+      <ThemeToggle client:load />
+    </div>
+
+    <!-- Mobile Navbar (Bottom) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 glass px-4 py-3 flex items-center justify-around">
+      <a href="/" class="mobile-nav-link">
+        <Heart className="w-6 h-6" />
+        <span class="text-xs mt-1">首页</span>
+      </a>
+      <a href="/music" class="mobile-nav-link">
+        <MusicIcon className="w-6 h-6" />
+        <span class="text-xs mt-1">歌单</span>
+      </a>
+      <a href="/about" class="mobile-nav-link">
+        <User className="w-6 h-6" />
+        <span class="text-xs mt-1">关于</span>
+      </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen pt-16 md:pt-20 pb-20 md:pb-0">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="hidden md:block py-8 text-center" style="background: var(--bg-secondary);">
+      <p style="color: var(--text-secondary);">
+        © {yearDisplay} Kloa Site. Made with 💖 for the fans.
+      </p>
+    </footer>
+
+    <!-- Sonner Toaster -->
+    <ToasterWrapper client:load />
+
+    <style is:global>
+      /* Desktop Nav Links */
+      .nav-link {
+        position: relative;
+        font-family: var(--font-sans);
+        font-weight: 500;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .nav-link:hover {
+        color: var(--accent-primary);
+      }
+
+      .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        transition: width 0.3s ease;
+      }
+
+      .nav-link:hover::after {
+        width: 100%;
+      }
+
+      /* Mobile Nav Links */
+      .mobile-nav-link {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .mobile-nav-link:hover {
+        color: var(--accent-primary);
+        transform: translateY(-2px);
+      }
+
+      /* Theme-aware glow for active states */
+      :root .nav-link:hover,
+      :root .mobile-nav-link:hover {
+        text-shadow: 0 0 10px var(--color-glow-angel);
+      }
+
+      :root.dark .nav-link:hover,
+      :root.dark .mobile-nav-link:hover {
+        text-shadow: 0 0 10px var(--color-glow-demon);
+      }
+    </style>
+  </body>
+</html>

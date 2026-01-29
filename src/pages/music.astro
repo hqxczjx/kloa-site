@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SongList from '../components/react/SongList';
+import songs from '../data/songs.json';
+import { ArrowLeft, Music as MusicIcon } from 'lucide-react';
+import PersistentPlayer from '../components/react/PersistentPlayer';
+---
+
+<BaseLayout title="歌单">
+  <section class="min-h-screen" style="background: var(--bg-primary);">
+    {/* Page Header */}
+    <div class="max-w-4xl mx-auto px-4 py-8">
+      {/* Back to Home Link */}
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl glass transition-all duration-300 hover:scale-105 active:scale-95 mb-6 group"
+      >
+        <ArrowLeft className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" style={{ color: 'var(--accent-primary)' }} />
+        <span class="font-medium" style={{ color: 'var(--text-primary)' }}>
+          返回首页
+        </span>
+      </a>
+
+      {/* Page Title */}
+      <div class="mb-8">
+        <h1 class="text-3xl md:text-4xl font-serif font-bold mb-2 flex items-center gap-3">
+          <MusicIcon className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--accent-primary)' }} />
+          <span class="bg-gradient-to-br from-pink-500 to-blue-500 bg-clip-text text-transparent">
+            歌单
+          </span>
+        </h1>
+        <p class="text-base md:text-lg" style={{ color: 'var(--text-secondary)' }}>
+          点击歌曲名称或复制按钮，快速复制歌名到剪贴板
+        </p>
+      </div>
+    </div>
+
+    {/* Song List */}
+    <SongList client:load songs={songs} />
+
+    {/* Global Player */}
+    <PersistentPlayer client:load />
+  </section>
+</BaseLayout>

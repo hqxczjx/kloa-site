@@ -1,0 +1,37 @@
+[
+  {
+    "title": "七里香",
+    "artist": "Vsinger",
+    "date": "2024-01-15",
+    "url": "https://www.bilibili.com/video/BV1xx411c7mD",
+    "tags": ["中文", "抒情", "经典"]
+  },
+  {
+    "title": "光るなら",
+    "artist": "Vsinger",
+    "date": "2024-02-20",
+    "url": "https://www.bilibili.com/video/BV1yy411c7mE",
+    "tags": ["日语", "燃曲", "Vocaloid"]
+  },
+  {
+    "title": "Meltdown",
+    "artist": "Vsinger",
+    "date": "2024-03-10",
+    "url": "https://www.bilibili.com/video/BV1zz411c7mF",
+    "tags": ["日语", "燃曲", "快节奏"]
+  },
+  {
+    "title": "千本樱",
+    "artist": "Vsinger",
+    "date": "2024-04-05",
+    "url": "https://www.bilibili.com/video/BV1AA411c7mG",
+    "tags": ["中文", "抒情", "樱花"]
+  },
+  {
+    "title": "Tell Your World",
+    "artist": "Vsinger",
+    "date": "2024-05-18",
+    "url": "https://www.bilibili.com/video/BV1BB411c7mH",
+    "tags": ["日语", "电子", "Vocaloid"]
+  }
+]

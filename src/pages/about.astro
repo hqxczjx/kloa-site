@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AboutPage from '../components/react/AboutPage';
+---
+
+<BaseLayout>
+  <AboutPage client:load />
+</BaseLayout>
+
+<style>
+  /* Custom hover effects for cards */
+  .glass:hover {
+    box-shadow: 0 12px 40px var(--glow-color);
+  }
+
+  :root.dark .glass:hover {
+    box-shadow: 0 12px 40px var(--color-glow-demon), 0 0 20px oklch(0.64 0.10 240 / 0.2);
+  }
+
+  /* Smooth link transitions */
+  a {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Disclaimer Card Styles - Light Mode */
+  .disclaimer-card {
+    background-color: oklch(0.98 0.02 15 / 0.8);
+    border-color: oklch(0.84 0.08 15);
+  }
+
+  .disclaimer-icon-bg {
+    background-color: oklch(0.89 0.06 15);
+  }
+
+  .disclaimer-icon {
+    color: oklch(0.42 0.20 15);
+  }
+
+  .disclaimer-title {
+    color: oklch(0.42 0.20 15);
+  }
+
+  .disclaimer-text {
+    color: oklch(0.42 0.20 15);
+  }
+
+  .disclaimer-highlight {
+    border-color: oklch(0.65 0.14 15);
+    background-color: oklch(0.96 0.02 15);
+  }
+
+  .disclaimer-pattern {
+    color: oklch(0.42 0.20 15);
+  }
+
+  /* Disclaimer Card Styles - Dark Mode */
+  .disclaimer-icon-bg-dark {
+    background-color: oklch(0.40 0.16 15 / 0.3);
+  }
+
+  .disclaimer-icon-dark {
+    color: oklch(0.84 0.08 15);
+  }
+
+  .disclaimer-title-dark {
+    color: oklch(0.84 0.08 15);
+  }
+
+  .disclaimer-text-dark {
+    color: oklch(0.84 0.08 15);
+  }
+
+  .disclaimer-highlight-dark {
+    border-color: oklch(0.65 0.14 15);
+    background-color: oklch(0.32 0.18 15 / 0.2);
+  }
+
+  .disclaimer-pattern-dark {
+    color: oklch(0.84 0.08 15);
+  }
+
+  /* Bun Icon Styles */
+  .bun-gradient {
+    background: linear-gradient(135deg, #fbf0df, #e6c98a);
+  }
+
+  .bun-icon {
+    color: #5c3a21;
+  }
+</style>
