@@ -1,5 +1,6 @@
-import { ShieldAlert, Mail, Github, Zap, Layers, Cpu, Heart, MessageCircle } from 'lucide-react';
+import { ShieldAlert, Mail, Zap, Layers, Cpu, Heart, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { GithubIcon } from '../ui/BrandIcons';
 
 export default function AboutPage() {
   return (
@@ -56,7 +57,7 @@ export default function AboutPage() {
             {/* Warning Card - Light Mode */}
             <div className="dark:hidden relative">
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center disclaimer-icon-bg">
+                <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center disclaimer-icon-bg">
                   <ShieldAlert className="w-6 h-6 disclaimer-icon" />
                 </div>
                 <div className="flex-1">
@@ -68,7 +69,7 @@ export default function AboutPage() {
                       本网站为粉丝出于喜爱而自发制作的非官方应援站点。
                     </p>
                     <p className="text-base md:text-lg">
-                      本站与 <strong>Kloa</strong> 及相关公司无任何直接或许可关系。
+                      本站与 <strong>克罗雅</strong> 及相关公司无任何直接或许可关系。
                     </p>
                     <p className="text-base md:text-lg font-bold border-l-4 pl-4 py-2 rounded-r disclaimer-highlight">
                       请勿就本网站的相关问题（如Bug、功能建议）去打扰主播本人或官方运营人员。
@@ -85,7 +86,7 @@ export default function AboutPage() {
             {/* Warning Card - Dark Mode */}
             <div className="hidden dark:block relative">
               <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center disclaimer-icon-bg-dark">
+                <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center disclaimer-icon-bg-dark">
                   <ShieldAlert className="w-6 h-6 disclaimer-icon-dark" />
                 </div>
                 <div className="flex-1">
@@ -97,7 +98,7 @@ export default function AboutPage() {
                       本网站为粉丝出于喜爱而自发制作的非官方应援站点。
                     </p>
                     <p className="text-base md:text-lg">
-                      本站与 <strong>Kloa</strong> 及相关公司无任何直接或许可关系。
+                      本站与 <strong>克罗雅</strong> 及相关公司无任何直接或许可关系。
                     </p>
                     <p className="text-base md:text-lg font-bold border-l-4 pl-4 py-2 rounded-r disclaimer-highlight-dark">
                       请勿就本网站的相关问题（如Bug、功能建议）去打扰主播本人或官方运营人员。
@@ -128,7 +129,10 @@ export default function AboutPage() {
                 这个网站全靠爱发电，由我一人独立开发维护。
               </p>
               <p className="text-base md:text-lg" style={{ color: 'var(--text-primary)' }}>
-                因为太喜欢 <strong>Kloa</strong> 的歌声了，希望能做一个方便大家安利和找歌的地方。
+                因为主播的歌单太神了，想试下弄个方便自己点歌用。
+              </p>
+              <p className="text-base md:text-lg" style={{ color: 'var(--text-primary)' }}>
+                当了好多年前端也没试过自己部署网站，所以这也算是个试验场，不确定什么时候爆炸。
               </p>
               <p className="text-base md:text-lg" style={{ color: 'var(--text-primary)' }}>
                 如果遇到 Bug 或有数据补充，欢迎联系我！
@@ -200,13 +204,13 @@ export default function AboutPage() {
                 Email Me
               </a>
               <a
-                href="https://github.com/yourusername/kloa-fansite"
+                href="https://github.com/hqxczjx/kloa-site"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105"
                 style={{ background: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', color: 'var(--accent-primary)' }}
               >
-                <Github className="w-4 h-4" />
+                <GithubIcon className="w-4 h-4" />
                 GitHub
               </a>
             </div>

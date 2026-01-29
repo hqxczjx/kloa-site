@@ -3,11 +3,11 @@ import { ArrowRight, Tv } from 'lucide-react';
 import { BilibiliIcon } from '../ui/BrandIcons';
 ---
 
-<section class="relative h-[100vh] flex flex-col items-center justify-center overflow-hidden">
+<section class="relative h-screen flex flex-col items-center justify-center overflow-hidden">
   <!-- Background Gradients (Duality Theme) -->
   <div class="absolute inset-0 -z-10 transition-colors duration-700">
     <!-- Angel Mode (Light) - Soft Pink/White Dreamy Gradients -->
-    <div class="absolute inset-0 bg-gradient-to-br from-pink-100 via-white to-pink-50 dark:hidden">
+    <div class="absolute inset-0 bg-linear-to-br from-pink-100 via-white to-pink-50 dark:hidden">
       <!-- Floating Feather Particles -->
       <div class="absolute top-20 left-10 w-3 h-3 opacity-30 animate-float-1">
         <svg viewBox="0 0 24 24" fill="currentColor" class="text-pink-300">
@@ -40,11 +40,11 @@ import { BilibiliIcon } from '../ui/BrandIcons';
         </svg>
       </div>
       <!-- Soft Light Rays -->
-      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-b from-pink-200/20 to-transparent blur-3xl animate-light-ray"></div>
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-linear-to-b from-pink-200/20 to-transparent blur-3xl animate-light-ray"></div>
     </div>
 
     <!-- Demon Mode (Dark) - Deep Navy/Blue Gradients + Neon Glow -->
-    <div class="absolute inset-0 hidden bg-gradient-to-br from-slate-900 via-blue-900 to-slate-950 dark:block">
+    <div class="absolute inset-0 hidden bg-linear-to-br from-slate-900 via-blue-900 to-slate-950 dark:block">
       <!-- Floating Bat Wings/Particles -->
       <div class="absolute top-20 left-10 w-3 h-3 opacity-30 animate-float-1">
         <svg viewBox="0 0 24 24" fill="currentColor" class="text-blue-700">
@@ -77,7 +77,7 @@ import { BilibiliIcon } from '../ui/BrandIcons';
         </svg>
       </div>
       <!-- Neon Glow Effects -->
-      <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-t from-blue-600/20 to-transparent blur-3xl animate-neon-glow"></div>
+      <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-linear-to-t from-blue-600/20 to-transparent blur-3xl animate-neon-glow"></div>
       <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500/10 blur-3xl animate-pulse-slow"></div>
     </div>
   </div>
@@ -87,17 +87,17 @@ import { BilibiliIcon } from '../ui/BrandIcons';
     <!-- Character Tachie (Standing Art) -->
     <div class="relative mb-8 animate-levitation">
       <!-- Halo (Angel Mode) - Positioned independently -->
-      <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-80 h-80 md:w-[440px] md:h-[440px] dark:hidden">
+      <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-80 h-80 md:w-110 md:h-110 dark:hidden">
         <div class="w-full h-full rounded-full bg-pink-400/15 animate-halo-glow"></div>
       </div>
 
       <!-- Horn Glow (Demon Mode) - Positioned independently -->
-      <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-80 h-80 md:w-[440px] md:h-[440px] hidden dark:block">
+      <div class="absolute -top-10 left-1/2 -translate-x-1/2 w-80 h-80 md:w-110 md:h-110 hidden dark:block">
         <div class="w-full h-full rounded-full bg-blue-500/10 animate-horn-glow"></div>
       </div>
 
       <!-- Character Image Container -->
-      <div class="-mt-6 md:-mt-5 w-72 h-72 md:w-[400px] md:h-[400px] rounded-full glass flex items-center justify-center relative overflow-hidden transition-transform duration-300 hover:scale-110">
+      <div class="-mt-6 md:-mt-5 w-72 h-72 md:w-100 md:h-100 rounded-full glass flex items-center justify-center relative overflow-hidden transition-transform duration-300 hover:scale-110">
         <!-- Character Image -->
         <img
           src="/images/character-1.png"
@@ -106,12 +106,12 @@ import { BilibiliIcon } from '../ui/BrandIcons';
         />
 
         <!-- Floating Glow Effect -->
-        <div class="absolute inset-0 bg-gradient-to-t from-pink-500/10 to-blue-500/10 dark:from-blue-600/10 dark:to-pink-600/10 animate-glow-pulse pointer-events-none"></div>
+        <div class="absolute inset-0 bg-linear-to-t from-pink-500/10 to-blue-500/10 dark:from-blue-600/10 dark:to-pink-600/10 animate-glow-pulse pointer-events-none"></div>
       </div>
     </div>
 
     <!-- Title -->
-    <h1 class="text-5xl md:text-7xl font-serif font-bold text-center leading-relaxed bg-gradient-to-br from-pink-500 to-blue-500 bg-clip-text text-transparent mb-4 animate-title-glow">
+    <h1 class="text-5xl md:text-7xl font-serif font-bold text-center leading-relaxed bg-linear-to-br from-pink-500 to-blue-500 bg-clip-text text-transparent mb-4 animate-title-glow">
       克罗雅
     </h1>
     <p class="text-xl md:text-2xl text-center" style="color: var(--text-secondary);">
@@ -126,7 +126,7 @@ import { BilibiliIcon } from '../ui/BrandIcons';
       class="group relative px-8 py-4 rounded-2xl glass flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
     >
       <!-- Button Glow Effect -->
-      <div class="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div class="absolute inset-0 bg-linear-to-r from-pink-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
       <!-- Button Content -->
       <span class="relative z-10 text-lg font-medium" style="color: var(--accent-primary);">

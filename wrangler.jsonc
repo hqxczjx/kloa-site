@@ -1,0 +1,11 @@
+{
+  "name": "kloa-site",
+  "compatibility_date": "2026-01-29",
+  "assets": {
+    "directory": "./dist", // 这就是你要找的“输出目录”
+    "binding": "ASSETS"
+  },
+  "build": {
+    "command": "bun run build" // 这就是你要找的“构建命令”
+  }
+}

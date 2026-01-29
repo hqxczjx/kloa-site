@@ -1,4 +1,4 @@
-# kloa-app
+# kloa-site
 
 To install dependencies:
 

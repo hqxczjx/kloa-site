@@ -34,8 +34,8 @@
   --color-blue-900: oklch(0.32 0.18 240);
 
   /* Angel Mode (Light) - Holy Surfaces */
-  --color-surface-angel: oklch(0.98 0.01 350); /* Lavender Blush */
-  --color-surface-angel-soft: oklch(1.00 0.00 0); /* Pure White */
+  --color-surface-angel: oklch(0.96 0.01 20); /* Porcelain - Warm Rose-Tinted Grey */
+  --color-surface-angel-soft: oklch(0.98 0.01 350); /* Soft Lavender Blush */
   --color-glow-angel: oklch(0.72 0.12 15 / 0.3); /* Pink Glow */
 
   /* Demon Mode (Dark) - Abyssal Surfaces */
@@ -98,6 +98,33 @@
     overflow-x: hidden;
     margin: 0;
     padding: 0;
+    position: relative;
+  }
+
+  /* Angel Light - Subtle Radial Gradient for Light Mode */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150vw;
+    height: 80vh;
+    background: radial-gradient(
+      ellipse at top center,
+      oklch(0.89 0.06 15 / 0.3) 0%,
+      transparent 70%
+    );
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: -1;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+
+  /* Hide Angel Light in Dark Mode */
+  :root.dark body::before {
+    opacity: 0;
   }
 
   /* Typography Base Styles */
