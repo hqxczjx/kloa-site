@@ -1,0 +1,8 @@
+# Robots.txt for Kloa Fan Site
+# Allow all crawlers to access the site
+
+User-agent: *
+Allow: /
+
+# Sitemap location (update with actual URL when deployed)
+# Sitemap: https://kloa.fans/sitemap.xml

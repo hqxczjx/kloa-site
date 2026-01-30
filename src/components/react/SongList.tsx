@@ -137,6 +137,7 @@ export default function SongList({ songs }: SongListProps) {
             onClick={() => setIsTagsCollapsed(!isTagsCollapsed)}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105"
             style={{ background: 'var(--bg-secondary)', color: 'var(--text-secondary)' }}
+            aria-label={isTagsCollapsed ? '展开标签筛选' : '收起标签筛选'}
           >
             <span className="text-sm">{isTagsCollapsed ? '展开' : '收起'}</span>
             {isTagsCollapsed ? (
@@ -173,6 +174,7 @@ export default function SongList({ songs }: SongListProps) {
                   color: 'var(--text-secondary)',
                 }
           }
+          aria-label="筛选全部歌曲"
         >
           全部
         </button>
@@ -193,6 +195,7 @@ export default function SongList({ songs }: SongListProps) {
                     color: 'var(--text-secondary)',
                   }
             }
+            aria-label={`筛选标签: ${tag}`}
           >
             {tag}
           </button>
@@ -207,7 +210,7 @@ export default function SongList({ songs }: SongListProps) {
         itemHeight={90}
         containerHeight={600}
         renderItem={(song, index) => (
-          <li
+          <div
             key={`${song.title}-${song.artist}`}
             onClick={(e) => handleCopy(song, e)}
             className={`
@@ -239,7 +242,7 @@ export default function SongList({ songs }: SongListProps) {
                     className="px-2 py-1 rounded-md text-xs font-medium"
                     style={{
                       background: 'var(--bg-secondary)',
-                      color: 'var(--accent-primary)',
+                      color: 'oklch(0.55 0.16 15)', // pink-700 for better contrast
                     }}
                   >
                     {tag}
@@ -254,11 +257,13 @@ export default function SongList({ songs }: SongListProps) {
                 style={{
                   background: 'var(--bg-secondary)',
                 }}
+                aria-label={`复制歌名: ${song.title}`}
+                title={`复制 ${song.title}`}
               >
-                <Copy className="w-5 h-5 transition-colors duration-200 group-hover:text-pink-600 dark:group-hover:text-blue-400" style={{ color: 'var(--accent-primary)' }} />
+                <Copy className="w-5 h-5 transition-colors duration-200 group-hover:text-pink-600 dark:group-hover:text-blue-400" style={{ color: 'oklch(0.55 0.16 15)' }} />
               </button>
             </div>
-          </li>
+          </div>
         )}
       />
 

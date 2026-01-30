@@ -44,31 +44,34 @@ export default function VirtualList<T>({
       style={{ height: containerHeight }}
       onScroll={handleScroll}
     >
-      <div
+      <ul
         style={{
           height: items.length * itemHeight,
           position: 'relative',
+          margin: 0,
+          padding: 0,
+          listStyle: 'none',
         }}
       >
-        <div
-          style={{
-            transform: `translateY(${visibleRange.offsetY}px)`,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-          }}
-        >
-          {visibleItems.map((item, index) => (
-            <div
-              key={visibleRange.startIdx + index}
-              style={{ height: itemHeight }}
-            >
-              {renderItem(item, visibleRange.startIdx + index)}
-            </div>
-          ))}
-        </div>
-      </div>
+        {visibleItems.map((item, index) => (
+          <li
+            key={visibleRange.startIdx + index}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: itemHeight,
+              transform: `translateY(${(visibleRange.startIdx + index) * itemHeight}px)`,
+              margin: 0,
+              padding: 0,
+              listStyle: 'none',
+            }}
+          >
+            {renderItem(item, visibleRange.startIdx + index)}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

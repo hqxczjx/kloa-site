@@ -66,7 +66,7 @@ export default function AboutPage() {
                   </h2>
                   <div className="space-y-3 disclaimer-text">
                     <p className="text-base md:text-lg">
-                      本网站为粉丝出于喜爱而自发制作的非官方应援站点。
+                      本网站为 <a href='https://space.bilibili.com/38028857'>@卿家ん</a> 出于临时起意而自发制作的非官方站点。
                     </p>
                     <p className="text-base md:text-lg">
                       本站与 <strong>克罗雅</strong> 及相关公司无任何直接或许可关系。
@@ -95,7 +95,7 @@ export default function AboutPage() {
                   </h2>
                   <div className="space-y-3 disclaimer-text-dark">
                     <p className="text-base md:text-lg">
-                      本网站为粉丝出于喜爱而自发制作的非官方应援站点。
+                      本网站为粉丝出于喜爱而制作的非官方应援站点。
                     </p>
                     <p className="text-base md:text-lg">
                       本站与 <strong>克罗雅</strong> 及相关公司无任何直接或许可关系。
@@ -129,10 +129,10 @@ export default function AboutPage() {
                 这个网站全靠爱发电，由我一人独立开发维护。
               </p>
               <p className="text-base md:text-lg" style={{ color: 'var(--text-primary)' }}>
-                因为主播的歌单太神了，想试下弄个方便自己点歌用。
+                因为主播原歌单太神了，想试下弄个方便自己点歌用。
               </p>
               <p className="text-base md:text-lg" style={{ color: 'var(--text-primary)' }}>
-                当了好多年前端也没试过自己部署网站，所以这也算是个试验场，不确定什么时候爆炸。
+                当了好多年前端也没试过自己部署网站，所以这算是个试验场，不确定什么时候爆炸。
               </p>
               <p className="text-base md:text-lg" style={{ color: 'var(--text-primary)' }}>
                 如果遇到 Bug 或有数据补充，欢迎联系我！
@@ -196,7 +196,7 @@ export default function AboutPage() {
                 发现问题或有建议？欢迎反馈！
               </p>
               <a
-                href="mailto:feedback@example.com"
+                href="mailto:qwqtest1@outlook.com"
                 className="flex items-center gap-3 w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105"
                 style={{ background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', color: 'white', boxShadow: '0 4px 15px var(--glow-color)' }}
               >
