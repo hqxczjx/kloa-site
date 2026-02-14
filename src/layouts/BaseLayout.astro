@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import ThemeToggle from '../components/ui/ThemeToggle.tsx';
 import ToasterWrapper from '../components/ui/ToasterWrapper.tsx';
-import { Heart, Music as MusicIcon, User } from 'lucide-react';
+import { Heart, Music as MusicIcon, User, Volume2 } from 'lucide-react';
 
 // Get current year dynamically
 const currentYear = new Date().getFullYear();
@@ -51,6 +51,7 @@ const yearDisplay = currentYear === startYear
       <div class="flex items-center gap-8">
         <a href="/" class="nav-link">首页</a>
         <a href="/music" class="nav-link">歌单</a>
+        <a href="/soundboard" class="nav-link">Button</a>
         <a href="/about" class="nav-link">关于</a>
       </div>
 
@@ -71,6 +72,10 @@ const yearDisplay = currentYear === startYear
       <a href="/music" class="mobile-nav-link">
         <MusicIcon className="w-6 h-6" />
         <span class="text-xs mt-1">歌单</span>
+      </a>
+      <a href="/soundboard" class="mobile-nav-link">
+        <Volume2 className="w-6 h-6" />
+        <span class="text-xs mt-1">Button</span>
       </a>
       <a href="/about" class="mobile-nav-link">
         <User className="w-6 h-6" />

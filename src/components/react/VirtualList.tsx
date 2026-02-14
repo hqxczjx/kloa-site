@@ -45,6 +45,7 @@ export default function VirtualList<T>({
       onScroll={handleScroll}
     >
       <ul
+        role="list"
         style={{
           height: items.length * itemHeight,
           position: 'relative',

@@ -1,0 +1,62 @@
+[
+  {
+    "title": "测试歌曲中文",
+    "artist": "测试歌手",
+    "date": "2024-01-15",
+    "tags": ["中文", "测试"]
+  },
+  {
+    "title": "Test Song English",
+    "artist": "Test Artist",
+    "date": "2024-01-15",
+    "tags": ["英文", "Test"]
+  },
+  {
+    "title": "テスト曲",
+    "artist": "テスト歌手",
+    "date": "2024-01-15",
+    "tags": ["日文", "テスト"]
+  },
+  {
+    "title": "特殊字符歌曲!@#",
+    "artist": "特殊&歌手",
+    "date": "2024-01-15",
+    "tags": ["中文", "特殊"]
+  },
+  {
+    "title": "A",
+    "artist": "B",
+    "date": "2024-01-15",
+    "tags": ["短标题"]
+  },
+  {
+    "title": "大鱼",
+    "artist": "Vsinger",
+    "date": "2024-01-15",
+    "tags": ["中文", "治愈", "空灵"]
+  },
+  {
+    "title": "Bad apple",
+    "artist": "Vsinger",
+    "date": "2024-01-15",
+    "tags": ["日文", "东方", "经典"]
+  },
+  {
+    "title": "A whole new world",
+    "artist": "Vsinger",
+    "date": "2024-01-15",
+    "tags": ["英文", "迪士尼", "对唱"]
+  },
+  {
+    "title": "愛してるばんざーい",
+    "artist": "Vsinger",
+    "date": "2024-01-15",
+    "tags": ["日文", "ACG", "治愈"]
+  },
+  {
+    "title": "不染",
+    "artist": "Vsinger",
+    "date": "2024-01-15",
+    "tags": ["中文", "古风", "影视"]
+  }
+]

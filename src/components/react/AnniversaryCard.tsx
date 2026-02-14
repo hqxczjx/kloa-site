@@ -43,8 +43,8 @@ export default function AnniversaryCard({ type, date, label, icon, className = '
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: [0, -5, 0] }}
-      transition={{ duration: 3, repeat: Infinity }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
       className={`fixed glass rounded-2xl p-4 backdrop-blur-md bg-white/10 dark:bg-slate-900/10 border border-white/20 dark:border-white/5 shadow-lg hover:scale-105 transition-transform duration-300 ${className}`}
     >
       <div className="flex items-center gap-2 mb-2">

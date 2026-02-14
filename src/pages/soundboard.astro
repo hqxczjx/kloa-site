@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SoundboardComponent from '../components/react/Soundboard';
+---
+
+<BaseLayout>
+  <SoundboardComponent client:load />
+</BaseLayout>
+
+<style>
+  /* Custom hover effects for voice pads */
+  .VoicePad:hover {
+    box-shadow: 0 8px 30px var(--glow-color);
+  }
+
+  :root.dark .VoicePad:hover {
+    box-shadow: 0 8px 30px var(--color-glow-demon), 0 0 15px oklch(0.64 0.10 240 / 0.3);
+  }
+
+  /* Angel glow effect */
+  :root .VoicePad:has([data-category="angel"]):hover {
+    --glow-color: oklch(0.72 0.12 15 / 0.4);
+  }
+
+  /* Demon glow effect */
+  :root.dark .VoicePad:has([data-category="demon"]):hover {
+    --glow-color: oklch(0.64 0.10 240 / 0.5);
+  }
+
+  /* Chaos mixed glow effect */
+  .VoicePad:has([data-category="chaos"]):hover {
+    --glow-color: linear-gradient(135deg, oklch(0.72 0.12 15 / 0.4), oklch(0.64 0.10 240 / 0.4));
+  }
+</style>
