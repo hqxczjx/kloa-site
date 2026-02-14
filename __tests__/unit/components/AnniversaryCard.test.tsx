@@ -16,8 +16,8 @@ describe('AnniversaryCard组件', () => {
     );
 
     expect(screen.getByText('生日')).toBeInTheDocument();
-    expect(screen.getByText('距离生日')).toBeInTheDocument();
-    expect(screen.getByText('已过')).toBeInTheDocument();
+    expect(screen.getByText('2026-07-19')).toBeInTheDocument();
+    expect(screen.getByText(/距离生日纪念日/)).toBeInTheDocument();
   });
 
   it('应该渲染出道日卡片', () => {
@@ -32,11 +32,11 @@ describe('AnniversaryCard组件', () => {
     );
 
     expect(screen.getByText('出道日')).toBeInTheDocument();
-    expect(screen.getByText('距离出道日')).toBeInTheDocument();
-    expect(screen.getByText('已过')).toBeInTheDocument();
+    expect(screen.getByText('2026-01-16')).toBeInTheDocument();
+    expect(screen.getByText(/距离出道日纪念日/)).toBeInTheDocument();
   });
 
-  it('应该显示已过天数', () => {
+  it('应该显示距离上一次纪念日的天数', () => {
     const pastDate = new Date();
     pastDate.setFullYear(pastDate.getFullYear() - 1);
 
@@ -49,23 +49,27 @@ describe('AnniversaryCard组件', () => {
       />
     );
 
-    expect(screen.getByText(/已过/)).toBeInTheDocument();
+    const daysText = screen.getByText(/天$/);
+    expect(daysText).toBeInTheDocument();
+    expect(screen.getByText(/距离生日纪念日/)).toBeInTheDocument();
   });
 
-  it('应该显示距离下一个纪念日的剩余天数', () => {
-    const futureDate = new Date();
-    futureDate.setFullYear(futureDate.getFullYear() + 1);
+  it('应该显示距离上一次纪念日的天数', () => {
+    const pastDate = new Date();
+    pastDate.setFullYear(pastDate.getFullYear() - 1);
 
     render(
       <AnniversaryCard
         type="debut"
-        date={futureDate}
+        date={pastDate}
         label="出道日"
         icon={<Sparkles className="w-5 h-5" />}
       />
     );
 
-    expect(screen.getByText(/距离/)).toBeInTheDocument();
+    const daysText = screen.getByText(/天$/);
+    expect(daysText).toBeInTheDocument();
+    expect(screen.getByText(/距离出道日纪念日/)).toBeInTheDocument();
   });
 
   it('应该渲染图标', () => {

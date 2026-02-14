@@ -13,32 +13,26 @@ interface AnniversaryCardProps {
 }
 
 export default function AnniversaryCard({ type, date, label, icon, className = '' }: AnniversaryCardProps) {
-  // type 参数为未来扩展预留，用于不同纪念日类型的差异化处理
-  void type;
-  const daysSince = useMemo(() => {
+  const lastOccurrence = useMemo(() => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const anniversary = new Date(date);
-    anniversary.setHours(0, 0, 0, 0);
-    const days = Math.floor((today.getTime() - anniversary.getTime()) / (1000 * 60 * 60 * 24));
-    return Math.max(0, days);
-  }, [date]);
-
-  const nextOccurrence = useMemo(() => {
-    const today = new Date();
-    const nextDate = new Date(date);
-    nextDate.setFullYear(today.getFullYear());
-    if (nextDate < today) {
-      nextDate.setFullYear(today.getFullYear() + 1);
+    const lastDate = new Date(date);
+    lastDate.setFullYear(today.getFullYear());
+    if (lastDate > today) {
+      lastDate.setFullYear(today.getFullYear() - 1);
     }
-    return nextDate;
+    return lastDate;
   }, [date]);
 
-  const daysRemaining = useMemo(() => {
+  const daysSinceLast = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return Math.floor((nextOccurrence.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  }, [nextOccurrence]);
+    return Math.floor((today.getTime() - lastOccurrence.getTime()) / (1000 * 60 * 60 * 24));
+  }, [lastOccurrence]);
+
+  const formatDate = useMemo(() => {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }, [date]);
 
   return (
     <motion.div
@@ -54,18 +48,17 @@ export default function AnniversaryCard({ type, date, label, icon, className = '
         </span>
       </div>
 
-      <div className="mb-1">
+      <div className="mb-2">
         <div className="text-2xl font-bold font-serif" style={{ color: 'var(--text-primary)' }}>
-          {daysRemaining} 天
+          {formatDate}
         </div>
-        <div className="text-xs opacity-75">距离{label}</div>
       </div>
 
       <div>
-        <div className="text-sm opacity-90" style={{ color: 'var(--text-primary)' }}>
-          {daysSince} 天
+        <div className="text-2xl font-bold font-serif" style={{ color: 'var(--text-primary)' }}>
+          {daysSinceLast} 天
         </div>
-        <div className="text-xs opacity-60">已过</div>
+        <div className="text-xs opacity-75">距离{label}纪念日</div>
       </div>
     </motion.div>
   );
