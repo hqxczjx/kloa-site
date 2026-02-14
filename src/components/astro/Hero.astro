@@ -1,6 +1,7 @@
 ---
-import { ArrowRight, Tv } from 'lucide-react';
+import { ArrowRight, Tv, Volume2 } from 'lucide-react';
 import { BilibiliIcon } from '../ui/BrandIcons';
+import AnniversaryCards from '../react/AnniversaryCards';
 ---
 
 <section class="relative h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -147,7 +148,7 @@ import { BilibiliIcon } from '../ui/BrandIcons';
 
         <!-- Button Content -->
         <Tv className="relative z-10 w-5 h-5 transition-colors duration-300 group-hover:shadow-pink-500/20" style={{ color: '#FB7299' }} />
-        <span class="relative z-10 text-base font-medium" style="color: '#FB7299'">
+        <span class="relative z-10 text-base font-medium" style={{ color: '#FB7299' }}>
           直播间
         </span>
       </a>
@@ -162,10 +163,28 @@ import { BilibiliIcon } from '../ui/BrandIcons';
 
         <!-- Button Content -->
         <BilibiliIcon className="relative z-10 w-5 h-5" style={{ color: '#FB7299' }} />
-        <span class="relative z-10 text-base font-medium" style="color: '#FB7299'">
+        <span class="relative z-10 text-base font-medium" style={{ color: '#FB7299' }}>
           主页
+        </span>
+      </a>
+
+      <!-- Soundboard Button -->
+      <a
+        href="/soundboard"
+        class="group relative px-5 py-3 rounded-xl glass flex items-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
+      >
+        <!-- Button Glow Effect -->
+        <div class="absolute inset-0 bg-linear-to-r from-pink-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+        <!-- Button Content -->
+        <Volume2 className="relative z-10 w-5 h-5 transition-colors duration-300 group-hover:from-pink-500/20 group-hover:to-blue-500/20" style={{ color: 'var(--accent-primary)' }} />
+        <span class="relative z-10 text-base font-medium" style={{ color: 'var(--accent-primary)' }}>
+          克罗雅Button
         </span>
       </a>
     </div>
   </div>
+
+  <!-- Anniversary Cards -->
+  <AnniversaryCards client:load />
 </section>
