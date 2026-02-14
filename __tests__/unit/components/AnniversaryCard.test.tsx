@@ -36,7 +36,7 @@ describe('AnniversaryCard组件', () => {
     expect(screen.getByText(/距离出道日纪念日/)).toBeInTheDocument();
   });
 
-  it('应该显示距离上一次纪念日的天数', () => {
+  it('应该显示距离下一个纪念日的天数', () => {
     const pastDate = new Date();
     pastDate.setFullYear(pastDate.getFullYear() - 1);
 
@@ -54,7 +54,7 @@ describe('AnniversaryCard组件', () => {
     expect(screen.getByText(/距离生日纪念日/)).toBeInTheDocument();
   });
 
-  it('应该显示距离上一次纪念日的天数', () => {
+  it('应该显示距离下一个纪念日的天数', () => {
     const pastDate = new Date();
     pastDate.setFullYear(pastDate.getFullYear() - 1);
 

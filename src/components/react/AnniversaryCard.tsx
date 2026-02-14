@@ -13,21 +13,21 @@ interface AnniversaryCardProps {
 }
 
 export default function AnniversaryCard({ type, date, label, icon, className = '' }: AnniversaryCardProps) {
-  const lastOccurrence = useMemo(() => {
+  const nextOccurrence = useMemo(() => {
     const today = new Date();
-    const lastDate = new Date(date);
-    lastDate.setFullYear(today.getFullYear());
-    if (lastDate > today) {
-      lastDate.setFullYear(today.getFullYear() - 1);
+    const nextDate = new Date(date);
+    nextDate.setFullYear(today.getFullYear());
+    if (nextDate < today) {
+      nextDate.setFullYear(today.getFullYear() + 1);
     }
-    return lastDate;
+    return nextDate;
   }, [date]);
 
-  const daysSinceLast = useMemo(() => {
+  const daysUntilNext = useMemo(() => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return Math.floor((today.getTime() - lastOccurrence.getTime()) / (1000 * 60 * 60 * 24));
-  }, [lastOccurrence]);
+    return Math.floor((nextOccurrence.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  }, [nextOccurrence]);
 
   const formatDate = useMemo(() => {
     const d = new Date(date);
@@ -57,7 +57,7 @@ export default function AnniversaryCard({ type, date, label, icon, className = '
       <div>
         <div className="text-xs opacity-75">距离{label}纪念日</div>
         <div className="text-2xl font-bold font-serif" style={{ color: 'var(--text-primary)' }}>
-          {daysSinceLast} 天
+          {daysUntilNext} 天
         </div>
       </div>
     </motion.div>
