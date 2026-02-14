@@ -55,10 +55,10 @@ export default function AnniversaryCard({ type, date, label, icon, className = '
       </div>
 
       <div>
+        <div className="text-xs opacity-75">距离{label}纪念日</div>
         <div className="text-2xl font-bold font-serif" style={{ color: 'var(--text-primary)' }}>
           {daysSinceLast} 天
         </div>
-        <div className="text-xs opacity-75">距离{label}纪念日</div>
       </div>
     </motion.div>
   );
