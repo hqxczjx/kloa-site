@@ -64,8 +64,8 @@
     --accent-primary: var(--color-pink-500);
     --accent-secondary: var(--color-blue-500);
     --glow-color: var(--color-glow-angel);
-    --glass-bg: oklch(1.00 0.00 0 / 0.85);
-    --glass-border: oklch(0.95 0.01 15 / 0.5);
+    --glass-bg: oklch(1.00 0.00 0 / 0.95);
+    --glass-border: oklch(0.95 0.01 15 / 0.8);
     --glass-blur: 12px;
   }
 
