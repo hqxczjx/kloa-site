@@ -6,7 +6,12 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     // Check localStorage or system preference on mount
-    const saved = localStorage.getItem('theme');
+    let saved;
+    try {
+      saved = localStorage.getItem('theme');
+    } catch (e) {
+      saved = null;
+    }
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initialMode = saved === 'dark' || (!saved && prefersDark);
     setIsAngelMode(!initialMode);
@@ -26,11 +31,19 @@ export default function ThemeToggle() {
     if (newMode) {
       // Angel Mode (Light)
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      try {
+        localStorage.setItem('theme', 'light');
+      } catch (e) {
+        // Silent fail - localStorage may not be available
+      }
     } else {
       // Demon Mode (Dark)
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      try {
+        localStorage.setItem('theme', 'dark');
+      } catch (e) {
+        // Silent fail - localStorage may not be available
+      }
     }
   };
 

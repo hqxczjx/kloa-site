@@ -56,7 +56,7 @@ export default function SongList({ songs }: SongListProps) {
 
       // Search filter (Pinyin + Chinese)
       if (searchQuery) {
-        const query = searchQuery.toLowerCase();
+        const query = searchQuery.trim().toLowerCase();
         const titleLower = song.title.toLowerCase();
         const artistLower = song.artist.toLowerCase();
 
@@ -227,9 +227,10 @@ export default function SongList({ songs }: SongListProps) {
               <h3 className="text-base md:text-lg font-semibold truncate transition-colors duration-200 group-hover:text-pink-600 dark:group-hover:text-blue-400" style={{ color: 'var(--text-primary)' }}>
                 {song.title}
               </h3>
-              <p className="text-sm md:text-base truncate opacity-60" style={{ color: 'var(--text-secondary)' }}>
-                {song.artist}
-              </p>
+              <div className="flex items-center gap-2 text-sm md:text-base opacity-60" style={{ color: 'var(--text-secondary)' }}>
+                <span className="truncate">{song.artist}</span>
+                {song.date && <span className="shrink-0">{song.date}</span>}
+              </div>
             </div>
 
             {/* Right: Copy Button */}
