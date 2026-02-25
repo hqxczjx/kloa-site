@@ -52,14 +52,14 @@ test.describe('Home Page', () => {
 
     // Check initial state (Angel mode)
     const initialAriaLabel = await themeToggle.getAttribute('aria-label');
-    expect(initialAriaLabel).toContain('恶魔');
+    expect(initialAriaLabel).toBe('切换到恶魔模式');
 
     // Toggle to Demon mode
     await themeToggle.click();
 
     // Check new state
     const newAriaLabel = await themeToggle.getAttribute('aria-label');
-    expect(newAriaLabel).toContain('天使');
+    expect(newAriaLabel).toBe('切换到天使模式');
 
     // Verify dark class is added
     await expect(page.locator('html')).toHaveClass(/dark/);
@@ -82,8 +82,11 @@ test.describe('Home Page', () => {
 
     // Theme should still be dark
     await expect(page.locator('html')).toHaveClass(/dark/);
-    const ariaLabel = await themeToggle.getAttribute('aria-label');
-    expect(ariaLabel).toContain('天使');
+
+    // Get fresh reference to the element
+    const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
+    const ariaLabel = await themeToggleAfterReload.getAttribute('aria-label');
+    expect(ariaLabel).toContain('切换到天使模式');
   });
 
   test('should display footer on desktop', async ({ page }) => {

@@ -56,7 +56,7 @@ export default function ThemeToggle() {
           ? 'linear-gradient(135deg, oklch(0.78 0.10 15), oklch(0.72 0.12 15))'
           : 'linear-gradient(135deg, oklch(0.72 0.08 240), oklch(0.64 0.10 240))',
       }}
-      aria-label={isAngelMode ? '切换到天使模式' : '切换到恶魔模式'}
+      aria-label={isAngelMode ? '切换到恶魔模式' : '切换到天使模式'}
     >
       <div
         className="absolute top-1 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300"

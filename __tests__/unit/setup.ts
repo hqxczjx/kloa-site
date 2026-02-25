@@ -9,6 +9,11 @@ afterEach(() => {
 
 // Setup before each test
 beforeEach(() => {
+  // Clean up document classes
+  if (typeof document !== 'undefined' && document.documentElement) {
+    document.documentElement.classList.remove('dark');
+  }
+
   // Mock window.matchMedia
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
@@ -24,14 +29,14 @@ beforeEach(() => {
     })),
   });
 
-  // Mock localStorage
+  // Mock localStorage (ensure it's available)
   const localStorageMock = {
     getItem: vi.fn(),
     setItem: vi.fn(),
     removeItem: vi.fn(),
     clear: vi.fn(),
   };
-  Object.defineProperty(global, 'localStorage', {
+  Object.defineProperty(globalThis, 'localStorage', {
     value: localStorageMock as unknown as Storage,
     writable: true,
     configurable: true,

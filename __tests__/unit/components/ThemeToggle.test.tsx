@@ -1,32 +1,10 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ThemeToggle from '../../../src/components/ui/ThemeToggle';
 
-// Mock window.matchMedia
-const mockMatchMedia = vi.fn();
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: mockMatchMedia,
-});
-
 describe('ThemeToggle', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    document.documentElement.classList.remove('dark');
-    (global.localStorage.getItem as any).mockReturnValue(null);
-    (global.localStorage.setItem as any).mockClear();
-    window.matchMedia = vi.fn((query: string) => ({
-      matches: query === '(prefers-color-scheme: dark)' ? false : false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }));
-  });
+  describe('Initial State', () => {
 
   afterEach(() => {
     document.documentElement.classList.remove('dark');
@@ -355,3 +333,4 @@ describe('ThemeToggle', () => {
       expect(left).toBeGreaterThanOrEqual(0);
     });
   });
+});

@@ -21,13 +21,15 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should use system preference when no saved theme', async ({ page }) => {
+    // Clear any saved theme first
+    await page.evaluate(() => localStorage.clear());
     // Set system preference to dark
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.reload();
 
     const themeToggle = page.locator('button[aria-label*="切换"]').first();
     const ariaLabel = await themeToggle.getAttribute('aria-label');
-    expect(ariaLabel).toContain('天使');
+    expect(ariaLabel).toBe('切换到天使模式');
 
     await expect(page.locator('html')).toHaveClass(/dark/);
   });
@@ -39,7 +41,7 @@ test.describe('Theme Toggle', () => {
     await expect(page.locator('html')).toHaveClass(/dark/);
 
     const ariaLabel = await themeToggle.getAttribute('aria-label');
-    expect(ariaLabel).toContain('天使');
+    expect(ariaLabel).toBe('切换到天使模式');
   });
 
   test('should switch back to Angel mode (light) when clicked again', async ({ page }) => {
@@ -82,8 +84,10 @@ test.describe('Theme Toggle', () => {
     // Theme should still be dark
     await expect(page.locator('html')).toHaveClass(/dark/);
 
-    const ariaLabel = await themeToggle.getAttribute('aria-label');
-    expect(ariaLabel).toContain('天使');
+    // Get fresh reference to the element
+    const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
+    const ariaLabel = await themeToggleAfterReload.getAttribute('aria-label');
+    expect(ariaLabel).toBe('切换到天使模式');
   });
 
   test('should save light theme preference', async ({ page }) => {

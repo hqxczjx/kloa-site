@@ -103,10 +103,17 @@ test.describe('Responsive Design', () => {
       await page.goto('/');
 
       const themeToggle = page.locator('[data-testid="mobile-theme-toggle"] button').first();
+      await expect(themeToggle).toBeVisible();
+
+      // Wait for element to be fully visible
+      await page.waitForTimeout(500);
+
       const box = await themeToggle.boundingBox();
       expect(box).toBeTruthy();
-      expect(box!.x).toBeGreaterThan(300); // Should be on the right side
-      expect(box!.y).toBeLessThan(50); // Should be near the top
+      if (box) {
+        expect(box.x).toBeGreaterThan(300); // Should be on the right side
+        expect(box.y).toBeLessThan(50); // Should be near the top
+      }
     });
   });
 
@@ -197,6 +204,9 @@ test.describe('Responsive Design', () => {
       await page.goto('/');
 
       const musicLink = page.getByRole('link', { name: '歌单', exact: true });
+      await expect(musicLink).toBeVisible();
+      await page.waitForTimeout(500);
+
       await musicLink.tap();
 
       await expect(page).toHaveURL(/\/music/);
@@ -206,6 +216,9 @@ test.describe('Responsive Design', () => {
       await page.goto('/');
 
       const themeToggle = page.locator('[data-testid="mobile-theme-toggle"] button').first();
+      await expect(themeToggle).toBeVisible();
+      await page.waitForTimeout(500);
+
       await themeToggle.tap();
 
       await expect(page.locator('html')).toHaveClass(/dark/);
