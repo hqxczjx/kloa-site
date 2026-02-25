@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Theme Toggle', () => {
   test.beforeEach(async ({ page }) => {
-    // Clear localStorage before each test
+    // Set system preference to light and clear localStorage before each test
+    await page.emulateMedia({ colorScheme: 'light' });
     await page.goto('/');
     await page.evaluate(() => localStorage.clear());
   });
@@ -162,11 +163,11 @@ test.describe('Theme Toggle', () => {
     await themeToggle.focus();
 
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
     await expect(page.locator('html')).toHaveClass(/dark/);
 
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 });

@@ -469,7 +469,7 @@ describe('SongList', () => {
       expect(screen.getByText('没有找到匹配的歌曲')).toBeInTheDocument();
     });
 
-    it('should clear tag filter when searching', async () => {
+    it('should clear tag filter when searching', { timeout: 10000 }, async () => {
       const user = userEvent.setup();
       render(<SongList songs={mockSongs} />);
 

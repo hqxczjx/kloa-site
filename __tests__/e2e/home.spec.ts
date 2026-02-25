@@ -2,6 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Home Page', () => {
   test.beforeEach(async ({ page }) => {
+    // Set system preference to light before each test
+    await page.emulateMedia({ colorScheme: 'light' });
     await page.goto('/');
   });
 

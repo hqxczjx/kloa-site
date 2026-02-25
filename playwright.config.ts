@@ -17,7 +17,13 @@ export default defineConfig({
     actionTimeout: 10000,
     navigationTimeout: 10000,
     launchOptions: {
-      args: ['--disable-blink-features=AutomationControlled'],
+      args: [
+        '--disable-blink-features=AutomationControlled',
+        '--disable-extensions',
+        '--disable-dev-shm-usage',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+      ],
     },
   },
   projects: [

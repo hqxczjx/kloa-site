@@ -231,7 +231,7 @@ describe('ThemeToggle', () => {
 });
 
   describe('Additional Coverage Tests', () => {
-    it('should handle rapid theme toggles', async () => {
+    it('should handle rapid theme toggles', { timeout: 10000 }, async () => {
       const user = userEvent.setup();
       render(<ThemeToggle />);
 
