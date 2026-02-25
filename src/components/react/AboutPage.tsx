@@ -66,7 +66,7 @@ export default function AboutPage() {
                   </h2>
                   <div className="space-y-3 disclaimer-text">
                     <p className="text-base md:text-lg">
-                      本网站为 <a href='https://space.bilibili.com/38028857'>@卿家ん</a> 出于临时起意而自发制作的非官方站点。
+                      本网站为 <a href='https://space.bilibili.com/38028857' target='_blank' rel='noopener noreferrer'>@卿家ん</a> 出于临时起意而自发制作的非官方站点。
                     </p>
                     <p className="text-base md:text-lg">
                       本站与 <strong>克罗雅</strong> 及相关公司无任何直接或许可关系。

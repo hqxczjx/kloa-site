@@ -30,10 +30,11 @@ test.describe('Music Page', () => {
     await searchInput.fill('大鱼');
 
     // Wait for search to complete
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
 
     // Check if filtered results are shown
     const songItems = page.locator('[data-testid="virtual-list"]').locator('.group');
+    await expect(songItems).toHaveCount(1);
     const firstSong = songItems.first();
     await expect(firstSong).toContainText('大鱼');
   });
@@ -78,13 +79,13 @@ test.describe('Music Page', () => {
     await chineseTag.click();
     await page.waitForTimeout(300);
 
-    const initialCount = await page.locator('[data-testid="virtual-list"]').locator('.group').count();
+    const initialCount = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
 
     await chineseTag.click();
     await page.waitForTimeout(300);
 
-    const newCount = await page.locator('[data-testid="virtual-list"]').locator('.group').count();
-    expect(newCount).toBeGreaterThan(initialCount);
+    const newCount = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
+    expect(Number(newCount)).toBeGreaterThan(Number(initialCount));
   });
 
   test('should reset filter when "全部" is clicked', async ({ page }) => {
@@ -121,7 +122,7 @@ test.describe('Music Page', () => {
     const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
     await searchInput.fill('nonexistent song xyz123');
 
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(500);
 
     await expect(page.getByText('没有找到匹配的歌曲')).toBeVisible();
   });
@@ -177,19 +178,17 @@ test.describe('Music Page', () => {
   });
 
   test('should scroll through song list', async ({ page }) => {
-    const listContainer = page.locator('[data-testid="virtual-list"]').locator('..');
-    if (listContainer) {
-      await listContainer.evaluate((el: any) => el.scrollTop = 1000);
-      await page.waitForTimeout(300);
+    const listContainer = page.locator('[data-testid="virtual-list"]');
+    await listContainer.evaluate((el: any) => el.scrollTop = 1000);
+    await page.waitForTimeout(500);
 
-      // Check that scrolling works
-      const scrollTop = await listContainer.evaluate((el: any) => el.scrollTop);
-      expect(scrollTop).toBeGreaterThan(0);
-    }
+    // Check that scrolling works
+    const scrollTop = await listContainer.evaluate((el: any) => el.scrollTop);
+    expect(scrollTop).toBeGreaterThan(0);
   });
 
   test('should navigate back to home', async ({ page }) => {
-    const homeLink = page.getByRole('link', { name: '首页' });
+    const homeLink = page.getByRole('link', { name: '返回首页' });
     await homeLink.click();
 
     await expect(page).toHaveURL('/');

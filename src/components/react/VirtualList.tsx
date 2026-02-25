@@ -44,6 +44,7 @@ export default function VirtualList<T>({
       style={{ height: containerHeight }}
       onScroll={handleScroll}
       data-testid="virtual-list"
+      data-total-items={items.length}
     >
       <ul
         role="list"

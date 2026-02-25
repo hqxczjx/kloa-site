@@ -158,9 +158,11 @@ test.describe('Theme Toggle', () => {
     await themeToggle.focus();
 
     await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await expect(page.locator('html')).toHaveClass(/dark/);
 
     await page.keyboard.press('Enter');
+    await page.waitForTimeout(300);
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 });

@@ -14,9 +14,9 @@ test.describe('Responsive Design', () => {
     test('should display all navigation links', async ({ page }) => {
       await page.goto('/');
 
-      await expect(page.getByRole('link', { name: '首页' })).toBeVisible();
-      await expect(page.getByRole('link', { name: '歌单' })).toBeVisible();
-      await expect(page.getByRole('link', { name: '关于' })).toBeVisible();
+      await expect(page.getByRole('link', { name: '首页', exact: true })).toBeVisible();
+      await expect(page.getByRole('link', { name: '歌单', exact: true })).toBeVisible();
+      await expect(page.getByRole('link', { name: '关于', exact: true })).toBeVisible();
     });
 
     test('should display footer', async ({ page }) => {
@@ -95,14 +95,14 @@ test.describe('Responsive Design', () => {
     test('should display theme toggle on mobile', async ({ page }) => {
       await page.goto('/');
 
-      const themeToggle = page.locator('button[aria-label*="切换"]').first();
+      const themeToggle = page.locator('[data-testid="mobile-theme-toggle"] button').first();
       await expect(themeToggle).toBeVisible();
     });
 
     test('should display mobile theme toggle in top right', async ({ page }) => {
       await page.goto('/');
 
-      const themeToggle = page.locator('button[aria-label*="切换"]').first();
+      const themeToggle = page.locator('[data-testid="mobile-theme-toggle"] button').first();
       const box = await themeToggle.boundingBox();
       expect(box).toBeTruthy();
       expect(box!.x).toBeGreaterThan(300); // Should be on the right side
@@ -138,14 +138,12 @@ test.describe('Responsive Design', () => {
     test('should scroll through song list', async ({ page }) => {
       await page.goto('/music');
 
-      const listContainer = page.locator('[data-testid="virtual-list"]').locator('..');
-      if (listContainer) {
-        await listContainer.evaluate((el: any) => el.scrollTop = 500);
-        await page.waitForTimeout(300);
+      const listContainer = page.locator('[data-testid="virtual-list"]');
+      await listContainer.evaluate((el: any) => el.scrollTop = 500);
+      await page.waitForTimeout(500);
 
-        const scrollTop = await listContainer.evaluate((el: any) => el.scrollTop);
-        expect(scrollTop).toBeGreaterThan(0);
-      }
+      const scrollTop = await listContainer.evaluate((el: any) => el.scrollTop);
+      expect(scrollTop).toBeGreaterThan(0);
     });
   });
 
@@ -207,7 +205,7 @@ test.describe('Responsive Design', () => {
     test('should handle tap on theme toggle', async ({ page }) => {
       await page.goto('/');
 
-      const themeToggle = page.locator('button[aria-label*="切换"]').first();
+      const themeToggle = page.locator('[data-testid="mobile-theme-toggle"] button').first();
       await themeToggle.tap();
 
       await expect(page.locator('html')).toHaveClass(/dark/);
