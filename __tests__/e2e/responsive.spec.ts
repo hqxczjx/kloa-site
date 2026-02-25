@@ -72,9 +72,9 @@ test.describe('Responsive Design', () => {
     test('should display mobile navigation icons', async ({ page }) => {
       await page.goto('/');
 
-      await expect(page.getByRole('link', { name: '首页' })).toBeVisible();
-      await expect(page.getByRole('link', { name: '歌单' })).toBeVisible();
-      await expect(page.getByRole('link', { name: '关于' })).toBeVisible();
+      await expect(page.getByRole('link', { name: '首页', exact: true })).toBeVisible();
+      await expect(page.getByRole('link', { name: '歌单', exact: true })).toBeVisible();
+      await expect(page.getByRole('link', { name: '关于', exact: true })).toBeVisible();
     });
 
     test('should not display desktop navigation', async ({ page }) => {
@@ -95,14 +95,14 @@ test.describe('Responsive Design', () => {
     test('should display theme toggle on mobile', async ({ page }) => {
       await page.goto('/');
 
-      const themeToggle = page.locator('button[aria-label*="切换"]');
+      const themeToggle = page.locator('button[aria-label*="切换"]').first();
       await expect(themeToggle).toBeVisible();
     });
 
     test('should display mobile theme toggle in top right', async ({ page }) => {
       await page.goto('/');
 
-      const themeToggle = page.locator('button[aria-label*="切换"]');
+      const themeToggle = page.locator('button[aria-label*="切换"]').first();
       const box = await themeToggle.boundingBox();
       expect(box).toBeTruthy();
       expect(box!.x).toBeGreaterThan(300); // Should be on the right side
@@ -116,7 +116,7 @@ test.describe('Responsive Design', () => {
     test('should display search bar', async ({ page }) => {
       await page.goto('/music');
 
-      const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）');
+      const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
       await expect(searchInput).toBeVisible();
     });
 
@@ -161,7 +161,7 @@ test.describe('Responsive Design', () => {
     test('should display disclaimer', async ({ page }) => {
       await page.goto('/about');
 
-      await expect(page.getByText('本站声明')).toBeVisible();
+      await expect(page.getByRole('heading', { name: '本站声明' }).first()).toBeVisible();
     });
 
     test('should be scrollable', async ({ page }) => {
@@ -198,7 +198,7 @@ test.describe('Responsive Design', () => {
     test('should handle tap on navigation links', async ({ page }) => {
       await page.goto('/');
 
-      const musicLink = page.getByRole('link', { name: '歌单' });
+      const musicLink = page.getByRole('link', { name: '歌单', exact: true });
       await musicLink.tap();
 
       await expect(page).toHaveURL(/\/music/);
@@ -207,7 +207,7 @@ test.describe('Responsive Design', () => {
     test('should handle tap on theme toggle', async ({ page }) => {
       await page.goto('/');
 
-      const themeToggle = page.locator('button[aria-label*="切换"]');
+      const themeToggle = page.locator('button[aria-label*="切换"]').first();
       await themeToggle.tap();
 
       await expect(page.locator('html')).toHaveClass(/dark/);

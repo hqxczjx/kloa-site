@@ -14,16 +14,16 @@ test.describe('About Page', () => {
   });
 
   test('should display disclaimer section', async ({ page }) => {
-    await expect(page.getByText('本站声明')).toBeVisible();
+    await expect(page.getByRole('heading', { name: '本站声明' }).first()).toBeVisible();
   });
 
   test('should display disclaimer content', async ({ page }) => {
-    await expect(page.getByText(/本网站为/)).toBeVisible();
-    await expect(page.getByText(/克罗雅/)).toBeVisible();
+    await expect(page.getByText(/本网站为/).first()).toBeVisible();
+    await expect(page.getByText(/克罗雅/).first()).toBeVisible();
   });
 
   test('should display warning message', async ({ page }) => {
-    await expect(page.getByText(/请勿就本网站的相关问题/)).toBeVisible();
+    await expect(page.getByText(/请勿就本网站的相关问题/).first()).toBeVisible();
   });
 
   test('should display Bilibili link', async ({ page }) => {
@@ -38,15 +38,15 @@ test.describe('About Page', () => {
   });
 
   test('should display technology section', async ({ page }) => {
-    await expect(page.getByText(/技术栈/)).toBeVisible();
+    await expect(page.getByText(/Built with/)).toBeVisible();
   });
 
   test('should display features section', async ({ page }) => {
-    await expect(page.getByText(/特性/)).toBeVisible();
+    await expect(page.getByText(/开发者碎碎念/)).toBeVisible();
   });
 
   test('should display contact section', async ({ page }) => {
-    await expect(page.getByText(/联系/)).toBeVisible();
+    await expect(page.getByText(/联系方式/)).toBeVisible();
   });
 
   test('should display heart icon', async ({ page }) => {
@@ -90,7 +90,7 @@ test.describe('About Page', () => {
     await page.setViewportSize({ width: 375, height: 667 });
 
     // Check mobile navigation is visible
-    const mobileNav = page.locator('nav').filter({ hasText: '首页' });
+    const mobileNav = page.locator('nav.md\\:hidden');
     await expect(mobileNav).toBeVisible();
 
     // Check content is still visible

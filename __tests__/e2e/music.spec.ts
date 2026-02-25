@@ -10,7 +10,7 @@ test.describe('Music Page', () => {
   });
 
   test('should display search bar', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）');
+    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
     await expect(searchInput).toBeVisible();
   });
 
@@ -26,7 +26,7 @@ test.describe('Music Page', () => {
   });
 
   test('should search songs by title', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）');
+    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
     await searchInput.fill('大鱼');
 
     // Wait for search to complete
@@ -39,7 +39,7 @@ test.describe('Music Page', () => {
   });
 
   test('should search songs by artist', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）');
+    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
     await searchInput.fill('Vsinger');
 
     await page.waitForTimeout(300);
@@ -50,7 +50,7 @@ test.describe('Music Page', () => {
   });
 
   test('should search songs by pinyin', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）');
+    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
     await searchInput.fill('dayu');
 
     await page.waitForTimeout(300);
@@ -118,7 +118,7 @@ test.describe('Music Page', () => {
   });
 
   test('should display empty state when no results found', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）');
+    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
     await searchInput.fill('nonexistent song xyz123');
 
     await page.waitForTimeout(300);
@@ -127,7 +127,7 @@ test.describe('Music Page', () => {
   });
 
   test('should clear search when input is cleared', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）');
+    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
     await searchInput.fill('大鱼');
     await page.waitForTimeout(300);
 
@@ -159,7 +159,7 @@ test.describe('Music Page', () => {
     await chineseTag.click();
     await page.waitForTimeout(300);
 
-    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）');
+    const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
     await searchInput.fill('大');
     await page.waitForTimeout(300);
 

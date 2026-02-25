@@ -43,6 +43,7 @@ export default function VirtualList<T>({
       className="overflow-auto"
       style={{ height: containerHeight }}
       onScroll={handleScroll}
+      data-testid="virtual-list"
     >
       <ul
         role="list"

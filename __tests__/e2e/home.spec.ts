@@ -15,7 +15,7 @@ test.describe('Home Page', () => {
     const homeLink = page.getByRole('link', { name: '首页' });
     await expect(homeLink).toBeVisible();
 
-    const musicLink = page.getByRole('link', { name: '歌单' });
+    const musicLink = page.getByRole('link', { name: '歌单', exact: true });
     await expect(musicLink).toBeVisible();
 
     const aboutLink = page.getByRole('link', { name: '关于' });
@@ -29,7 +29,7 @@ test.describe('Home Page', () => {
   });
 
   test('should navigate to music page', async ({ page }) => {
-    const musicLink = page.getByRole('link', { name: '歌单' });
+    const musicLink = page.getByRole('link', { name: '歌单', exact: true });
     await musicLink.click();
 
     await expect(page).toHaveURL(/\/music/);
@@ -43,12 +43,12 @@ test.describe('Home Page', () => {
   });
 
   test('should display theme toggle button', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
     await expect(themeToggle).toBeVisible();
   });
 
   test('should toggle theme', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
 
     // Check initial state (Angel mode)
     const initialAriaLabel = await themeToggle.getAttribute('aria-label');
@@ -72,7 +72,7 @@ test.describe('Home Page', () => {
   });
 
   test('should persist theme preference', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
 
     // Toggle to dark mode
     await themeToggle.click();

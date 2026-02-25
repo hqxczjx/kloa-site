@@ -8,12 +8,12 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should display theme toggle button', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
     await expect(themeToggle).toBeVisible();
   });
 
   test('should start in Angel mode (light) by default', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
     const ariaLabel = await themeToggle.getAttribute('aria-label');
     expect(ariaLabel).toContain('恶魔');
 
@@ -25,7 +25,7 @@ test.describe('Theme Toggle', () => {
     await page.emulateMedia({ colorScheme: 'dark' });
     await page.reload();
 
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
     const ariaLabel = await themeToggle.getAttribute('aria-label');
     expect(ariaLabel).toContain('天使');
 
@@ -33,7 +33,7 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should switch to Demon mode (dark) when clicked', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
     await themeToggle.click();
 
     await expect(page.locator('html')).toHaveClass(/dark/);
@@ -43,7 +43,7 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should switch back to Angel mode (light) when clicked again', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
 
     // First click: Light -> Dark
     await themeToggle.click();
@@ -58,7 +58,7 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should persist theme preference in localStorage', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
 
     // Toggle to dark mode
     await themeToggle.click();
@@ -70,7 +70,7 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should load saved theme on page reload', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
 
     // Toggle to dark mode
     await themeToggle.click();
@@ -87,7 +87,7 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should save light theme preference', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
 
     // Toggle to dark mode first
     await themeToggle.click();
@@ -118,7 +118,7 @@ test.describe('Theme Toggle', () => {
 
     for (const url of pages) {
       await page.goto(url);
-      const themeToggle = page.locator('button[aria-label*="切换"]');
+      const themeToggle = page.locator('button[aria-label*="切换"]').first();
       await expect(themeToggle).toBeVisible();
 
       await themeToggle.click();
@@ -130,7 +130,7 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should have correct visual styles in Angel mode', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
     const toggleButton = themeToggle;
 
     // Check Angel mode styles
@@ -141,7 +141,7 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should have correct visual styles in Demon mode', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
     await themeToggle.click();
 
     const toggleButton = themeToggle;
@@ -154,7 +154,7 @@ test.describe('Theme Toggle', () => {
   });
 
   test('should be keyboard accessible', async ({ page }) => {
-    const themeToggle = page.locator('button[aria-label*="切换"]');
+    const themeToggle = page.locator('button[aria-label*="切换"]').first();
     await themeToggle.focus();
 
     await page.keyboard.press('Enter');
