@@ -55,6 +55,12 @@
    Base Styles (Lowest Priority)
    ======================================== */
 @layer base {
+  /* Hide Astro Dev Toolbar in tests */
+  astro-dev-toolbar {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
   :root {
     /* Default: Angel Mode (Light) */
     --bg-primary: var(--color-surface-angel);

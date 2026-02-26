@@ -27,14 +27,14 @@ test.describe('Music Page', () => {
 
   test('should search songs by title', async ({ page }) => {
     const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
-    await searchInput.fill('一闪一闪');
+    await searchInput.fill('爱');
 
     // Wait for search to complete
     await page.waitForTimeout(500);
 
     // Check if filtered results are shown using data-total-items
     const totalItems = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
-    expect(totalItems).toBe('1');
+    expect(totalItems).toBe('2');
   });
 
   test('should search songs by artist', async ({ page }) => {
@@ -126,7 +126,7 @@ test.describe('Music Page', () => {
 
   test('should clear search when input is cleared', async ({ page }) => {
     const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
-    await searchInput.fill('一闪一闪');
+    await searchInput.fill('爱');
     await page.waitForTimeout(300);
 
     await searchInput.fill('');

@@ -3,8 +3,11 @@ import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle() {
   const [isAngelMode, setIsAngelMode] = useState(true);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+
     // Check localStorage or system preference on mount
     let saved;
     try {
@@ -13,11 +16,11 @@ export default function ThemeToggle() {
       saved = null;
     }
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialMode = saved === 'dark' || (!saved && prefersDark);
-    setIsAngelMode(!initialMode);
+    const isDark = saved === 'dark' || (!saved && prefersDark);
+    setIsAngelMode(!isDark);
 
     // Apply the initial theme to the document
-    if (initialMode) {
+    if (isDark) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
