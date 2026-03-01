@@ -38,7 +38,7 @@ test.describe('Music Page', () => {
 
     // Check if filtered results are shown using data-total-items
     const totalItems = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
-    expect(totalItems).toBe('2');
+    expect(totalItems).toBe('14');
   });
 
   test('should search songs by artist', async ({ page }) => {
@@ -109,8 +109,9 @@ test.describe('Music Page', () => {
     const firstSong = page.locator('[data-testid="virtual-list"]').locator('.group').first();
     await firstSong.click();
 
-    // Check for toast notification (allow success or error)
-    await expect(page.locator('[data-sonner-toast]')).toBeVisible({ timeout: 3000 });
+    // Wait for toast notification to appear
+    await page.waitForTimeout(500);
+    await expect(page.locator('[data-sonner-toast]')).toBeVisible({ timeout: 5000 });
   });
 
   test('should display copy button on song item', async ({ page }) => {

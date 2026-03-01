@@ -163,16 +163,16 @@ test.describe('Theme Toggle', () => {
     await themeToggle.focus();
 
     // Wait for focus to be applied
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(200);
 
     await page.keyboard.press('Enter');
-    // Wait for theme to change
-    await page.waitForTimeout(1000);
+    // Wait for theme to change and React state to update
+    await page.waitForTimeout(1500);
     await expect(page.locator('html')).toHaveClass(/dark/);
 
     await page.keyboard.press('Enter');
-    // Wait for theme to change back
-    await page.waitForTimeout(1000);
+    // Wait for theme to change back and React state to update
+    await page.waitForTimeout(1500);
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 });

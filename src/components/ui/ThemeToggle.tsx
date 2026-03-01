@@ -3,61 +3,42 @@ import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle() {
   const [isAngelMode, setIsAngelMode] = useState(true);
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-
-    const getTheme = (): { isDark: boolean; source: string } => {
-      let saved;
+    const syncTheme = () => {
       try {
-        saved = localStorage.getItem('theme');
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = saved === 'dark' || (!saved && prefersDark);
+        setIsAngelMode(!isDark);
       } catch (e) {
-        saved = null;
-      }
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      if (saved === 'dark') {
-        return { isDark: true, source: 'saved' };
-      }
-      if (saved === 'light') {
-        return { isDark: false, source: 'saved' };
-      }
-      return { isDark: prefersDark, source: 'system' };
-    };
-
-    const applyTheme = () => {
-      const { isDark } = getTheme();
-      setIsAngelMode(!isDark);
-
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
+        // Silent fail
       }
     };
 
-    // Apply theme on mount
-    applyTheme();
+    // Sync theme on mount to match BaseLayout.astro inline script
+    syncTheme();
 
-    // Listen for storage changes
+    // Listen for localStorage changes
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'theme') {
-        applyTheme();
+        syncTheme();
       }
     };
-
     window.addEventListener('storage', handleStorageChange);
 
-    // Listen for system preference changes
+    // Listen for system preference changes (only if no saved theme)
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleMediaChange = () => {
-      const { source } = getTheme();
-      if (source === 'system') {
-        applyTheme();
+      try {
+        const saved = localStorage.getItem('theme');
+        if (!saved) {
+          syncTheme();
+        }
+      } catch (e) {
+        // Silent fail
       }
     };
-
     mediaQuery.addEventListener('change', handleMediaChange);
 
     return () => {
