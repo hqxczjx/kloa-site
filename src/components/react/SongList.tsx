@@ -118,7 +118,7 @@ export default function SongList({ songs }: SongListProps) {
             placeholder="搜索歌曲（支持拼音）..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-xl bg-transparent outline-none placeholder-(--text-secondary)"
+            className="w-full pl-12 pr-4 py-3 rounded-xl bg-transparent outline-none"
             style={{
               color: 'var(--text-primary)',
               fontSize: '1rem',

@@ -162,12 +162,17 @@ test.describe('Theme Toggle', () => {
     const themeToggle = page.locator('button[aria-label*="切换"]').first();
     await themeToggle.focus();
 
+    // Wait for focus to be applied
+    await page.waitForTimeout(100);
+
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(500);
+    // Wait for theme to change
+    await page.waitForTimeout(1000);
     await expect(page.locator('html')).toHaveClass(/dark/);
 
     await page.keyboard.press('Enter');
-    await page.waitForTimeout(500);
+    // Wait for theme to change back
+    await page.waitForTimeout(1000);
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 });

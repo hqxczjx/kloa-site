@@ -27,10 +27,14 @@ test.describe('Music Page', () => {
 
   test('should search songs by title', async ({ page }) => {
     const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
-    await searchInput.fill('爱');
 
-    // Wait for search to complete
-    await page.waitForTimeout(500);
+    // Clear input first to ensure it's empty
+    await searchInput.clear();
+    // Use type instead of fill to ensure proper event handling
+    await searchInput.type('爱', { delay: 30 });
+
+    // Wait for search to complete and virtual list to update
+    await page.waitForTimeout(1000);
 
     // Check if filtered results are shown using data-total-items
     const totalItems = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
@@ -117,8 +121,13 @@ test.describe('Music Page', () => {
 
   test('should display empty state when no results found', async ({ page }) => {
     const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
-    await searchInput.fill('nonexistent song xyz123');
 
+    // Clear input first
+    await searchInput.clear();
+    // Use type instead of fill to ensure proper event handling
+    await searchInput.type('nonexistent song xyz123', { delay: 30 });
+
+    // Wait for search to complete
     await page.waitForTimeout(1500);
 
     await expect(page.getByText('没有找到匹配的歌曲')).toBeVisible();

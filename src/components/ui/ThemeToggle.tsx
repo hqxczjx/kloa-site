@@ -8,23 +8,62 @@ export default function ThemeToggle() {
   useEffect(() => {
     setIsClient(true);
 
-    // Check localStorage or system preference on mount
-    let saved;
-    try {
-      saved = localStorage.getItem('theme');
-    } catch (e) {
-      saved = null;
-    }
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = saved === 'dark' || (!saved && prefersDark);
-    setIsAngelMode(!isDark);
+    const getTheme = (): { isDark: boolean; source: string } => {
+      let saved;
+      try {
+        saved = localStorage.getItem('theme');
+      } catch (e) {
+        saved = null;
+      }
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    // Apply the initial theme to the document
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
+      if (saved === 'dark') {
+        return { isDark: true, source: 'saved' };
+      }
+      if (saved === 'light') {
+        return { isDark: false, source: 'saved' };
+      }
+      return { isDark: prefersDark, source: 'system' };
+    };
+
+    const applyTheme = () => {
+      const { isDark } = getTheme();
+      setIsAngelMode(!isDark);
+
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+
+    // Apply theme on mount
+    applyTheme();
+
+    // Listen for storage changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'theme') {
+        applyTheme();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Listen for system preference changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleMediaChange = () => {
+      const { source } = getTheme();
+      if (source === 'system') {
+        applyTheme();
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleMediaChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      mediaQuery.removeEventListener('change', handleMediaChange);
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -50,9 +89,17 @@ export default function ThemeToggle() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleTheme();
+    }
+  };
+
   return (
     <button
       onClick={toggleTheme}
+      onKeyDown={handleKeyDown}
       className="relative w-16 h-8 rounded-full p-1 transition-all duration-300"
       style={{
         background: isAngelMode

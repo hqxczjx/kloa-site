@@ -126,14 +126,20 @@ test.describe('Responsive Design', () => {
     });
 
     test('should display tag filter', async ({ page }) => {
-      await page.goto('/music');
+      await page.goto('/music', { timeout: 15000 });
+
+      // Wait for page to be fully loaded
+      await page.waitForLoadState('networkidle', { timeout: 15000 });
 
       await expect(page.getByText('筛选标签')).toBeVisible();
       await expect(page.getByText('全部')).toBeVisible();
     });
 
     test('should display song list', async ({ page }) => {
-      await page.goto('/music');
+      await page.goto('/music', { timeout: 15000 });
+
+      // Wait for page to be fully loaded
+      await page.waitForLoadState('networkidle', { timeout: 15000 });
 
       const songItems = page.locator('[data-testid="virtual-list"]').locator('.group');
       const count = await songItems.count();
