@@ -2,7 +2,19 @@ import { useState, useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle() {
-  const [isAngelMode, setIsAngelMode] = useState(true);
+  const [isAngelMode, setIsAngelMode] = useState(() => {
+    if (typeof window === 'undefined') {
+      return true;
+    }
+    try {
+      const saved = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const isDark = saved === 'dark' || (!saved && prefersDark);
+      return !isDark;
+    } catch (e) {
+      return true;
+    }
+  });
 
   useEffect(() => {
     const syncTheme = () => {
@@ -10,7 +22,16 @@ export default function ThemeToggle() {
         const saved = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const isDark = saved === 'dark' || (!saved && prefersDark);
+
+        // Update React state
         setIsAngelMode(!isDark);
+
+        // Sync document class with BaseLayout.astro inline script
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
       } catch (e) {
         // Silent fail
       }

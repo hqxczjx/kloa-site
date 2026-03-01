@@ -15,7 +15,7 @@ beforeEach(() => {
   }
 
   // Mock window.matchMedia
-  Object.defineProperty(window, 'matchMedia', {
+  Object.defineProperty(globalThis, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation(query => ({
       matches: false,
@@ -52,7 +52,7 @@ beforeEach(() => {
   });
 
   // Mock window.scrollTo
-  window.scrollTo = vi.fn();
+  globalThis.scrollTo = vi.fn();
 
   // Mock HTMLMediaElement (audio/video)
   HTMLMediaElement.prototype.play = vi.fn(() => Promise.resolve());

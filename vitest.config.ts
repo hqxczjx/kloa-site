@@ -10,24 +10,22 @@ export default defineConfig({
     include: ['**/__tests__/unit/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: [
       'node_modules/',
-      '__tests__/e2e/**',
+      '__tests__/e2e',
       'dist/',
       '.astro/',
       '*.config.*',
       'public/',
-      '*.astro',
     ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'lcov'],
       exclude: [
         'node_modules/',
-        '__tests__/',
+        '__tests__',
         'dist/',
         '.astro/',
         '*.config.*',
         'public/',
-        '*.astro',
       ],
       thresholds: {
         statements: 90,

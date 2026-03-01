@@ -1,0 +1,416 @@
+Run bun run test:e2e
+$ bun test-e2e.ts
+▶️  运行 E2E 测试...
+
+[WebServer] $ astro dev
+
+Running 84 tests using 1 worker
+
+  ✓   1 [chromium] › __tests__/e2e/about.spec.ts:8:3 › About Page › should load about page successfully (4.1s)
+  ✓   2 [chromium] › __tests__/e2e/about.spec.ts:12:3 › About Page › should display page title (3.0s)
+  ✓   3 [chromium] › __tests__/e2e/about.spec.ts:16:3 › About Page › should display disclaimer section (2.5s)
+  ✓   4 [chromium] › __tests__/e2e/about.spec.ts:20:3 › About Page › should display disclaimer content (2.4s)
+  ✓   5 [chromium] › __tests__/e2e/about.spec.ts:25:3 › About Page › should display warning message (2.4s)
+  ✓   6 [chromium] › __tests__/e2e/about.spec.ts:29:3 › About Page › should display Bilibili link (3.0s)
+  ✓   7 [chromium] › __tests__/e2e/about.spec.ts:35:3 › About Page › should open Bilibili link in new tab (2.5s)
+  ✓   8 [chromium] › __tests__/e2e/about.spec.ts:40:3 › About Page › should display technology section (2.4s)
+  ✓   9 [chromium] › __tests__/e2e/about.spec.ts:44:3 › About Page › should display features section (2.5s)
+  ✓  10 [chromium] › __tests__/e2e/about.spec.ts:48:3 › About Page › should display contact section (2.4s)
+  ✓  11 [chromium] › __tests__/e2e/about.spec.ts:52:3 › About Page › should display heart icon (3.0s)
+  ✓  12 [chromium] › __tests__/e2e/about.spec.ts:57:3 › About Page › should display background effects (2.5s)
+  ✓  13 [chromium] › __tests__/e2e/about.spec.ts:63:3 › About Page › should navigate to home page (4.0s)
+  ✓  14 [chromium] › __tests__/e2e/about.spec.ts:70:3 › About Page › should navigate to music page (4.1s)
+  ✓  15 [chromium] › __tests__/e2e/about.spec.ts:77:3 › About Page › should display footer on desktop (2.5s)
+  ✓  16 [chromium] › __tests__/e2e/about.spec.ts:84:3 › About Page › should have proper heading structure (2.4s)
+  ✓  17 [chromium] › __tests__/e2e/about.spec.ts:89:3 › About Page › should be responsive on mobile (2.5s)
+  ✓  18 [chromium] › __tests__/e2e/home.spec.ts:10:3 › Home Page › should load home page successfully (3.0s)
+  ✓  19 [chromium] › __tests__/e2e/home.spec.ts:14:3 › Home Page › should display navigation links (3.8s)
+  ✓  20 [chromium] › __tests__/e2e/home.spec.ts:27:3 › Home Page › should display hero section (3.5s)
+  ✓  21 [chromium] › __tests__/e2e/home.spec.ts:33:3 › Home Page › should navigate to music page (3.3s)
+  ✓  22 [chromium] › __tests__/e2e/home.spec.ts:40:3 › Home Page › should navigate to about page (3.1s)
+  ✓  23 [chromium] › __tests__/e2e/home.spec.ts:47:3 › Home Page › should display theme toggle button (3.0s)
+  ✓  24 [chromium] › __tests__/e2e/home.spec.ts:52:3 › Home Page › should toggle theme (4.5s)
+  ✘  25 [chromium] › __tests__/e2e/home.spec.ts:76:3 › Home Page › should persist theme preference (3.4s)
+  ✘  26 [chromium] › __tests__/e2e/home.spec.ts:76:3 › Home Page › should persist theme preference (retry #1) (4.5s)
+  ✓  27 [chromium] › __tests__/e2e/home.spec.ts:94:3 › Home Page › should display footer on desktop (3.2s)
+  ✓  28 [chromium] › __tests__/e2e/home.spec.ts:105:3 › Home Page › should have proper meta tags (3.0s)
+  ✓  29 [chromium] › __tests__/e2e/music.spec.ts:8:3 › Music Page › should load music page successfully (2.4s)
+  ✓  30 [chromium] › __tests__/e2e/music.spec.ts:12:3 › Music Page › should display search bar (2.4s)
+  ✓  31 [chromium] › __tests__/e2e/music.spec.ts:17:3 › Music Page › should display tag filter section (2.4s)
+  ✓  32 [chromium] › __tests__/e2e/music.spec.ts:22:3 › Music Page › should display song list (2.5s)
+  ✘  33 [chromium] › __tests__/e2e/music.spec.ts:28:3 › Music Page › should search songs by title (3.4s)
+  ✘  34 [chromium] › __tests__/e2e/music.spec.ts:28:3 › Music Page › should search songs by title (retry #1) (4.3s)
+  ✓  35 [chromium] › __tests__/e2e/music.spec.ts:44:3 › Music Page › should search songs by artist (2.6s)
+  ✓  36 [chromium] › __tests__/e2e/music.spec.ts:55:3 › Music Page › should search songs by pinyin (2.7s)
+  ✓  37 [chromium] › __tests__/e2e/music.spec.ts:67:3 › Music Page › should filter songs by tag (2.9s)
+  ✓  38 [chromium] › __tests__/e2e/music.spec.ts:79:3 › Music Page › should deselect tag when clicked again (3.9s)
+  ✓  39 [chromium] › __tests__/e2e/music.spec.ts:93:3 › Music Page › should reset filter when "全部" is clicked (3.4s)
+  ✘  40 [chromium] › __tests__/e2e/music.spec.ts:108:3 › Music Page › should copy song title (6.1s)
+  ✘  41 [chromium] › __tests__/e2e/music.spec.ts:108:3 › Music Page › should copy song title (retry #1) (6.0s)
+  ✓  42 [chromium] › __tests__/e2e/music.spec.ts:116:3 › Music Page › should display copy button on song item (2.5s)
+  ✓  43 [chromium] › __tests__/e2e/music.spec.ts:122:3 › Music Page › should display empty state when no results found (4.9s)
+  ✓  44 [chromium] › __tests__/e2e/music.spec.ts:136:3 › Music Page › should clear search when input is cleared (3.5s)
+  ✓  45 [chromium] › __tests__/e2e/music.spec.ts:150:3 › Music Page › should expand and collapse tags (2.8s)
+  ✓  46 [chromium] › __tests__/e2e/music.spec.ts:164:3 › Music Page › should combine search and tag filters (3.2s)
+  ✓  47 [chromium] › __tests__/e2e/music.spec.ts:179:3 › Music Page › should display song tags (2.4s)
+  ✓  48 [chromium] › __tests__/e2e/music.spec.ts:186:3 › Music Page › should scroll through song list (2.8s)
+  ✓  49 [chromium] › __tests__/e2e/music.spec.ts:196:3 › Music Page › should navigate back to home (3.8s)
+  ✓  50 [chromium] › __tests__/e2e/music.spec.ts:203:3 › Music Page › should navigate to about page (2.9s)
+  ✓  51 [chromium] › __tests__/e2e/responsive.spec.ts:7:5 › Responsive Design › Desktop Viewport (1280x720) › should display desktop navigation (2.9s)
+  ✓  52 [chromium] › __tests__/e2e/responsive.spec.ts:14:5 › Responsive Design › Desktop Viewport (1280x720) › should display all navigation links (3.0s)
+  ✓  53 [chromium] › __tests__/e2e/responsive.spec.ts:22:5 › Responsive Design › Desktop Viewport (1280x720) › should display footer (3.0s)
+  ✓  54 [chromium] › __tests__/e2e/responsive.spec.ts:29:5 › Responsive Design › Desktop Viewport (1280x720) › should not display mobile navigation (3.1s)
+  ✓  55 [chromium] › __tests__/e2e/responsive.spec.ts:41:5 › Responsive Design › Tablet Viewport (768x1024) › should display content properly (3.0s)
+  ✓  56 [chromium] › __tests__/e2e/responsive.spec.ts:48:5 › Responsive Design › Tablet Viewport (768x1024) › should display navigation (2.9s)
+  ✓  57 [chromium] › __tests__/e2e/responsive.spec.ts:54:5 › Responsive Design › Tablet Viewport (768x1024) › should display footer (2.9s)
+  ✓  58 [chromium] › __tests__/e2e/responsive.spec.ts:65:5 › Responsive Design › Mobile Viewport (375x667) › should display mobile bottom navigation (2.4s)
+  ✓  59 [chromium] › __tests__/e2e/responsive.spec.ts:72:5 › Responsive Design › Mobile Viewport (375x667) › should display mobile navigation icons (2.6s)
+  ✓  60 [chromium] › __tests__/e2e/responsive.spec.ts:80:5 › Responsive Design › Mobile Viewport (375x667) › should not display desktop navigation (2.4s)
+  ✓  61 [chromium] › __tests__/e2e/responsive.spec.ts:88:5 › Responsive Design › Mobile Viewport (375x667) › should not display footer on mobile (2.4s)
+  ✓  62 [chromium] › __tests__/e2e/responsive.spec.ts:95:5 › Responsive Design › Mobile Viewport (375x667) › should display theme toggle on mobile (2.4s)
+  ✓  63 [chromium] › __tests__/e2e/responsive.spec.ts:102:5 › Responsive Design › Mobile Viewport (375x667) › should display mobile theme toggle in top right (2.8s)
+  ✓  64 [chromium] › __tests__/e2e/responsive.spec.ts:121:5 › Responsive Design › Music Page on Mobile › should display search bar (2.2s)
+  ✓  65 [chromium] › __tests__/e2e/responsive.spec.ts:128:5 › Responsive Design › Music Page on Mobile › should display tag filter (2.7s)
+  ✓  66 [chromium] › __tests__/e2e/responsive.spec.ts:138:5 › Responsive Design › Music Page on Mobile › should display song list (2.7s)
+  ✓  67 [chromium] › __tests__/e2e/responsive.spec.ts:149:5 › Responsive Design › Music Page on Mobile › should scroll through song list (2.6s)
+  ✓  68 [chromium] › __tests__/e2e/responsive.spec.ts:164:5 › Responsive Design › About Page on Mobile › should display page title (2.1s)
+  ✓  69 [chromium] › __tests__/e2e/responsive.spec.ts:170:5 › Responsive Design › About Page on Mobile › should display disclaimer (2.2s)
+  ✓  70 [chromium] › __tests__/e2e/responsive.spec.ts:176:5 › Responsive Design › About Page on Mobile › should be scrollable (2.1s)
+  ✓  71 [chromium] › __tests__/e2e/responsive.spec.ts:187:5 › Responsive Design › Orientation Changes › should handle landscape orientation (2.4s)
+  ✓  72 [chromium] › __tests__/e2e/responsive.spec.ts:195:5 › Responsive Design › Orientation Changes › should handle portrait orientation (2.4s)
+  ✓  73 [chromium] › __tests__/e2e/responsive.spec.ts:207:5 › Responsive Design › Touch Interactions › should handle tap on navigation links (3.4s)
+  ✓  74 [chromium] › __tests__/e2e/responsive.spec.ts:219:5 › Responsive Design › Touch Interactions › should handle tap on theme toggle (3.6s)
+  ✓  75 [chromium] › __tests__/e2e/theme.spec.ts:11:3 › Theme Toggle › should display theme toggle button (3.0s)
+  ✓  76 [chromium] › __tests__/e2e/theme.spec.ts:16:3 › Theme Toggle › should start in Angel mode (light) by default (3.2s)
+  ✘  77 [chromium] › __tests__/e2e/theme.spec.ts:24:3 › Theme Toggle › should use system preference when no saved theme (3.3s)
+  ✘  78 [chromium] › __tests__/e2e/theme.spec.ts:24:3 › Theme Toggle › should use system preference when no saved theme (retry #1) (4.7s)
+  ✓  79 [chromium] › __tests__/e2e/theme.spec.ts:38:3 › Theme Toggle › should switch to Demon mode (dark) when clicked (3.6s)
+  ✓  80 [chromium] › __tests__/e2e/theme.spec.ts:48:3 › Theme Toggle › should switch back to Angel mode (light) when clicked again (4.0s)
+  ✓  81 [chromium] › __tests__/e2e/theme.spec.ts:63:3 › Theme Toggle › should persist theme preference in localStorage (3.3s)
+  ✘  82 [chromium] › __tests__/e2e/theme.spec.ts:75:3 › Theme Toggle › should load saved theme on page reload (3.6s)
+  ✘  83 [chromium] › __tests__/e2e/theme.spec.ts:75:3 › Theme Toggle › should load saved theme on page reload (retry #1) (4.9s)
+  ✓  84 [chromium] › __tests__/e2e/theme.spec.ts:94:3 › Theme Toggle › should save light theme preference (3.8s)
+  ✓  85 [chromium] › __tests__/e2e/theme.spec.ts:110:3 › Theme Toggle › should apply theme immediately on page load (2.9s)
+  ✓  86 [chromium] › __tests__/e2e/theme.spec.ts:121:3 › Theme Toggle › should work on all pages (5.4s)
+  ✓  87 [chromium] › __tests__/e2e/theme.spec.ts:137:3 › Theme Toggle › should have correct visual styles in Angel mode (3.1s)
+  ✓  88 [chromium] › __tests__/e2e/theme.spec.ts:148:3 › Theme Toggle › should have correct visual styles in Demon mode (3.5s)
+  ✘  89 [chromium] › __tests__/e2e/theme.spec.ts:161:3 › Theme Toggle › should be keyboard accessible (9.1s)
+  ✓  90 [chromium] › __tests__/e2e/theme.spec.ts:161:3 › Theme Toggle › should be keyboard accessible (retry #1) (6.3s)
+
+
+  1) [chromium] › __tests__/e2e/home.spec.ts:76:3 › Home Page › should persist theme preference ────
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected substring: "切换到天使模式"
+    Received string:    "切换到恶魔模式"
+
+      89 |     const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
+      90 |     const ariaLabel = await themeToggleAfterReload.getAttribute('aria-label');
+    > 91 |     expect(ariaLabel).toContain('切换到天使模式');
+         |                       ^
+      92 |   });
+      93 |
+      94 |   test('should display footer on desktop', async ({ page }) => {
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/home.spec.ts:91:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/home-Home-Page-should-persist-theme-preference-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/home-Home-Page-should-persist-theme-preference-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toContain(expected) // indexOf
+
+    Expected substring: "切换到天使模式"
+    Received string:    "切换到恶魔模式"
+
+      89 |     const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
+      90 |     const ariaLabel = await themeToggleAfterReload.getAttribute('aria-label');
+    > 91 |     expect(ariaLabel).toContain('切换到天使模式');
+         |                       ^
+      92 |   });
+      93 |
+      94 |   test('should display footer on desktop', async ({ page }) => {
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/home.spec.ts:91:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/home-Home-Page-should-persist-theme-preference-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/home-Home-Page-should-persist-theme-preference-chromium-retry1/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/home-Home-Page-should-persist-theme-preference-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/home-Home-Page-should-persist-theme-preference-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › __tests__/e2e/music.spec.ts:28:3 › Music Page › should search songs by title ─────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "2"
+    Received: "311"
+
+      39 |     // Check if filtered results are shown using data-total-items
+      40 |     const totalItems = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
+    > 41 |     expect(totalItems).toBe('2');
+         |                        ^
+      42 |   });
+      43 |
+      44 |   test('should search songs by artist', async ({ page }) => {
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/music.spec.ts:41:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/music-Music-Page-should-search-songs-by-title-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/music-Music-Page-should-search-songs-by-title-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "2"
+    Received: "14"
+
+      39 |     // Check if filtered results are shown using data-total-items
+      40 |     const totalItems = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
+    > 41 |     expect(totalItems).toBe('2');
+         |                        ^
+      42 |   });
+      43 |
+      44 |   test('should search songs by artist', async ({ page }) => {
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/music.spec.ts:41:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/music-Music-Page-should-search-songs-by-title-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/music-Music-Page-should-search-songs-by-title-chromium-retry1/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/music-Music-Page-should-search-songs-by-title-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/music-Music-Page-should-search-songs-by-title-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › __tests__/e2e/music.spec.ts:108:3 › Music Page › should copy song title ──────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-sonner-toast]')
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 3000ms
+      - waiting for locator('[data-sonner-toast]')
+
+
+      111 |
+      112 |     // Check for toast notification (allow success or error)
+    > 113 |     await expect(page.locator('[data-sonner-toast]')).toBeVisible({ timeout: 3000 });
+          |                                                       ^
+      114 |   });
+      115 |
+      116 |   test('should display copy button on song item', async ({ page }) => {
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/music.spec.ts:113:55
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/music-Music-Page-should-copy-song-title-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/music-Music-Page-should-copy-song-title-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[data-sonner-toast]')
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" with timeout 3000ms
+      - waiting for locator('[data-sonner-toast]')
+
+
+      111 |
+      112 |     // Check for toast notification (allow success or error)
+    > 113 |     await expect(page.locator('[data-sonner-toast]')).toBeVisible({ timeout: 3000 });
+          |                                                       ^
+      114 |   });
+      115 |
+      116 |   test('should display copy button on song item', async ({ page }) => {
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/music.spec.ts:113:55
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/music-Music-Page-should-copy-song-title-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/music-Music-Page-should-copy-song-title-chromium-retry1/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/music-Music-Page-should-copy-song-title-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/music-Music-Page-should-copy-song-title-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › __tests__/e2e/theme.spec.ts:24:3 › Theme Toggle › should use system preference when no saved theme
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "切换到天使模式"
+    Received: "切换到恶魔模式"
+
+      31 |     const themeToggle = page.locator('button[aria-label*="切换"]').first();
+      32 |     const ariaLabel = await themeToggle.getAttribute('aria-label');
+    > 33 |     expect(ariaLabel).toBe('切换到天使模式');
+         |                       ^
+      34 |
+      35 |     await expect(page.locator('html')).toHaveClass(/dark/);
+      36 |   });
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/theme.spec.ts:33:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/theme-Theme-Toggle-should--0af0e-ference-when-no-saved-theme-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/theme-Theme-Toggle-should--0af0e-ference-when-no-saved-theme-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "切换到天使模式"
+    Received: "切换到恶魔模式"
+
+      31 |     const themeToggle = page.locator('button[aria-label*="切换"]').first();
+      32 |     const ariaLabel = await themeToggle.getAttribute('aria-label');
+    > 33 |     expect(ariaLabel).toBe('切换到天使模式');
+         |                       ^
+      34 |
+      35 |     await expect(page.locator('html')).toHaveClass(/dark/);
+      36 |   });
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/theme.spec.ts:33:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/theme-Theme-Toggle-should--0af0e-ference-when-no-saved-theme-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/theme-Theme-Toggle-should--0af0e-ference-when-no-saved-theme-chromium-retry1/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/theme-Theme-Toggle-should--0af0e-ference-when-no-saved-theme-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/theme-Theme-Toggle-should--0af0e-ference-when-no-saved-theme-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  5) [chromium] › __tests__/e2e/theme.spec.ts:75:3 › Theme Toggle › should load saved theme on page reload
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "切换到天使模式"
+    Received: "切换到恶魔模式"
+
+      89 |     const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
+      90 |     const ariaLabel = await themeToggleAfterReload.getAttribute('aria-label');
+    > 91 |     expect(ariaLabel).toBe('切换到天使模式');
+         |                       ^
+      92 |   });
+      93 |
+      94 |   test('should save light theme preference', async ({ page }) => {
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/theme.spec.ts:91:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/theme-Theme-Toggle-should-load-saved-theme-on-page-reload-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/theme-Theme-Toggle-should-load-saved-theme-on-page-reload-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "切换到天使模式"
+    Received: "切换到恶魔模式"
+
+      89 |     const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
+      90 |     const ariaLabel = await themeToggleAfterReload.getAttribute('aria-label');
+    > 91 |     expect(ariaLabel).toBe('切换到天使模式');
+         |                       ^
+      92 |   });
+      93 |
+      94 |   test('should save light theme preference', async ({ page }) => {
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/theme.spec.ts:91:23
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/theme-Theme-Toggle-should-load-saved-theme-on-page-reload-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/theme-Theme-Toggle-should-load-saved-theme-on-page-reload-chromium-retry1/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/theme-Theme-Toggle-should-load-saved-theme-on-page-reload-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/theme-Theme-Toggle-should-load-saved-theme-on-page-reload-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  6) [chromium] › __tests__/e2e/theme.spec.ts:161:3 › Theme Toggle › should be keyboard accessible ─
+
+    Error: expect(locator).toHaveClass(expected) failed
+
+    Locator: locator('html')
+    Expected pattern: /dark/
+    Received string:  ""
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveClass" with timeout 5000ms
+      - waiting for locator('html')
+        9 × locator resolved to <html lang="zh-CN">…</html>
+          - unexpected value ""
+
+
+      169 |     // Wait for theme to change
+      170 |     await page.waitForTimeout(1000);
+    > 171 |     await expect(page.locator('html')).toHaveClass(/dark/);
+          |                                        ^
+      172 |
+      173 |     await page.keyboard.press('Enter');
+      174 |     // Wait for theme to change back
+        at /home/runner/work/kloa-site/kloa-site/__tests__/e2e/theme.spec.ts:171:40
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/theme-Theme-Toggle-should-be-keyboard-accessible-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/theme-Theme-Toggle-should-be-keyboard-accessible-chromium/error-context.md
+
+  5 failed
+    [chromium] › __tests__/e2e/home.spec.ts:76:3 › Home Page › should persist theme preference ─────
+    [chromium] › __tests__/e2e/music.spec.ts:28:3 › Music Page › should search songs by title ──────
+    [chromium] › __tests__/e2e/music.spec.ts:108:3 › Music Page › should copy song title ───────────
+    [chromium] › __tests__/e2e/theme.spec.ts:24:3 › Theme Toggle › should use system preference when no saved theme
+    [chromium] › __tests__/e2e/theme.spec.ts:75:3 › Theme Toggle › should load saved theme on page reload
+  1 flaky
+    [chromium] › __tests__/e2e/theme.spec.ts:161:3 › Theme Toggle › should be keyboard accessible ──
+  78 passed (5.3m)
+error: script "test:e2e" exited with code 1
+Error: Process completed with exit code 1.
