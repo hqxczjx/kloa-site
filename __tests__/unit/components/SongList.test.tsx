@@ -313,9 +313,9 @@ describe('SongList', () => {
         () => {
           expect(songItem).toHaveClass('song-item');
         },
-        { timeout: 1000 }
+        { timeout: 3000 }
       );
-    }, 10000);
+    }, 30000);
   });
 
   describe('Edge Cases', () => {

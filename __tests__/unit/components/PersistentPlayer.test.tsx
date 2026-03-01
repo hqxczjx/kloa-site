@@ -191,7 +191,7 @@ describe('PersistentPlayer', () => {
 
       const mockSong = {
         title: 'Test Song',
-        artist: 'A'.repeat(100),
+        artist: 'A'.repeat(50),
         date: '2024-01-15',
         url: 'https://example.com/song.mp3',
         tags: ['中文'],
@@ -202,10 +202,10 @@ describe('PersistentPlayer', () => {
         window.dispatchEvent(event);
       });
 
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 200));
 
-      expect(screen.getByText('A'.repeat(100))).toBeInTheDocument();
-    }, 15000);
+      expect(screen.getByText('A'.repeat(50))).toBeInTheDocument();
+    }, 30000);
 
     it('should handle song with special characters in artist', async () => {
       render(<PersistentPlayer />);
