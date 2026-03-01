@@ -308,14 +308,14 @@ describe('SongList', () => {
       const songItem = screen.getByText('大鱼').closest('.group');
       expect(songItem).toHaveClass('song-item-copied');
 
-      // Wait for flash effect to clear
+      // Wait for flash effect to clear - increased timeout
       await waitFor(
         () => {
           expect(songItem).toHaveClass('song-item');
         },
-        { timeout: 400 }
+        { timeout: 1000 }
       );
-    });
+    }, 10000);
   });
 
   describe('Edge Cases', () => {

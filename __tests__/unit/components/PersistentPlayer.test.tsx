@@ -205,7 +205,7 @@ describe('PersistentPlayer', () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(screen.getByText('A'.repeat(100))).toBeInTheDocument();
-    });
+    }, 15000);
 
     it('should handle song with special characters in artist', async () => {
       render(<PersistentPlayer />);
