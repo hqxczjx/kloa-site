@@ -24,9 +24,14 @@ test.describe('Theme Toggle', () => {
   test('should use system preference when no saved theme', async ({ page }) => {
     // Clear any saved theme first
     await page.evaluate(() => localStorage.clear());
+
     // Set system preference to dark
     await page.emulateMedia({ colorScheme: 'dark' });
+
+    // Reload and wait for page to fully load
     await page.reload();
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
 
     const themeToggle = page.locator('button[aria-label*="切换"]').first();
     const ariaLabel = await themeToggle.getAttribute('aria-label');
@@ -79,8 +84,13 @@ test.describe('Theme Toggle', () => {
     await themeToggle.click();
     await expect(page.locator('html')).toHaveClass(/dark/);
 
-    // Reload page
+    // Wait for theme to be saved
+    await page.waitForTimeout(1000);
+
+    // Reload page and wait for full load
     await page.reload();
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
 
     // Theme should still be dark
     await expect(page.locator('html')).toHaveClass(/dark/);

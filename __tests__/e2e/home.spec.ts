@@ -79,8 +79,19 @@ test.describe('Home Page', () => {
     // Toggle to dark mode
     await themeToggle.click();
 
+    // Wait for theme to be saved to localStorage
+    await page.waitForTimeout(1000);
+
+    // Verify theme was saved
+    const savedTheme = await page.evaluate(() => localStorage.getItem('theme'));
+    expect(savedTheme).toBe('dark');
+
     // Reload page
     await page.reload();
+
+    // Wait for page to fully load and React to mount
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
 
     // Theme should still be dark
     await expect(page.locator('html')).toHaveClass(/dark/);

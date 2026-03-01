@@ -37,8 +37,15 @@ export default function ThemeToggle() {
       }
     };
 
-    // Sync theme on mount to match BaseLayout.astro inline script
+    // Force sync on mount to match BaseLayout.astro inline script
     syncTheme();
+
+    // Also listen for matchMedia changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleMediaChange = () => {
+      syncTheme();
+    };
+    mediaQuery.addEventListener('change', handleMediaChange);
 
     // Listen for localStorage changes
     const handleStorageChange = (e: StorageEvent) => {
@@ -48,23 +55,9 @@ export default function ThemeToggle() {
     };
     window.addEventListener('storage', handleStorageChange);
 
-    // Listen for system preference changes (only if no saved theme)
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleMediaChange = () => {
-      try {
-        const saved = localStorage.getItem('theme');
-        if (!saved) {
-          syncTheme();
-        }
-      } catch (e) {
-        // Silent fail
-      }
-    };
-    mediaQuery.addEventListener('change', handleMediaChange);
-
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
       mediaQuery.removeEventListener('change', handleMediaChange);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
