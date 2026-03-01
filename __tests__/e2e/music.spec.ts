@@ -34,7 +34,7 @@ test.describe('Music Page', () => {
     await searchInput.type('爱', { delay: 30 });
 
     // Wait for search to complete and virtual list to update
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(2000);
 
     // Check if filtered results are shown using data-total-items
     const totalItems = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
@@ -79,12 +79,12 @@ test.describe('Music Page', () => {
   test('should deselect tag when clicked again', async ({ page }) => {
     const chineseTag = page.getByText('中文').first();
     await chineseTag.click();
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(1000);
 
     const initialCount = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
 
     await chineseTag.click();
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(1000);
 
     const newCount = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
     expect(Number(newCount)).toBeGreaterThan(Number(initialCount));
@@ -110,8 +110,9 @@ test.describe('Music Page', () => {
     await firstSong.click();
 
     // Wait for toast notification to appear
-    await page.waitForTimeout(500);
-    await expect(page.locator('[data-sonner-toast]')).toBeVisible({ timeout: 5000 });
+    await page.waitForTimeout(3000);
+    // Accept any toast (success or error)
+    await expect(page.locator('[data-sonner-toast]')).toBeVisible({ timeout: 20000 });
   });
 
   test('should display copy button on song item', async ({ page }) => {

@@ -42,7 +42,7 @@ export default function ThemeToggle() {
 
     // Listen for localStorage changes
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'theme') {
+      if (e.key === 'theme' || e.key === null) {
         syncTheme();
       }
     };
