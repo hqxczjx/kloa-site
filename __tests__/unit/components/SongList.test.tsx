@@ -29,27 +29,27 @@ const mockSongs = [
     {
       title: '大鱼',
       artist: 'Vsinger',
-      tags: ['中文', '治愈', '空灵'],
+      tags: ['国语', '治愈', '空灵'],
     },
     {
       title: 'Bad apple',
       artist: 'Vsinger',
-      tags: ['日文', '东方', '经典'],
+      tags: ['日语', '东方', '经典'],
     },
     {
       title: 'A whole new world',
       artist: 'Vsinger',
-      tags: ['英文', '迪士尼', '对唱'],
+      tags: ['英语', '迪士尼', '对唱'],
     },
     {
       title: '愛してるばんざーい',
       artist: 'Vsinger',
-      tags: ['日文', 'ACG', '治愈'],
+      tags: ['日语', 'ACG', '治愈'],
     },
     {
       title: '不染',
       artist: 'Vsinger',
-      tags: ['中文', '古风', '影视'],
+      tags: ['国语', '古风', '影视'],
     },
   ];
 
@@ -81,9 +81,9 @@ describe('SongList', () => {
       render(<SongList songs={mockSongs} />);
       expect(screen.getByText('全部')).toBeInTheDocument();
       // 使用getAllByText处理重复标签
-      expect(screen.getAllByText('中文').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('日文').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('英文').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('国语').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('日语').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('英语').length).toBeGreaterThan(0);
       expect(screen.getAllByText('治愈').length).toBeGreaterThan(0);
       expect(screen.getAllByText('空灵').length).toBeGreaterThan(0);
     });
@@ -164,7 +164,7 @@ describe('SongList', () => {
       render(<SongList songs={mockSongs} />);
 
       // 使用aria-label选择标签按钮，避免重复元素
-      const chineseTag = screen.getByLabelText('筛选标签: 中文');
+      const chineseTag = screen.getByLabelText('筛选标签: 国语');
       await user.click(chineseTag);
 
       expect(screen.getByText('大鱼')).toBeInTheDocument();
@@ -176,7 +176,7 @@ describe('SongList', () => {
       const user = userEvent.setup();
       render(<SongList songs={mockSongs} />);
 
-      const chineseTag = screen.getByLabelText('筛选标签: 中文');
+      const chineseTag = screen.getByLabelText('筛选标签: 国语');
       await user.click(chineseTag);
       expect(screen.queryByText('Bad apple')).not.toBeInTheDocument();
 
@@ -188,7 +188,7 @@ describe('SongList', () => {
       const user = userEvent.setup();
       render(<SongList songs={mockSongs} />);
 
-      const chineseTag = screen.getByLabelText('筛选标签: 中文');
+      const chineseTag = screen.getByLabelText('筛选标签: 国语');
       await user.click(chineseTag);
       expect(screen.queryByText('Bad apple')).not.toBeInTheDocument();
 
@@ -201,8 +201,8 @@ describe('SongList', () => {
       const user = userEvent.setup();
       render(<SongList songs={mockSongs} />);
 
-      // Select "中文" tag
-      const chineseTag = screen.getByLabelText('筛选标签: 中文');
+      // Select "国语" tag
+      const chineseTag = screen.getByLabelText('筛选标签: 国语');
       await user.click(chineseTag);
 
       // Search for "大"
@@ -215,12 +215,12 @@ describe('SongList', () => {
 
     it('should sort language tags in predefined order', () => {
       render(<SongList songs={mockSongs} />);
-      const tags = screen.getAllByRole('button').filter(btn => btn.textContent && ['中文', '日文', '英文', '韩文'].includes(btn.textContent));
+      const tags = screen.getAllByRole('button').filter(btn => btn.textContent && ['国语', '日语', '英语', '粤语'].includes(btn.textContent));
 
       const tagTexts = tags.map(btn => btn.textContent);
-      const languageTags = tagTexts.filter(t => t && ['中文', '日文', '英文', '韩文'].includes(t));
+      const languageTags = tagTexts.filter(t => t && ['国语', '日语', '英语', '粤语'].includes(t));
 
-      expect(languageTags).toEqual(['中文', '日文', '英文']);
+      expect(languageTags).toEqual(['国语', '日语', '英语']);
     });
   });
 
@@ -333,7 +333,7 @@ describe('SongList', () => {
         {
           title: '测试!@#',
           artist: '歌手&*',
-          tags: ['中文'],
+          tags: ['国语'],
         },
       ];
       render(<SongList songs={songsWithSpecialChars} />);
@@ -349,19 +349,19 @@ describe('SongList', () => {
         {
           title: 'Song 1',
           artist: 'Artist 1',
-          tags: ['中文', '测试'],
+          tags: ['国语', '测试'],
         },
         {
           title: 'Song 2',
           artist: 'Artist 2',
-          tags: ['中文', '测试'],
+          tags: ['国语', '测试'],
         },
       ];
       render(<SongList songs={songsWithDuplicateTags} />);
 
-      const chineseTags = screen.getAllByText('中文');
-      // 两个标签按钮（一个用于"中文"标签按钮，一个用于歌曲的tag显示）
-      // 组件会去重唯一标签，所以应该有3个"中文"元素（1个按钮 + 2个歌曲标签）
+      const chineseTags = screen.getAllByText('国语');
+      // 两个标签按钮（一个用于"国语"标签按钮，一个用于歌曲的tag显示）
+      // 组件会去重唯一标签，所以应该有3个"国语"元素（1个按钮 + 2个歌曲标签）
       expect(chineseTags.length).toBeGreaterThan(0);
     });
   });
@@ -421,7 +421,7 @@ describe('SongList', () => {
       render(<SongList songs={mockSongs} />);
       const tagButtons = screen.getAllByRole('button').filter(btn => {
         const text = btn.textContent;
-        return text && ['中文', '日文', '英文', '韩文', '全部', '治愈', '空灵', '东方', '经典', '迪士尼', '对唱', 'ACG', '古风', '影视'].includes(text);
+        return text && ['国语', '日语', '英语', '粤语', '全部', '治愈', '空灵', '东方', '经典', '迪士尼', '对唱', 'ACG', '古风', '影视'].includes(text);
       });
       expect(tagButtons.length).toBeGreaterThan(0);
     });
@@ -430,7 +430,7 @@ describe('SongList', () => {
       const user = userEvent.setup();
       render(<SongList songs={mockSongs} />);
 
-      const chineseTag = screen.getByLabelText('筛选标签: 中文');
+      const chineseTag = screen.getByLabelText('筛选标签: 国语');
       await user.click(chineseTag);
 
       const 治愈Tags = screen.getAllByText('治愈');
@@ -460,7 +460,7 @@ describe('SongList', () => {
       const user = userEvent.setup();
       render(<SongList songs={mockSongs} />);
 
-      const chineseTag = screen.getByLabelText('筛选标签: 中文');
+      const chineseTag = screen.getByLabelText('筛选标签: 国语');
       await user.click(chineseTag);
 
       const searchInput = screen.getByPlaceholderText('搜索歌曲（支持拼音）...');
@@ -481,7 +481,7 @@ describe('SongList', () => {
 
     it('should display song tags in compact view', () => {
       render(<SongList songs={mockSongs} />);
-      const tags = screen.getAllByText(/中文|日文|英文|治愈|空灵|东方|经典|迪士尼|对唱|ACG|古风|影视/);
+      const tags = screen.getAllByText(/国语|日语|英语|治愈|空灵|东方|经典|迪士尼|对唱|ACG|古风|影视/);
       expect(tags.length).toBeGreaterThan(0);
     });
 

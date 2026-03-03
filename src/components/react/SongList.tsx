@@ -28,7 +28,7 @@ export default function SongList({ songs }: SongListProps) {
     });
 
     const tags = Array.from(tagSet);
-    const languageTags = ['中文', '日文', '英文', '韩文'];
+    const languageTags = ['国语', '日语', '英语', '粤语'];
 
     // Separate language tags and other tags
     const langTags = tags.filter(tag => languageTags.includes(tag));

@@ -26,7 +26,7 @@ describe('PersistentPlayer', () => {
         title: 'Test Song',
         artist: 'Test Artist',
         url: 'https://example.com/song.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       await act(async () => {
@@ -51,7 +51,7 @@ describe('PersistentPlayer', () => {
         title: 'Test Song',
         artist: 'Test Artist',
         url: '',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       const event = new CustomEvent('playSong', { detail: mockSong });
@@ -71,7 +71,7 @@ describe('PersistentPlayer', () => {
         title: 'Test Song',
         artist: 'Test Artist',
         url: 'not-a-valid-url',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       const event = new CustomEvent('playSong', { detail: mockSong });
@@ -91,7 +91,7 @@ describe('PersistentPlayer', () => {
         title: 'Test Song 1',
         artist: 'Test Artist',
         url: 'https://example.com/song1.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       await act(async () => {
@@ -105,7 +105,7 @@ describe('PersistentPlayer', () => {
         title: 'Test Song 2',
         artist: 'Test Artist',
         url: 'https://example.com/song2.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       await act(async () => {
@@ -126,7 +126,7 @@ describe('PersistentPlayer', () => {
         artist: 'Test Artist',
 
         url: 'https://example.com/song.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       const event = new CustomEvent('playSong', { detail: mockSong });
@@ -147,7 +147,7 @@ describe('PersistentPlayer', () => {
         artist: 'Test Artist',
 
         url: 'https://example.com/song.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       const event = new CustomEvent('playSong', { detail: mockSong });
@@ -168,7 +168,7 @@ describe('PersistentPlayer', () => {
         artist: '',
 
         url: 'https://example.com/song.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       const event = new CustomEvent('playSong', { detail: mockSong });
@@ -189,7 +189,7 @@ describe('PersistentPlayer', () => {
         artist: 'A'.repeat(50),
 
         url: 'https://example.com/song.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       const event = new CustomEvent('playSong', { detail: mockSong });
@@ -210,7 +210,7 @@ describe('PersistentPlayer', () => {
         artist: '测试&*()$#@!',
 
         url: 'https://example.com/song.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       const event = new CustomEvent('playSong', { detail: mockSong });
@@ -252,7 +252,7 @@ describe('PersistentPlayer', () => {
         artist: 'Test Artist',
 
         url: 'https://example.com/song.mp3',
-        tags: ['中文', '日文', '英文', '韩文', '治愈', '空灵', '东方', '经典'],
+        tags: ['国语', '日语', '英语', '粤语', '治愈', '空灵', '东方', '经典'],
       };
 
       const event = new CustomEvent('playSong', { detail: mockSong });
@@ -273,7 +273,7 @@ describe('PersistentPlayer', () => {
         artist: 'Test Artist',
 
         url: 'https://example.com/song1.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       const mockSong2 = {
@@ -281,7 +281,7 @@ describe('PersistentPlayer', () => {
         artist: 'Test Artist',
 
         url: 'https://example.com/song2.mp3',
-        tags: ['中文'],
+        tags: ['国语'],
       };
 
       await act(async () => {
