@@ -71,7 +71,7 @@ test.describe('Music Page', () => {
   });
 
   test('should filter songs by tag', async ({ page }) => {
-    const chineseTag = page.getByText('中文').first();
+    const chineseTag = page.getByText('国语').first();
     await chineseTag.click();
 
     await page.waitForTimeout(300);
@@ -83,7 +83,7 @@ test.describe('Music Page', () => {
   });
 
   test('should deselect tag when clicked again', async ({ page }) => {
-    const chineseTag = page.getByText('中文').first();
+    const chineseTag = page.getByText('国语').first();
     await chineseTag.click();
     await page.waitForTimeout(1000);
 
@@ -97,7 +97,7 @@ test.describe('Music Page', () => {
   });
 
   test('should reset filter when "全部" is clicked', async ({ page }) => {
-    const chineseTag = page.getByText('中文').first();
+    const chineseTag = page.getByText('国语').first();
     await chineseTag.click();
     await page.waitForTimeout(300);
 
@@ -183,7 +183,7 @@ test.describe('Music Page', () => {
   });
 
   test('should combine search and tag filters', async ({ page }) => {
-    const chineseTag = page.getByText('中文').first();
+    const chineseTag = page.getByText('国语').first();
     await chineseTag.click();
     await page.waitForTimeout(300);
 

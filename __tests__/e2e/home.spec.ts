@@ -2,9 +2,12 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Home Page', () => {
   test.beforeEach(async ({ page }) => {
+    // Clear localStorage to ensure consistent initial state
+    await page.goto('/');
+    await page.evaluate(() => localStorage.clear());
     // Set system preference to light before each test
     await page.emulateMedia({ colorScheme: 'light' });
-    await page.goto('/');
+    await page.reload();
   });
 
   test('should load home page successfully', async ({ page }) => {
@@ -58,6 +61,7 @@ test.describe('Home Page', () => {
 
     // Toggle to Demon mode
     await themeToggle.click();
+    await page.waitForTimeout(100);
 
     // Check new state
     const newAriaLabel = await themeToggle.getAttribute('aria-label');
