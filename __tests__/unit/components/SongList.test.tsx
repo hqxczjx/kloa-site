@@ -29,31 +29,26 @@ const mockSongs = [
     {
       title: '大鱼',
       artist: 'Vsinger',
-      date: '2024-01-15',
       tags: ['中文', '治愈', '空灵'],
     },
     {
       title: 'Bad apple',
       artist: 'Vsinger',
-      date: '2024-01-15',
       tags: ['日文', '东方', '经典'],
     },
     {
       title: 'A whole new world',
       artist: 'Vsinger',
-      date: '2024-01-15',
       tags: ['英文', '迪士尼', '对唱'],
     },
     {
       title: '愛してるばんざーい',
       artist: 'Vsinger',
-      date: '2024-01-15',
       tags: ['日文', 'ACG', '治愈'],
     },
     {
       title: '不染',
       artist: 'Vsinger',
-      date: '2024-01-15',
       tags: ['中文', '古风', '影视'],
     },
   ];
@@ -326,7 +321,7 @@ describe('SongList', () => {
 
     it('should handle songs with no tags', () => {
       const songsWithoutTags = [
-        { title: 'Test', artist: 'Artist', date: '2024-01-15', tags: [] },
+        { title: 'Test', artist: 'Artist', tags: [] },
       ];
       render(<SongList songs={songsWithoutTags} />);
       expect(screen.getByText('Test')).toBeInTheDocument();
@@ -338,7 +333,6 @@ describe('SongList', () => {
         {
           title: '测试!@#',
           artist: '歌手&*',
-          date: '2024-01-15',
           tags: ['中文'],
         },
       ];
@@ -355,13 +349,11 @@ describe('SongList', () => {
         {
           title: 'Song 1',
           artist: 'Artist 1',
-          date: '2024-01-15',
           tags: ['中文', '测试'],
         },
         {
           title: 'Song 2',
           artist: 'Artist 2',
-          date: '2024-01-15',
           tags: ['中文', '测试'],
         },
       ];
@@ -379,11 +371,6 @@ describe('SongList', () => {
     it('should display song artist', () => {
       render(<SongList songs={mockSongs} />);
       expect(screen.getAllByText('Vsinger').length).toBeGreaterThan(0);
-    });
-
-    it('should display song date', () => {
-      render(<SongList songs={mockSongs} />);
-      expect(screen.getAllByText('2024-01-15').length).toBeGreaterThan(0);
     });
 
     it('should handle empty search query', async () => {

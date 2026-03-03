@@ -1,313 +1,1737 @@
 [
-  { "title": "A whole new world", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "迪士尼", "对唱"] },
-  { "title": "A.I.N.Y", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "爆发", "高难度"] },
-  { "title": "阿楚姑娘", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "民谣", "抒情", "付费"] },
-  { "title": "阿刁", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "爆发", "民谣", "付费"] },
-  { "title": "All alone with you", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "治愈"] },
-  { "title": "All eyes on me", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "艺术", "流行"] },
-  { "title": "阿拉斯加海湾", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "网络流行"] },
-  { "title": "Autumn leave", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "经典", "爵士"] },
-  { "title": "爱", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "抒情"] },
-  { "title": "爱的回归线", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "青春", "温情"] },
-  { "title": "爱你", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "甜美", "流行"] },
-  { "title": "爱情买卖", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "魔性"] },
-  { "title": "爱情三十六计", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "动感", "经典"] },
-  { "title": "爱殇", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "大气"] },
-  { "title": "爱丫爱丫", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "青春", "经典"] },
-  { "title": "愛してるばんざーい", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "治愈"] },
-  { "title": "暗香", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "大气"] },
-  { "title": "Bad apple", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "东方", "经典"] },
-  { "title": "Bet on me", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "节奏", "流行"] },
-  { "title": "Blue star", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "治愈"] },
-  { "title": "八重桜", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "古风"] },
-  { "title": "巴黎假期", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "轻快", "流行"] },
-  { "title": "白日", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "爆发"] },
-  { "title": "背对背拥抱", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "流行"] },
-  { "title": "贝尔加湖畔", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "治愈", "经典"] },
-  { "title": "别问很可怕", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "R&B", "个性"] },
-  { "title": "别找我麻烦", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "轻快"] },
-  { "title": "不染", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "影视"] },
-  { "title": "不痛", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "抒情"] },
-  { "title": "不值得", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "流行"] },
-  { "title": "Catch me if you can", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "律动", "经典"] },
-  { "title": "CH4NGE", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "酷"] },
-  { "title": "City of stars", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "浪漫", "爵士"] },
-  { "title": "Coco9", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "带感"] },
-  { "title": "茶花游侠", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "个性", "流行"] },
-  { "title": "忏悔录", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "艺术", "感性"] },
-  { "title": "成人法则", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "爵士流行", "个性"] },
-  { "title": "初恋", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "经典"] },
-  { "title": "創聖のアクエリオン", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "经典"] },
-  { "title": "春、恋、花以外の", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "清新"] },
-  { "title": "Darling", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "甜美"] },
-  { "title": "Darling!", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "可爱"] },
-  { "title": "Deadman", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "个性", "流行"] },
-  { "title": "delete", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "摇滚"] },
-  { "title": "Departures", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "凄美"] },
-  { "title": "Distance -voice", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "抒情"] },
-  { "title": "Door", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "抒情"] },
-  { "title": "大鱼", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "治愈", "空灵"] },
-  { "title": "誕生日 TANGO", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "探戈", "艺术"] },
-  { "title": "但愿人长久", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "唯美"] },
-  { "title": "当时", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "民谣", "抒情"] },
-  { "title": "倒带", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "青春", "经典"] },
-  { "title": "地狱的士", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "个性"] },
-  { "title": "蝶", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "游戏", "阴郁"] },
-  { "title": "多远都要在一起", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "深情", "流行"] },
-  { "title": "Euterpe", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "空灵"] },
-  { "title": "恶作剧", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "清新", "青春"] },
-  { "title": "Feeling good", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "爵士", "经典"] },
-  { "title": "Fly me to the moon", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "经典", "爵士"] },
-  { "title": "Fly me to the star", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "梦幻"] },
-  { "title": "Forever young", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "独立流行", "感性"] },
-  { "title": "FREELY TOMORROW", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "Vocaloid", "舞曲"] },
-  { "title": "发如雪", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "中国风", "经典"] },
-  { "title": "繁华梦", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "影视"] },
-  { "title": "分手快乐", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "治愈"] },
-  { "title": "风吹麦浪", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "治愈", "清新"] },
-  { "title": "风月", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "性感"] },
-  { "title": "疯子", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "个性", "流行"] },
-  { "title": "浮光", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "古风"] },
-  { "title": "GimmexGimme", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "Vocaloid", "舞曲"] },
-  { "title": "Giraffe blue", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "节奏"] },
-  { "title": "甘い股関節", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "性感"] },
-  { "title": "告白气球", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "甜蜜", "流行"] },
-  { "title": "给我一个理由忘记", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "爆发"] },
-  { "title": "勾指起誓", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "治愈", "热曲"] },
-  { "title": "光年之外", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "磅礴", "爆发"] },
-  { "title": "Here", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "大气"] },
-  { "title": "HIP", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "舞曲"] },
-  { "title": "海沫", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "空灵", "抒情"] },
-  { "title": "好久不见", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "经典"] },
-  { "title": "黑暗骑士", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "磅礴"] },
-  { "title": "红玫瑰", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "深情"] },
-  { "title": "红日", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "粤语", "励志"] },
-  { "title": "红色高跟鞋", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "都市", "经典"] },
-  { "title": "后来", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "抒情"] },
-  { "title": "胡桃夹子", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "艺术", "高难度"] },
-  { "title": "呼吸决定", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "独立流行", "都市"] },
-  { "title": "化身孤岛的鲸", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "治愈", "经典"] },
-  { "title": "花宴", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "古风"] },
-  { "title": "花の唄", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "压抑"] },
-  { "title": "華の淑女", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "优雅"] },
-  { "title": "花は桜 君は美し", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "清新"] },
-  { "title": "会呼吸的痛", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "感人", "抒情"] },
-  { "title": "回忆的沙漏", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "抒情"] },
-  { "title": "回忆太美", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "怀旧"] },
-  { "title": "会いたくて 会いたくて", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "伤感"] },
-  { "title": "I can't wait", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "轻快", "流行"] },
-  { "title": "I wanna be your slave", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "摇滚", "个性"] },
-  { "title": "idontwannabeyouanymore", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "低沉", "艺术"] },
-  { "title": "記憶の光", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "治愈"] },
-  { "title": "寄り酔い", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "慵懒"] },
-  { "title": "煎熬", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "爆发", "高难度"] },
-  { "title": "禁忌边界线", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "中毒性"] },
-  { "title": "锦鲤抄", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "热曲"] },
-  { "title": "津轻海峡·冬景色", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "演歌", "怀旧"] },
-  { "title": "绝世舞姬", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "戏腔"] },
-  { "title": "KOE", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "大气"] },
-  { "title": "看我72变", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "舞曲"] },
-  { "title": "客官不可以", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "网络", "俏皮"] },
-  { "title": "刻在我心底的名字", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "治愈"] },
-  { "title": "誇りと驕り", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "气质"] },
-  { "title": "Let it go", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "动漫", "经典"] },
-  { "title": "LOVELESS WORLD", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "摇滚"] },
-  { "title": "离开", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "伤感"] },
-  { "title": "恋人", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "抒情"] },
-  { "title": "恋ノ行方", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "甜美"] },
-  { "title": "凉凉", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "影视", "对唱"] },
-  { "title": "淋雨一直走", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "励志", "经典"] },
-  { "title": "六等星の夜", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "治愈"] },
-  { "title": "流着泪说分手", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "伤感", "流行"] },
-  { "title": "鲁冰花", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "怀旧"] },
-  { "title": "旅行的意义", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "民谣", "清新"] },
-  { "title": "旅行中忘记", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "伤感", "流行"] },
-  { "title": "Magnet", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "Vocaloid", "经典"] },
-  { "title": "melody", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "R&B"] },
-  { "title": "Mercy", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "律动", "流行"] },
-  { "title": "Mira", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "梦幻"] },
-  { "title": "my name's WOMEN", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "动感"] },
-  { "title": "MY ONLY ONE", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "清新"] },
-  { "title": "慢慢喜欢你", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "治愈"] },
-  { "title": "美丽之物", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "物语", "大气"] },
-  { "title": "没有如果", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "动感", "经典"] },
-  { "title": "梦追人", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "励志"] },
-  { "title": "迷宮バタフライ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "经典"] },
-  { "title": "明知故行", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "粤语", "流行"] },
-  { "title": "Never enough", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "磅礴", "爆发"] },
-  { "title": "你把我灌醉", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "摇滚"] },
-  { "title": "你的酒馆对我打了烊", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "伤感", "流行"] },
-  { "title": "你是我的风景", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "民谣", "治愈"] },
-  { "title": "你在终点等我", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "影视", "抒情"] },
-  { "title": "年轮", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "影视"] },
-  { "title": "One last kiss", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "都市"] },
-  { "title": "One more time,  One more chance", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "感伤"] },
-  { "title": "欧若拉", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "励志", "流行"] },
-  { "title": "Paper plane", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "游戏", "清新"] },
-  { "title": "Part of Your World", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "迪士尼", "灵动"] },
-  { "title": "Please please please", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "甜美", "流行"] },
-  { "title": "Ponponpon", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "电波"] },
-  { "title": "Pride", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "励志"] },
-  { "title": "Promised land", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "大气"] },
-  { "title": "泡沫", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "高音", "经典"] },
-  { "title": "骗赖", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "俏皮", "流行"] },
-  { "title": "平行線", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "流行"] },
-  { "title": "僕らの戦场", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "燃"] },
-  { "title": "奇观", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "艺术", "流行"] },
-  { "title": "恰好", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "古风"] },
-  { "title": "千年之恋", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "摇滚", "爆发", "付费"] },
-  { "title": "牵丝戏", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "戏腔", "古风"] },
-  { "title": "亲爱的姑娘你为何", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "抒情"] },
-  { "title": "青花瓷", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "中国风", "经典"] },
-  { "title": "青鸟", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "热血"] },
-  { "title": "情人", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "流行"] },
-  { "title": "青藏高原", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "民族", "高音", "付费"] },
-  { "title": "求佛", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "怀旧", "热曲"] },
-  { "title": "去追一只鹿", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "民谣", "小众"] },
-  { "title": "群青", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "爆发"] },
-  { "title": "RNB all night", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "R&B", "节奏"] },
-  { "title": "让她降落", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "影视", "怀旧"] },
-  { "title": "日不落", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "动感", "经典"] },
-  { "title": "如此", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "情感"] },
-  { "title": "如果没有你", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "抒情"] },
-  { "title": "如果有来生", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "大气", "流行"] },
-  { "title": "若能拥抱我", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "深情"] },
-  { "title": "SAKURA", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "经典", "流行"] },
-  { "title": "secret base ～君がくれたもの～", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "感人"] },
-  { "title": "Shocking party", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "律动"] },
-  { "title": "Shut up my moms calling", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "氛围", "节奏"] },
-  { "title": "SLOW DOWN", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "律动"] },
-  { "title": "Slow motion", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "节奏", "流行"] },
-  { "title": "Snow halation", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "经典"] },
-  { "title": "Soldier game", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "帅气"] },
-  { "title": "Someone like you", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "感伤", "经典"] },
-  { "title": "Start:  dash", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "热血"] },
-  { "title": "Super star", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "组合"] },
-  { "title": "傻瓜", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "经典"] },
-  { "title": "砂のお城", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "神秘"] },
-  { "title": "扇子舞", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "复古", "流行", "付费"] },
-  { "title": "少年よ我に帰れ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "神秘"] },
-  { "title": "深愛", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "爆发"] },
-  { "title": "深海の孤独", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "忧郁"] },
-  { "title": "神魂颠倒", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "律动"] },
-  { "title": "圣诞结", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "节日", "经典"] },
-  { "title": "时差", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "R&B", "流行"] },
-  { "title": "时间都去哪了", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "亲情", "抒情"] },
-  { "title": "时间煮雨", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "影视", "抒情"] },
-  { "title": "世界を灰にするまで", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "艺术"] },
-  { "title": "十年", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "叙事"] },
-  { "title": "狮子", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "燃"] },
-  { "title": "舒伯特玫瑰", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "清新"] },
-  { "title": "水色の雨", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "CityPop", "经典"] },
-  { "title": "水星记", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "都市", "浪漫"] },
-  { "title": "瞬き", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "感人"] },
-  { "title": "说谎", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "抒情"] },
-  { "title": "说散就散", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "催泪"] },
-  { "title": "死了都要爱", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "爆发", "高难度"] },
-  { "title": "Take me to church", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "震撼", "爆发"] },
-  { "title": "Talking to the moon", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "浪漫", "流行"] },
-  { "title": "THERE IS A REASON", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "磅礴"] },
-  { "title": "This Day Aria", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "音乐剧", "高难度"] },
-  { "title": "to the beginning", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "燃"] },
-  { "title": "Trouble", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "流行", "带感"] },
-  { "title": "她说", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "叙事", "抒情"] },
-  { "title": "他一定很爱你", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "怀旧"] },
-  { "title": "倘还", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "抒情"] },
-  { "title": "特务 j", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "舞曲"] },
-  { "title": "天黑黑", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "抒情"] },
-  { "title": "天后", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "热歌", "流行"] },
-  { "title": "天路", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "民族", "高难度"] },
-  { "title": "甜蜜蜜", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "温婉"] },
-  { "title": "天生狂花", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "摇滚", "流行"] },
-  { "title": "天ノ弱", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "Vocaloid", "摇滚"] },
-  { "title": "听海", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "抒情"] },
-  { "title": "听夜雨", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "流行"] },
-  { "title": "庭園にて", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "清新"] },
-  { "title": "Unlasting", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "抒情"] },
-  { "title": "Virtual to LIVE", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "练习曲", "付费"] },
-  { "title": "what is a youth", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "经典", "怀旧"] },
-  { "title": "What Was I Made For?", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "治愈", "深情"] },
-  { "title": "With you", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "治愈"] },
-  { "title": "Wonderful you", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "温馨", "流行"] },
-  { "title": "妄想税", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "Vocaloid", "快歌"] },
-  { "title": "微熱から Mystery", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "甜美"] },
-  { "title": "危险派对", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "氛围", "节奏"] },
-  { "title": "吻", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "流行"] },
-  { "title": "我的悲伤是水做的", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "感性", "流行"] },
-  { "title": "我的歌声里", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "经典"] },
-  { "title": "我的一个道姑朋友", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "翻唱"] },
-  { "title": "我怀念的", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "经典"] },
-  { "title": "我们的纪念", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "影视", "感性"] },
-  { "title": "我为你痴迷", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "怀旧"] },
-  { "title": "我用什么把你留住", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "艺术", "摇滚"] },
-  { "title": "无法传达的爱恋", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "经典"] },
-  { "title": "无法原谅", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "影视", "热曲"] },
-  { "title": "舞娘", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "舞曲", "流行"] },
-  { "title": "喜欢你万岁", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "温馨"] },
-  { "title": "喜剧", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "轻松"] },
-  { "title": "夏風に溶ける", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "清新"] },
-  { "title": "霞光", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "童年", "清新"] },
-  { "title": "夏色えがおで 1, 2, Jump!", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "元气"] },
-  { "title": "夏天的风", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "清新", "经典"] },
-  { "title": "夏天请不要结束", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "清新"] },
-  { "title": "下雨天", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "抒情"] },
-  { "title": "像风一样", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "抒情", "忧郁"] },
-  { "title": "想你的365天", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "抒情"] },
-  { "title": "小酒窝", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "甜美", "对唱"] },
-  { "title": "晓之车", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "经典"] },
-  { "title": "硝子の花園", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "百合"] },
-  { "title": "新宝岛", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "复古"] },
-  { "title": "心拍数", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "Vocaloid", "治愈"] },
-  { "title": "心做し", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "Vocaloid", "撕心裂肺"] },
-  { "title": "星象仪", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "经典", "抒情"] },
-  { "title": "雪花火", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "凄美"] },
-  { "title": "血腥爱情故事", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "爆发"] },
-  { "title": "You are my love", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "空灵"] },
-  { "title": "You are my sunshine", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "民谣", "经典"] },
-  { "title": "Young And Beautiful", "artist": "Vsinger", "date": "2024-01-15", "tags": ["英文", "大气", "抒情"] },
-  { "title": "痒", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "个性", "古风"] },
-  { "title": "要抱抱", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "可爱", "流行", "付费"] },
-  { "title": "夜半小夜曲", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "粤语", "经典"] },
-  { "title": "一千年以后", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "流行"] },
-  { "title": "易燃易爆炸", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "个性", "艺术"] },
-  { "title": "桜流し", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "磅礴"] },
-  { "title": "永不失联的爱", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "感性", "流行"] },
-  { "title": "有一种悲伤", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "伤感", "流行"] },
-  { "title": "欲", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "性感", "流行"] },
-  { "title": "雨爱", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "流行"] },
-  { "title": "于辉夜城起舞", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "舞曲"] },
-  { "title": "原罪の灯", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "ACG", "神秘"] },
-  { "title": "月光", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "经典", "抒情"] },
-  { "title": "月光浴", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "空灵"] },
-  { "title": "约会在星期天晚上", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "复古", "流行"] },
-  { "title": "月亮上的花园", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "抒情"] },
-  { "title": "在夜里跳舞", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "氛围"] },
-  { "title": "真夜中のドア", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "CityPop", "经典"] },
-  { "title": "执一念", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "古风", "影视"] },
-  { "title": "珠玉", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "流行", "古风"] },
-  { "title": "子然炉火", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "律动"] },
-  { "title": "钻石裂痕", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "爆发"] },
-  { "title": "最长的电影", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "悲情", "经典"] },
-  { "title": "最高の片想い", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "抒情"] },
-  { "title": "最後の花瓣", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "凄美"] },
-  { "title": "左手指月", "artist": "Vsinger", "date": "2024-01-15", "tags": ["中文", "神曲", "极高音", "付费"] },
-  { "title": "あいたい", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "伤感"] },
-  { "title": "アイモ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "治愈"] },
-  { "title": "い～やい～やい～や", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "欢快"] },
-  { "title": "うたかた花火", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "抒情"] },
-  { "title": "オレンジ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "感人"] },
-  { "title": "カタオモイ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "清新"] },
-  { "title": "キミガタメ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "磅礴"] },
-  { "title": "クルマレテ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "慵懒"] },
-  { "title": "この世界で見つけたもの", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "治愈"] },
-  { "title": "たいせつなきみのために ぼくにできるいちばんのことは", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "治愈"] },
-  { "title": "ダンス・ダンス・ダダ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "动感"] },
-  { "title": "ハロ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "轻快"] },
-  { "title": "ひらひら ひらら", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "古风"] },
-  { "title": "フライディ・チャイナタウン", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "CityPop", "节奏"] },
-  { "title": "フリージア / 希望之花", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "梗"] },
-  { "title": "ヘビリンゴ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "个性"] },
-  { "title": "もってけ！ セーラーふく", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "电波"] },
-  { "title": "ラピスラズリ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "动漫", "大气"] },
-  { "title": "わがままハイウェイ", "artist": "Vsinger", "date": "2024-01-15", "tags": ["日文", "流行", "俏皮"] }
+  {
+    "title": "恋人",
+    "artist": "李荣浩",
+    "tags": ["国语"]
+  },
+  {
+    "title": "神魂颠倒",
+    "artist": "邓典",
+    "tags": ["国语"]
+  },
+  {
+    "title": "珠玉",
+    "artist": "单依纯",
+    "tags": ["国语"]
+  },
+  {
+    "title": "化身孤岛的鲸",
+    "artist": "周深",
+    "tags": ["国语"]
+  },
+  {
+    "title": "浮光",
+    "artist": "周深",
+    "tags": []
+  },
+  {
+    "title": "时差 (Live)",
+    "artist": "魏翔",
+    "tags": ["国语"]
+  },
+  {
+    "title": "听夜雨",
+    "artist": "礼越",
+    "tags": ["国语"]
+  },
+  {
+    "title": "奇观",
+    "artist": "单依纯",
+    "tags": []
+  },
+  {
+    "title": "恰好",
+    "artist": "A-Lin",
+    "tags": ["国语"]
+  },
+  {
+    "title": "繁华梦",
+    "artist": "黄龄",
+    "tags": ["国语"]
+  },
+  {
+    "title": "天生狂花",
+    "artist": "莫非定律乐团",
+    "tags": ["国语"]
+  },
+  {
+    "title": "疯子",
+    "artist": "许哲珮",
+    "tags": ["国语"]
+  },
+  {
+    "title": "月光",
+    "artist": "胡彦斌",
+    "tags": ["国语"]
+  },
+  {
+    "title": "明知故行",
+    "artist": "世界之外, 横山克",
+    "tags": []
+  },
+  {
+    "title": "如果没有你",
+    "artist": "莫文蔚",
+    "tags": ["国语"]
+  },
+  {
+    "title": "一千年以后",
+    "artist": "林俊杰",
+    "tags": ["国语"]
+  },
+  {
+    "title": "当时",
+    "artist": "姚贝娜",
+    "tags": ["国语"]
+  },
+  {
+    "title": "胡桃夹子",
+    "artist": "张碧晨",
+    "tags": ["国语"]
+  },
+  {
+    "title": "风月",
+    "artist": "黄龄",
+    "tags": ["国语"]
+  },
+  {
+    "title": "Melody",
+    "artist": "陶喆",
+    "tags": ["国语"]
+  },
+  {
+    "title": "红色高跟鞋",
+    "artist": "蔡健雅",
+    "tags": ["国语"]
+  },
+  {
+    "title": "爱",
+    "artist": "小虎队",
+    "tags": ["国语"]
+  },
+  {
+    "title": "欲",
+    "artist": "蔡徐坤",
+    "tags": ["国语"]
+  },
+  {
+    "title": "痒",
+    "artist": "黄龄",
+    "tags": ["国语"]
+  },
+  {
+    "title": "情人",
+    "artist": "蔡徐坤",
+    "tags": ["国语"]
+  },
+  {
+    "title": "吻",
+    "artist": "萧亚轩",
+    "tags": ["国语"]
+  },
+  {
+    "title": "巴黎假期",
+    "artist": "过又嘉",
+    "tags": ["国语"]
+  },
+  {
+    "title": "茶花游戏",
+    "artist": "莫非定律乐团",
+    "tags": ["国语"]
+  },
+  {
+    "title": "我为你痴迷",
+    "artist": "蜷花（李子璇）",
+    "tags": []
+  },
+  {
+    "title": "约会在星期天晚上",
+    "artist": "莫非定律乐团",
+    "tags": ["国语"]
+  },
+  {
+    "title": "慢慢喜欢你",
+    "artist": "莫文蔚",
+    "tags": ["国语"]
+  },
+  {
+    "title": "爱殇",
+    "artist": "小时姑娘",
+    "tags": ["国语"]
+  },
+  {
+    "title": "呼吸决定",
+    "artist": "Fine乐团",
+    "tags": ["国语"]
+  },
+  {
+    "title": "无法原谅",
+    "artist": "李佳璐",
+    "tags": ["国语"]
+  },
+  {
+    "title": "凉凉",
+    "artist": "杨宗纬, 张碧晨",
+    "tags": ["国语"]
+  },
+  {
+    "title": "血腥爱情故事",
+    "artist": "张惠妹",
+    "tags": ["国语"]
+  },
+  {
+    "title": "听海",
+    "artist": "张惠妹",
+    "tags": ["国语"]
+  },
+  {
+    "title": "别找我麻烦",
+    "artist": "蔡健雅",
+    "tags": ["国语"]
+  },
+  {
+    "title": "想你的365天",
+    "artist": "CoCo李玟",
+    "tags": ["国语"]
+  },
+  {
+    "title": "如果有来生",
+    "artist": "谭维维",
+    "tags": []
+  },
+  {
+    "title": "风吹麦浪",
+    "artist": "李健",
+    "tags": ["国语"]
+  },
+  {
+    "title": "绝世舞姬",
+    "artist": "张曦匀, 戚琦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "你在终点等我",
+    "artist": "王菲",
+    "tags": ["国语"]
+  },
+  {
+    "title": "有一种悲伤",
+    "artist": "A-Lin",
+    "tags": ["国语"]
+  },
+  {
+    "title": "我的一个道姑朋友",
+    "artist": "双笙（陈元汐）",
+    "tags": ["国语"]
+  },
+  {
+    "title": "我的悲伤是水做的",
+    "artist": "ChiliChill乐团, 洛天依Official",
+    "tags": []
+  },
+  {
+    "title": "天黑黑",
+    "artist": "孙燕姿",
+    "tags": ["国语"]
+  },
+  {
+    "title": "水星记",
+    "artist": "郭顶",
+    "tags": ["国语"]
+  },
+  {
+    "title": "后来",
+    "artist": "刘若英",
+    "tags": ["国语"]
+  },
+  {
+    "title": "暗香",
+    "artist": "沙宝亮",
+    "tags": ["国语"]
+  },
+  {
+    "title": "月半小夜曲",
+    "artist": "李克勤",
+    "tags": ["粤语"]
+  },
+  {
+    "title": "易燃易爆炸",
+    "artist": "陈粒",
+    "tags": ["国语"]
+  },
+  {
+    "title": "霞光",
+    "artist": "曲锦楠",
+    "tags": ["国语"]
+  },
+  {
+    "title": "亲爱的姑娘你为何要离开",
+    "artist": "张赫煊",
+    "tags": ["国语"]
+  },
+  {
+    "title": "偿还",
+    "artist": "王菲",
+    "tags": ["粤语"]
+  },
+  {
+    "title": "分手快乐",
+    "artist": "梁静茹",
+    "tags": ["国语"]
+  },
+  {
+    "title": "你把我灌醉",
+    "artist": "G.E.M.邓紫棋",
+    "tags": ["国语"]
+  },
+  {
+    "title": "恶作剧",
+    "artist": "王蓝茵",
+    "tags": ["国语"]
+  },
+  {
+    "title": "雨爱",
+    "artist": "杨丞琳",
+    "tags": ["国语"]
+  },
+  {
+    "title": "流着泪说分手",
+    "artist": "金志文",
+    "tags": ["国语"]
+  },
+  {
+    "title": "天后",
+    "artist": "陈势安",
+    "tags": ["国语"]
+  },
+  {
+    "title": "阿拉斯加海湾",
+    "artist": "蓝心羽",
+    "tags": ["国语"]
+  },
+  {
+    "title": "爱你",
+    "artist": "王心凌",
+    "tags": ["国语"]
+  },
+  {
+    "title": "不值得",
+    "artist": "梦飞船",
+    "tags": ["国语"]
+  },
+  {
+    "title": "别问很可怕",
+    "artist": "J.Sheon",
+    "tags": ["国语"]
+  },
+  {
+    "title": "R&B All Night",
+    "artist": "KnowKnow, Higher Brothers",
+    "tags": ["国语"]
+  },
+  {
+    "title": "死了都要爱",
+    "artist": "信乐团",
+    "tags": ["国语"]
+  },
+  {
+    "title": "红玫瑰",
+    "artist": "陈奕迅",
+    "tags": ["国语"]
+  },
+  {
+    "title": "爱情三十六计",
+    "artist": "蔡依林",
+    "tags": ["国语"]
+  },
+  {
+    "title": "倒带",
+    "artist": "蔡依林",
+    "tags": ["国语"]
+  },
+  {
+    "title": "会呼吸的痛",
+    "artist": "梁静茹",
+    "tags": ["国语"]
+  },
+  {
+    "title": "大鱼",
+    "artist": "周深",
+    "tags": ["国语"]
+  },
+  {
+    "title": "背对背拥抱",
+    "artist": "林俊杰",
+    "tags": ["国语"]
+  },
+  {
+    "title": "黑暗骑士",
+    "artist": "林俊杰, 五月天",
+    "tags": ["国语"]
+  },
+  {
+    "title": "小酒窝",
+    "artist": "林俊杰, 蔡卓妍",
+    "tags": ["国语"]
+  },
+  {
+    "title": "客官不可以",
+    "artist": "徐良, 小凌",
+    "tags": ["国语"]
+  },
+  {
+    "title": "我们的纪念",
+    "artist": "李雅微",
+    "tags": ["国语"]
+  },
+  {
+    "title": "煎熬",
+    "artist": "李佳薇",
+    "tags": ["国语"]
+  },
+  {
+    "title": "但愿人长久",
+    "artist": "王菲",
+    "tags": ["国语"]
+  },
+  {
+    "title": "锦鲤抄",
+    "artist": "银临, 云之泣",
+    "tags": ["国语"]
+  },
+  {
+    "title": "说谎",
+    "artist": "林宥嘉",
+    "tags": ["国语"]
+  },
+  {
+    "title": "光年之外",
+    "artist": "G.E.M. 邓紫棋",
+    "tags": ["国语"]
+  },
+  {
+    "title": "舞娘",
+    "artist": "蔡依林",
+    "tags": ["国语"]
+  },
+  {
+    "title": "危险派对",
+    "artist": "王以太, 刘至佳",
+    "tags": ["国语", "英语"]
+  },
+  {
+    "title": "牵丝戏",
+    "artist": "银临, Aki阿杰",
+    "tags": ["国语"]
+  },
+  {
+    "title": "阴天",
+    "artist": "莫文蔚",
+    "tags": ["国语"]
+  },
+  {
+    "title": "稻香",
+    "artist": "周杰伦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "十年",
+    "artist": "陈奕迅",
+    "tags": ["国语"]
+  },
+  {
+    "title": "红日",
+    "artist": "李克勤",
+    "tags": ["粤语"]
+  },
+  {
+    "title": "旅行的意义",
+    "artist": "陈绮贞",
+    "tags": ["国语"]
+  },
+  {
+    "title": "年轮",
+    "artist": "张碧晨",
+    "tags": ["国语"]
+  },
+  {
+    "title": "给我一个理由忘记",
+    "artist": "A-Lin",
+    "tags": ["国语"]
+  },
+  {
+    "title": "让她降落",
+    "artist": "何璐",
+    "tags": ["国语"]
+  },
+  {
+    "title": "爱的回归线",
+    "artist": "陈韵若, 陈每文",
+    "tags": ["国语"]
+  },
+  {
+    "title": "看我72变",
+    "artist": "蔡依林",
+    "tags": ["国语"]
+  },
+  {
+    "title": "刻在我心底的名字",
+    "artist": "卢广仲",
+    "tags": ["国语"]
+  },
+  {
+    "title": "旅行中忘记",
+    "artist": "袁娅维TIA RAY",
+    "tags": ["国语"]
+  },
+  {
+    "title": "不痛",
+    "artist": "周笔畅",
+    "tags": ["国语"]
+  },
+  {
+    "title": "圣诞结",
+    "artist": "陈奕迅",
+    "tags": ["国语"]
+  },
+  {
+    "title": "你的酒馆对我打了烊",
+    "artist": "陈雪凝",
+    "tags": ["国语"]
+  },
+  {
+    "title": "我怀念的",
+    "artist": "孙燕姿",
+    "tags": ["国语"]
+  },
+  {
+    "title": "欧若拉",
+    "artist": "张韶涵",
+    "tags": ["国语"]
+  },
+  {
+    "title": "去追一只鹿",
+    "artist": "万象凡音, 小时姑娘",
+    "tags": ["国语"]
+  },
+  {
+    "title": "月亮上的花园",
+    "artist": "牛奶咖啡",
+    "tags": ["国语"]
+  },
+  {
+    "title": "傻瓜",
+    "artist": "温岚",
+    "tags": ["国语"]
+  },
+  {
+    "title": "发如雪",
+    "artist": "周杰伦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "舒伯特玫瑰",
+    "artist": "蓝心羽, 翁梓铭",
+    "tags": ["国语"]
+  },
+  {
+    "title": "说散就散",
+    "artist": "袁娅维TIA RAY",
+    "tags": ["国语"]
+  },
+  {
+    "title": "下雨天",
+    "artist": "南拳妈妈",
+    "tags": ["国语"]
+  },
+  {
+    "title": "夏天的风",
+    "artist": "温岚",
+    "tags": ["国语"]
+  },
+  {
+    "title": "求佛",
+    "artist": "誓言",
+    "tags": ["国语"]
+  },
+  {
+    "title": "青花瓷",
+    "artist": "周杰伦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "最长的电影",
+    "artist": "周杰伦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "不染",
+    "artist": "毛不易",
+    "tags": ["国语"]
+  },
+  {
+    "title": "没有如果",
+    "artist": "梁静茹, 严爵",
+    "tags": ["国语"]
+  },
+  {
+    "title": "你是我的风景",
+    "artist": "何洁",
+    "tags": ["国语"]
+  },
+  {
+    "title": "时间煮雨",
+    "artist": "郁可唯",
+    "tags": ["国语"]
+  },
+  {
+    "title": "多远都要在一起",
+    "artist": "G.E.M. 邓紫棋",
+    "tags": ["国语"]
+  },
+  {
+    "title": "爱情买卖",
+    "artist": "慕容晓晓",
+    "tags": ["国语"]
+  },
+  {
+    "title": "童话",
+    "artist": "光良",
+    "tags": ["国语"]
+  },
+  {
+    "title": "我只在乎你",
+    "artist": "邓丽君",
+    "tags": ["国语"]
+  },
+  {
+    "title": "给我一首歌的时间",
+    "artist": "周杰伦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "广寒宫",
+    "artist": "丸子呦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "淋雨一直走",
+    "artist": "张韶涵",
+    "tags": ["国语"]
+  },
+  {
+    "title": "在夜里跳舞",
+    "artist": "单依纯",
+    "tags": ["国语"]
+  },
+  {
+    "title": "执一念",
+    "artist": "黄龄",
+    "tags": ["国语"]
+  },
+  {
+    "title": "她说",
+    "artist": "林俊杰",
+    "tags": ["国语"]
+  },
+  {
+    "title": "告白气球",
+    "artist": "周杰伦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "我的歌声里",
+    "artist": "曲婉婷",
+    "tags": ["国语"]
+  },
+  {
+    "title": "回忆的沙漏",
+    "artist": "G.E.M. 邓紫棋",
+    "tags": ["国语"]
+  },
+  {
+    "title": "日不落",
+    "artist": "蔡依林",
+    "tags": ["国语"]
+  },
+  {
+    "title": "Super Star",
+    "artist": "S.H.E",
+    "tags": ["国语"]
+  },
+  {
+    "title": "A.I.N.Y.",
+    "artist": "G.E.M. 邓紫棋",
+    "tags": ["国语"]
+  },
+  {
+    "title": "爱丫爱丫",
+    "artist": "BY2",
+    "tags": ["国语"]
+  },
+  {
+    "title": "他一定很爱你",
+    "artist": "阿杜",
+    "tags": ["国语"]
+  },
+  {
+    "title": "如此 (Live)",
+    "artist": "单依纯",
+    "tags": ["国语"]
+  },
+  {
+    "title": "好久不见",
+    "artist": "陈奕迅",
+    "tags": ["国语"]
+  },
+  {
+    "title": "永不失联的爱",
+    "artist": "Eric周兴哲",
+    "tags": ["国语"]
+  },
+  {
+    "title": "像风一样",
+    "artist": "薛之谦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "Forever Young",
+    "artist": "艾怡良",
+    "tags": []
+  },
+  {
+    "title": "勾指起誓",
+    "artist": "洛天依Official, ilem",
+    "tags": ["国语"]
+  },
+  {
+    "title": "泡沫",
+    "artist": "G.E.M. 邓紫棋",
+    "tags": ["国语"]
+  },
+  {
+    "title": "海沫",
+    "artist": "云之泣",
+    "tags": []
+  },
+  {
+    "title": "天路",
+    "artist": "韩红",
+    "tags": ["国语"]
+  },
+  {
+    "title": "甜蜜蜜",
+    "artist": "邓丽君",
+    "tags": ["国语"]
+  },
+  {
+    "title": "鲁冰花",
+    "artist": "贝乐虎儿歌",
+    "tags": []
+  },
+  {
+    "title": "特务J",
+    "artist": "蔡依林",
+    "tags": []
+  },
+  {
+    "title": "我用什么把你留住",
+    "artist": "福禄寿FloruitShow",
+    "tags": []
+  },
+  {
+    "title": "时间都去哪儿了",
+    "artist": "王铮亮",
+    "tags": ["国语"]
+  },
+  {
+    "title": "Coco9",
+    "artist": "Zealot周星星",
+    "tags": ["国语"]
+  },
+  {
+    "title": "贝加尔湖畔",
+    "artist": "李健",
+    "tags": ["国语"]
+  },
+  {
+    "title": "骗赖",
+    "artist": "刘教授",
+    "tags": ["国语"]
+  },
+  {
+    "title": "别看我只是一只羊",
+    "artist": "古倩敏",
+    "tags": ["国语"]
+  },
+  {
+    "title": "虫儿飞",
+    "artist": "贝乐虎儿歌",
+    "tags": []
+  },
+  {
+    "title": "隐形的翅膀",
+    "artist": "张韶涵",
+    "tags": ["国语"]
+  },
+  {
+    "title": "征服",
+    "artist": "那英",
+    "tags": ["国语"]
+  },
+  {
+    "title": "拿走了什么",
+    "artist": "A-Lin",
+    "tags": ["国语"]
+  },
+  {
+    "title": "不得不爱",
+    "artist": "潘玮柏, 弦子",
+    "tags": ["国语"]
+  },
+  {
+    "title": "快乐崇拜",
+    "artist": "潘玮柏, 张韶涵",
+    "tags": ["国语"]
+  },
+  {
+    "title": "烟花易冷",
+    "artist": "周杰伦",
+    "tags": ["国语"]
+  },
+  {
+    "title": "小幸运",
+    "artist": "田馥甄",
+    "tags": ["国语"]
+  },
+  {
+    "title": "踮起脚尖爱",
+    "artist": "洪佩瑜",
+    "tags": ["国语"]
+  },
+  {
+    "title": "小情歌",
+    "artist": "苏打绿",
+    "tags": ["国语"]
+  },
+  {
+    "title": "Let It Go",
+    "artist": "Idina Menzel",
+    "tags": ["英语"]
+  },
+  {
+    "title": "I WANNA BE YOUR SLAVE",
+    "artist": "Måneskin",
+    "tags": ["英语"]
+  },
+  {
+    "title": "纸飞机",
+    "artist": "鸣潮先约电台, 飞行雪绒",
+    "tags": ["英语"]
+  },
+  {
+    "title": "All Eyes On Me",
+    "artist": "OR3O",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Catch Me If You Can",
+    "artist": "鸣潮先约电台",
+    "tags": ["英语"]
+  },
+  {
+    "title": "City Of Stars",
+    "artist": "Ryan Gosling, Emma Stone",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Feeling Good",
+    "artist": "Michael Bublé",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Slow Motion",
+    "artist": "Marshmello, Jonas Brothers",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Mercy",
+    "artist": "Bishop Briggs",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Take Me to Church",
+    "artist": "Hozier",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Fly Me To The Moon",
+    "artist": "Claire",
+    "tags": ["英语"]
+  },
+  {
+    "title": "I Can't Wait",
+    "artist": "d0tc0mmie, GUMI, Deadman, 蔡徐坤",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Shut up My Moms Calling",
+    "artist": "Hotel Ugly",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Please Please Please",
+    "artist": "Sabrina Carpenter",
+    "tags": []
+  },
+  {
+    "title": "Trouble",
+    "artist": "Ariana Grande",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Never Enough",
+    "artist": "Loren Allred",
+    "tags": ["英语"]
+  },
+  {
+    "title": "A Whole New World",
+    "artist": "Lea Salonga, Brad Kane",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Wonderful U",
+    "artist": "AGA",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Bet On Me",
+    "artist": "Walk off the Earth, D Smoke",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Someone Like You",
+    "artist": "Adele",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Autumn Leaves",
+    "artist": "Jo Stafford",
+    "tags": ["英语"]
+  },
+  {
+    "title": "You Are My Sunshine",
+    "artist": "张靓颖",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Talking to the Moon",
+    "artist": "Bruno Mars",
+    "tags": ["英语"]
+  },
+  {
+    "title": "idontwannabeyouanymore",
+    "artist": "Billie Eilish",
+    "tags": ["英语"]
+  },
+  {
+    "title": "What Was I Made For?",
+    "artist": "Billie Eilish",
+    "tags": ["英语"]
+  },
+  {
+    "title": "What Is A Youth?",
+    "artist": "手嶌葵 (てしま あおい)",
+    "tags": ["英语"]
+  },
+  {
+    "title": "This Day Aria",
+    "artist": "Princess Cadance, Queen Chrysalis",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Part Of Your World",
+    "artist": "Jodi Benson",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Young And Beautiful",
+    "artist": "Lana Del Rey",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Just One Last Dance",
+    "artist": "Sarah Connor, Natural",
+    "tags": ["英语"]
+  },
+  {
+    "title": "My Heart Will Go On (Love Theme from \"Titanic\")",
+    "artist": "Céline Dion",
+    "tags": ["英语"]
+  },
+  {
+    "title": "Big Big World",
+    "artist": "Emilia Rydberg",
+    "tags": ["英语"]
+  },
+  {
+    "title": "The Phantom of the Opera (Live at the Royal Albert Hall, 2011)",
+    "artist": "Andrew Lloyd Webber",
+    "tags": ["英语"]
+  },
+  {
+    "title": "暁の車 (晓之车)",
+    "artist": "南里侑香 (なんり ゆうか)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "津軽海峡・冬景色",
+    "artist": "石川小百合 (いしかわ さゆり)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Here",
+    "artist": "JUNNA (じゅんな)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "独りんぼエンヴィー (孑然妒火)",
+    "artist": "koyori, 初音ミク (初音未来)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "ダイアモンド クレバス (钻石裂痕)",
+    "artist": "May'n (メイン)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "懺悔録",
+    "artist": "黒木渚 (くろき なぎさ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "輝夜の城で踊りたい (欲于辉夜之城起舞)",
+    "artist": "μ's (缪斯)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "微熱からMystery (来自微热的Mystery)",
+    "artist": "lily white",
+    "tags": ["日语"]
+  },
+  {
+    "title": "START:DASH!!",
+    "artist": "μ's (缪斯)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Snow halation",
+    "artist": "μ's (缪斯)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "soldier game",
+    "artist": "Pile (パイル), 三森铃子 (三森すずこ), 南条爱乃",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Shocking Party",
+    "artist": "櫻川めぐ (樱川惠), 松永真穂 (まつなが まほ), 大橋歩夕 (おおはし あゆる)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Daring!!",
+    "artist": "Pile (パイル)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "夏色えがおで1,2,Jump! (夏色笑颜1,2,Jump!)",
+    "artist": "μ's (缪斯)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "愛してるばんざーい！ (喜欢你万岁!)",
+    "artist": "μ's (缪斯)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "夏、終わらないで。 (夏天，请不要结束)",
+    "artist": "南条爱乃, Pile (パイル), 德井青空 (とくい そら)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "GIRAFFE BLUES",
+    "artist": "铃木实里 (鈴木みのり), JUNNA (じゅんな), 安野希世乃 (やすの きよの)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "地獄タクシー (地狱的士)",
+    "artist": "吉澤嘉代子 (よしざわ かよこ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "喜劇",
+    "artist": "星野源 (ほしの げん)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "secret base～君がくれたもの～ (secret base ~你给我的所有~) (10 years after Ver.)",
+    "artist": "茅野愛衣 (かやの あい), 戸松遥 (とまつ はるか), 早見沙織 (はやみ さおり)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "you are my love",
+    "artist": "牧野由依 (まきの ゆい)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "unlasting",
+    "artist": "LiSA (织部里沙)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "抱きしめられたら (若能拥抱我)",
+    "artist": "河西智美 (かさい ともみ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "おとなの掟 (成人的法则)",
+    "artist": "Doughnuts Hole",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Bad Apple!! (坏苹果)",
+    "artist": "nomico (のみこ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "プラネタリウム (星象仪)",
+    "artist": "大塚愛 (おおつか あい)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Fly Me to the Star",
+    "artist": "スタァライト九九組 (Starlight九九组)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "妄想税",
+    "artist": "DECO*27, 初音ミク",
+    "tags": []
+  },
+  {
+    "title": "狮子",
+    "artist": "儿歌点点",
+    "tags": ["国语"]
+  },
+  {
+    "title": "All Alone With You",
+    "artist": "EGOIST (エゴイスト)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Departures 〜あなたにおくるアイの歌〜 (离别 ~赠予你的爱之歌~)",
+    "artist": "EGOIST (エゴイスト)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "エウテルペ (欧忒耳佩 Euterpe)",
+    "artist": "EGOIST (エゴイスト)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "届かない恋 (无法传达的爱恋)",
+    "artist": "上原玲奈 (上原れな)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "新宝島",
+    "artist": "sakanaction (サカナクション)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "HIP (Japanese ver.)",
+    "artist": "MAMAMOO (마마무)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "みずいろの雨 (淡蓝色的雨)",
+    "artist": "八神純子 (Junko Yagami)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "キミガタメ (为了你)",
+    "artist": "Suara (すあら)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "回忆太美",
+    "artist": "大明明",
+    "tags": ["国语"]
+  },
+  {
+    "title": "恋ノ行方 (恋爱的去向)",
+    "artist": "あかせあかり",
+    "tags": ["日语"]
+  },
+  {
+    "title": "真夜中のドア - Stay With Me (深夜之门 - Stay With Me)",
+    "artist": "松原みき (まつばら みき)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "蝶 (蝴蝶)",
+    "artist": "天野月 (あまの つき)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "月光浴",
+    "artist": "ヨルシカ (Yorushika)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Blue Star (蓝色之星)",
+    "artist": "初音未来 (初音ミク), 八王子P (8#Prince)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "オレンジ (Orange)",
+    "artist": "7!! (Seven Oops)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "美しきもの (美丽之物)",
+    "artist": "Sound Horizon (サウンドホライズン)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "ハロ (光晕)",
+    "artist": "yama, ぼっちぼろまる",
+    "tags": ["日语"]
+  },
+  {
+    "title": "華の淑女 (芳华淑女)",
+    "artist": "NIGORO",
+    "tags": ["日语"]
+  },
+  {
+    "title": "アイモ",
+    "artist": "中島愛",
+    "tags": ["日语"]
+  },
+  {
+    "title": "わがままハイウェイ (任性的高速公路)",
+    "artist": "生田輝, 伊藤彩沙 (いとう あやさ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "MY ONLY ONE (我的唯一)",
+    "artist": "佐藤広大 (さとう こうだい), 宏実 (Hiromi), YUTAKA",
+    "tags": ["日语"]
+  },
+  {
+    "title": "フライディ・チャイナタウン",
+    "artist": "泰葉",
+    "tags": ["日语"]
+  },
+  {
+    "title": "誕生日TANGO",
+    "artist": "AKB48",
+    "tags": ["日语"]
+  },
+  {
+    "title": "寄り酔い (倚醉)",
+    "artist": "和ぬか",
+    "tags": ["日语"]
+  },
+  {
+    "title": "瞬き (瞬间)",
+    "artist": "back number (バックナンバー)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "この世界で見つけたもの (在这个世界找寻到的东西)",
+    "artist": "EGOIST (エゴイスト)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "最後の花弁 (The meaning of love) (最后的花瓣)",
+    "artist": "EGOIST (エゴイスト)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "夏风に溶ける (溶于夏风)",
+    "artist": "MAISONdes, りりあ。, 南云ゆうき",
+    "tags": ["日语"]
+  },
+  {
+    "title": "うたかた花火",
+    "artist": "supercell",
+    "tags": ["日语"]
+  },
+  {
+    "title": "誇りと骄り",
+    "artist": "小山百代 (こやま ももよ), 富田麻帆",
+    "tags": ["日语"]
+  },
+  {
+    "title": "フリージア (小苍兰)",
+    "artist": "Uru (うる)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "ブルーバード (青鸟)",
+    "artist": "生物股长 (いきものがかり)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "カタオモイ (单相思)",
+    "artist": "Aimer (エメ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "ひらひら ひらら (落樱纷飞)",
+    "artist": "ClariS (クラリス)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "ヘビリンゴ (蛇果)",
+    "artist": "すりぃ, ねね",
+    "tags": ["日语"]
+  },
+  {
+    "title": "ダンス・ダンス・ダダ (舞蹈达达)",
+    "artist": "MAISONdes, EMA (エマ), たなか",
+    "tags": ["日语"]
+  },
+  {
+    "title": "CH4NGE",
+    "artist": "ギガP (Giga-P), 可不 (KAFU)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Promised Land",
+    "artist": "清水理沙 (Shimizu Risa)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "原罪の灯 (原罪的灯火)",
+    "artist": "EGOIST (エゴイスト)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "记忆の光 (记忆之光)",
+    "artist": "KOKIA (吉田亚纪子)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "クルマレテ (覆盖)",
+    "artist": "KOKIA (吉田亚纪子)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "初恋",
+    "artist": "宇多田光 (宇多田ヒカル)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "砂のお城 (沙之城)",
+    "artist": "分岛花音 (わけしま かのん)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "いけないボーダーライン (禁忌的边界线)",
+    "artist": "Walküre (ワルキューレ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "FREELY TOMORROW",
+    "artist": "Mitchie M (人间调教), 初音未来 (初音ミク)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Darling (亲爱的)",
+    "artist": "西野加奈 (西野カナ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "会いたくて 会いたくて",
+    "artist": "西野加奈 (西野カナ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "桜流し (樱花纷飞)",
+    "artist": "宇多田光 (宇多田ヒカル)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "One more time, One more chance",
+    "artist": "山崎将义 (山崎まさよし)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Door (门)",
+    "artist": "高桥李依 (たかはし りえ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "白日",
+    "artist": "King Gnu (キング・ヌー)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "With You",
+    "artist": "茜西",
+    "tags": ["英语"]
+  },
+  {
+    "title": "梦追人 (追梦人)",
+    "artist": "KOKIA (吉田亚纪子)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "心拍数♯0822",
+    "artist": "一之瀬ユウ, 初音ミク",
+    "tags": []
+  },
+  {
+    "title": "花の呗 (花之歌)",
+    "artist": "Aimer (エメ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "もってけ!セ-ラ-ふく",
+    "artist": "可可味, わかざえもん",
+    "tags": ["日语"]
+  },
+  {
+    "title": "深海の孤独",
+    "artist": "桑岛法子 (Kuwashima Houko)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "花は桜 君は美し (花如樱花 倾城如君)",
+    "artist": "生物股长 (いきものがかり)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "SAKURA",
+    "artist": "生物股长 (いきものがかり)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "硝子の花园",
+    "artist": "南条爱乃, 楠田亜衣奈 (くすだ あいな)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "to the beginning",
+    "artist": "Kalafina (カラフィナ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "LOVELESS WORLD",
+    "artist": "μ's (缪斯)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Distance (Voice|Piano)",
+    "artist": "和纱 (Kazusa)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "六等星の夜 (六等星之夜)",
+    "artist": "Aimer (エメ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "群青",
+    "artist": "YOASOBI (ヨアソビ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "magnet",
+    "artist": "初音ミク, 巡音ルカ, 凑贵大",
+    "tags": []
+  },
+  {
+    "title": "PONPONPON",
+    "artist": "ギ格P (Giga-P), 镜音连 (鏡音レン)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "MIRA",
+    "artist": "kanaria, 小春六花",
+    "tags": []
+  },
+  {
+    "title": "One Last Kiss (最后一吻)",
+    "artist": "宇多田光 (宇多田ヒカル)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "春、恋、花以外の",
+    "artist": "IU",
+    "tags": ["日语"]
+  },
+  {
+    "title": "KOE",
+    "artist": "ASCA (アスカ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "my name's WOMEN",
+    "artist": "滨崎步 (浜崎あゆみ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "最高の片想い (最美好的单恋)",
+    "artist": "田井中彩智 (タイナカ彩智)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "僕らの戦場 (我们的战场)",
+    "artist": "Walküre (ワルキューレ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Gimme×Gimme",
+    "artist": "八王子P (8#Prince), ギガP (Giga-P), 初音未来 (初音ミク), 镜音铃 (鏡音リン)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "い〜やい〜やい〜や (随便~随便~随便~)",
+    "artist": "Neru, z'5, 镜音双子 (鏡音リン・レン)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "世界を灰にするまで",
+    "artist": "佐藤日向, 三森铃子 (三森すずこ), 小山百代 (こやま ももよ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "少年よ我に帰れ (少年啊回归自我吧)",
+    "artist": "药师丸悦子 (やくしまる えつこ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "深愛",
+    "artist": "水树奈奈 (みずき なな)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "迷宮バタフライ (迷宫蝴蝶)",
+    "artist": "水树奈奈 (みずき なな)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "ラピスラズリ (青金石)",
+    "artist": "藍井エイル (蓝井艾露)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "創聖のアクエリオン (创圣大天使)",
+    "artist": "AKINO (川満愛希信)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "たいせつなきみのために、ぼくにできるいちばんのこと (为了最重要的你，我所能做的最好的事)",
+    "artist": "Duca (デュッカ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Pride",
+    "artist": "滨崎步 (浜崎あゆみ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "delete",
+    "artist": "神田沙也加 (かんだ さやか)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "あいたい",
+    "artist": "RADWIMPS (ラッドウィンプス)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "甘い股関節",
+    "artist": "大堀恵",
+    "tags": ["日语"]
+  },
+  {
+    "title": "THERE IS A REASON",
+    "artist": "铃木木乃美 (鈴木このみ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "庭園にて。",
+    "artist": "acane_madder (アカネマダー)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "八重桜",
+    "artist": "泡泡",
+    "tags": ["日语"]
+  },
+  {
+    "title": "心做し (心理作用)",
+    "artist": "双笙 (陈元汐)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "花宴 (ハナウタゲ)",
+    "artist": "KOKIA (吉田亚纪子)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "天ノ弱 (天之弱)",
+    "artist": "164 (イチロクヨン), GUMI (グミ)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "SLOW DOWN",
+    "artist": "向井太一 (むかい たいち)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "雪花火 (雪花)",
+    "artist": "早见沙织 (はやみ さおり)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "打上花火",
+    "artist": "Daoko (ダヲコ), 米津玄师 (よねづ けんし)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "☆の向こう側 (星之彼方)",
+    "artist": "AKB48",
+    "tags": ["日语"]
+  },
+  {
+    "title": "禁じられた2人 (禁忌的2人) (チームK Ver.)",
+    "artist": "AKB48",
+    "tags": ["日语"]
+  },
+  {
+    "title": "シャムネコ (暹罗猫) (Single Version)",
+    "artist": "AKB48",
+    "tags": ["日语"]
+  },
+  {
+    "title": "乙女どもよ。 (少女们啊。)",
+    "artist": "CHiCO with HoneyWorks",
+    "tags": ["日语"]
+  },
+  {
+    "title": "桜の木になろう (化作樱花树)",
+    "artist": "AKB48",
+    "tags": ["日语"]
+  },
+  {
+    "title": "シュートサイン (Shoot Sign)",
+    "artist": "AKB48",
+    "tags": ["日语"]
+  },
+  {
+    "title": "synchronicity",
+    "artist": "牧野由依 (まきの ゆい)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "奈落の花 (奈落之花)",
+    "artist": "岛みやえい子 (岛宫荣子)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "レクイエム (安魂曲)",
+    "artist": "柊奈绪 (Hiiragi Nao)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "ドライフラワー (干花)",
+    "artist": "优里 (ゆうり)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "爱言葉Ⅳ",
+    "artist": "DECO*27, 初音未来 (初音ミク)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "なぜ？谜？！ANSWER (WHY?MYSTERY?!ANSWER) (TV Version)",
+    "artist": "増井优花, 熊田茜音 (くまだあかね)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "それを爱と呼ぶなら (倘若称之为爱)",
+    "artist": "Uru (うる)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "Christmas Song",
+    "artist": "back number (バックナンバー)",
+    "tags": ["日语"]
+  },
+  {
+    "title": "左手指月",
+    "artist": "萨顶顶",
+    "tags": ["国语", "30 SC"]
+  },
+  {
+    "title": "Virtual to LIVE",
+    "artist": "VirtuaReal",
+    "tags": ["国语", "100 SC"]
+  },
+  {
+    "title": "要抱抱",
+    "artist": "王蓉",
+    "tags": ["国语", "30 SC"]
+  },
+  {
+    "title": "阿刁",
+    "artist": "赵雷",
+    "tags": ["国语", "30 SC"]
+  },
+  {
+    "title": "扇子舞",
+    "artist": "李常超（Lao乾妈）",
+    "tags": ["国语", "30 SC"]
+  },
+  {
+    "title": "阿楚姑娘",
+    "artist": "袁娅维TIA RAY",
+    "tags": ["国语", "30 SC"]
+  },
+  {
+    "title": "千年之恋",
+    "artist": "F.I.R.飞儿乐团",
+    "tags": ["国语", "30 SC"]
+  },
+  {
+    "title": "青藏高原",
+    "artist": "韩红",
+    "tags": ["国语", "30 SC"]
+  },
+  {
+    "title": "春天的芭蕾",
+    "artist": "常思思",
+    "tags": ["国语", "30 SC"]
+  },
+  {
+    "title": "九儿 (Live)",
+    "artist": "谭晶",
+    "tags": ["国语", "30 SC"]
+  },
+  {
+    "title": "猪之歌",
+    "artist": "香香",
+    "tags": ["国语", "100 SC"]
+  },
+  {
+    "title": "老公天下第一",
+    "artist": "叶洛洛",
+    "tags": ["国语", "30 SC"]
+  }
 ]

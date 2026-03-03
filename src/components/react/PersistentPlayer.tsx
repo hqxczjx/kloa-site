@@ -4,7 +4,6 @@ import { Play, Pause, Volume2, VolumeX, SkipBack, SkipForward, X } from 'lucide-
 interface Song {
   title: string;
   artist: string;
-  date: string;
   url: string;
   tags: string[];
 }

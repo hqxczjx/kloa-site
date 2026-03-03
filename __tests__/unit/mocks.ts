@@ -23,7 +23,6 @@ export const mockDispatchEvent = vi.fn();
 export const createMockSong = (overrides = {}) => ({
   title: 'Test Song',
   artist: 'Test Artist',
-  date: '2024-01-15',
   tags: ['中文', '测试'],
   ...overrides,
 });
@@ -33,7 +32,6 @@ export const createMockSongs = (count: number = 10) => {
   return Array.from({ length: count }, (_, i) => ({
     title: `Song ${i + 1}`,
     artist: `Artist ${i + 1}`,
-    date: '2024-01-15',
     tags: ['中文', `Tag${i + 1}`],
   }));
 };

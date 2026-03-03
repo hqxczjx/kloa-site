@@ -7,7 +7,6 @@ import VirtualList from './VirtualList';
 interface Song {
   title: string;
   artist: string;
-  date: string;
   tags: string[];
 }
 
@@ -229,7 +228,6 @@ export default function SongList({ songs }: SongListProps) {
               </h3>
               <div className="flex items-center gap-2 text-sm md:text-base opacity-60" style={{ color: 'var(--text-secondary)' }}>
                 <span className="truncate">{song.artist}</span>
-                {song.date && <span className="shrink-0">{song.date}</span>}
               </div>
             </div>
 

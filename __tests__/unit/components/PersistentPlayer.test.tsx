@@ -25,7 +25,6 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: 'Test Song',
         artist: 'Test Artist',
-        date: '2024-01-15',
         url: 'https://example.com/song.mp3',
         tags: ['中文'],
       };
@@ -51,7 +50,6 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: 'Test Song',
         artist: 'Test Artist',
-        date: '2024-01-15',
         url: '',
         tags: ['中文'],
       };
@@ -72,7 +70,6 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: 'Test Song',
         artist: 'Test Artist',
-        date: '2024-01-15',
         url: 'not-a-valid-url',
         tags: ['中文'],
       };
@@ -93,7 +90,6 @@ describe('PersistentPlayer', () => {
       const mockSong1 = {
         title: 'Test Song 1',
         artist: 'Test Artist',
-        date: '2024-01-15',
         url: 'https://example.com/song1.mp3',
         tags: ['中文'],
       };
@@ -108,7 +104,6 @@ describe('PersistentPlayer', () => {
       const mockSong2 = {
         title: 'Test Song 2',
         artist: 'Test Artist',
-        date: '2024-01-15',
         url: 'https://example.com/song2.mp3',
         tags: ['中文'],
       };
@@ -129,7 +124,7 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: 'A'.repeat(100),
         artist: 'Test Artist',
-        date: '2024-01-15',
+
         url: 'https://example.com/song.mp3',
         tags: ['中文'],
       };
@@ -150,7 +145,7 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: '测试!@#$%^&*()',
         artist: 'Test Artist',
-        date: '2024-01-15',
+
         url: 'https://example.com/song.mp3',
         tags: ['中文'],
       };
@@ -171,7 +166,7 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: 'Test Song',
         artist: '',
-        date: '2024-01-15',
+
         url: 'https://example.com/song.mp3',
         tags: ['中文'],
       };
@@ -192,7 +187,7 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: 'Test Song',
         artist: 'A'.repeat(50),
-        date: '2024-01-15',
+
         url: 'https://example.com/song.mp3',
         tags: ['中文'],
       };
@@ -213,7 +208,7 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: 'Test Song',
         artist: '测试&*()$#@!',
-        date: '2024-01-15',
+
         url: 'https://example.com/song.mp3',
         tags: ['中文'],
       };
@@ -234,7 +229,7 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: 'Test Song',
         artist: 'Test Artist',
-        date: '2024-01-15',
+
         url: 'https://example.com/song.mp3',
         tags: [],
       };
@@ -255,7 +250,7 @@ describe('PersistentPlayer', () => {
       const mockSong = {
         title: 'Test Song',
         artist: 'Test Artist',
-        date: '2024-01-15',
+
         url: 'https://example.com/song.mp3',
         tags: ['中文', '日文', '英文', '韩文', '治愈', '空灵', '东方', '经典'],
       };
@@ -276,7 +271,7 @@ describe('PersistentPlayer', () => {
       const mockSong1 = {
         title: 'Test Song 1',
         artist: 'Test Artist',
-        date: '2024-01-15',
+
         url: 'https://example.com/song1.mp3',
         tags: ['中文'],
       };
@@ -284,7 +279,7 @@ describe('PersistentPlayer', () => {
       const mockSong2 = {
         title: 'Test Song 2',
         artist: 'Test Artist',
-        date: '2024-01-15',
+
         url: 'https://example.com/song2.mp3',
         tags: ['中文'],
       };
