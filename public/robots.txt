@@ -4,5 +4,4 @@
 User-agent: *
 Allow: /
 
-# Sitemap location (update with actual URL when deployed)
-# Sitemap: https://kloa.fans/sitemap.xml
+Sitemap: https://kloa.fans/sitemap.xml

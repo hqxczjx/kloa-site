@@ -4,6 +4,9 @@ import ThemeToggle from '../components/ui/ThemeToggle.tsx';
 import ToasterWrapper from '../components/ui/ToasterWrapper.tsx';
 import { Heart, Music as MusicIcon, User, Volume2 } from 'lucide-react';
 
+// Canonical URL for SEO / Open Graph (requires `site` in astro.config)
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
 // Get current year dynamically
 const currentYear = new Date().getFullYear();
 const startYear = 2026;
@@ -22,6 +25,18 @@ const yearDisplay = currentYear === startYear
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>克罗雅的小网站</title>
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="克罗雅的小网站" />
+    <meta property="og:description" content="克罗雅 - 从远古时期的天堂而来的恶魔&天使" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary" />
+    <!-- Fonts: preconnect (early handshake) + stylesheet replaces the
+         render-blocking CSS @import that used to live in global.css.
+         display=swap keeps text visible with fallback while fonts load. -->
+    <link rel="preconnect" href="https://fonts.loli.net" crossorigin />
+    <link rel="stylesheet" href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&display=swap" />
     <script is:inline>
       // Apply theme immediately to prevent flash
       (function() {
@@ -96,7 +111,7 @@ const yearDisplay = currentYear === startYear
     </footer>
 
     <!-- Sonner Toaster -->
-    <ToasterWrapper client:load />
+    <ToasterWrapper client:idle />
 
     <style is:global>
       /* Desktop Nav Links */

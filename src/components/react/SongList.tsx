@@ -208,7 +208,7 @@ export default function SongList({ songs }: SongListProps) {
         items={filteredSongs}
         itemHeight={90}
         containerHeight={600}
-        renderItem={(song, index) => (
+        renderItem={(song) => (
           <div
             key={`${song.title}-${song.artist}`}
             onClick={(e) => handleCopy(song, e)}

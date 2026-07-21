@@ -1,0 +1,17 @@
+# Fingerprinted build assets — safe to cache forever
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Favicon
+/favicon.svg
+  Cache-Control: public, max-age=604800
+
+# Sitemap & robots
+/sitemap*.xml
+  Cache-Control: public, max-age=86400
+/robots.txt
+  Cache-Control: public, max-age=86400
+
+# HTML pages — always revalidate so updates ship immediately
+/*
+  Cache-Control: public, max-age=0, must-revalidate

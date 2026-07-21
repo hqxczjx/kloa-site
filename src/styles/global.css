@@ -1,4 +1,3 @@
-@import url('https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ========================================
@@ -217,7 +216,7 @@
 
   /* Theme Transition */
   * {
-    transition-property: background-color, border-color, color, fill, stroke, opacity;
+    transition-property: background-color, border-color, color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
   }
@@ -522,5 +521,81 @@
   }
   50% {
     filter: drop-shadow(0 0 25px oklch(0.64 0.10 240 / 0.5));
+  }
+}
+
+/* ========================================
+   CSS-only Entrance & Loop Animations
+   (replace framer-motion, ~116K JS saved)
+   cubic-bezier(0.22, 1, 0.36, 1) = easeOutExpo
+   ======================================== */
+
+/* Entrance: fade up (cards entering from below) */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Entrance: fade down (headers sliding from top) */
+@keyframes fade-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-down {
+  animation: fade-down 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Entrance: fade + scale while staying horizontally centered.
+   Includes translateX(-50%) so it composes with `left-1/2`
+   without fighting a Tailwind transform utility. */
+@keyframes fade-scale-center {
+  from { opacity: 0; transform: translateX(-50%) scale(0); }
+  to { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+.animate-fade-scale-center {
+  animation: fade-scale-center 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Loop: heart-beat (decorative heart scaling + slight rotate) */
+@keyframes heart-beat {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(5deg); }
+  50% { transform: scale(1.1) rotate(-5deg); }
+  75% { transform: scale(1.1) rotate(0deg); }
+}
+
+.animate-heart-beat {
+  animation: heart-beat 3s ease-in-out infinite;
+}
+
+/* Loop: blur-float (soft glowing orb drifting up/down) */
+@keyframes blur-float {
+  0%, 100% { transform: translateY(0); opacity: 0.3; }
+  50% { transform: translateY(-10px); opacity: 0.5; }
+}
+
+.animate-blur-float {
+  animation: blur-float 4s ease-in-out infinite;
+}
+
+/* ========================================
+   Reduced Motion: honor user preference.
+   Disables transitions/animations for users
+   who request reduced motion (a11y + perf).
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

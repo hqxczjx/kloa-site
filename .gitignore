@@ -32,3 +32,11 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # Finder (MacOS) folder config
 .DS_Store
+
+# Playwright test artifacts
+playwright-report/
+test-results/
+
+# Astro dev runtime files (generated types are tracked)
+.astro/dev.json
+.astro/settings.json

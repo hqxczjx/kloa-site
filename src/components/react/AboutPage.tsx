@@ -1,5 +1,4 @@
 import { ShieldAlert, Mail, Zap, Layers, Cpu, Heart, MessageCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { GithubIcon } from '../ui/BrandIcons';
 
 export default function AboutPage() {
@@ -21,38 +20,29 @@ export default function AboutPage() {
       </div>
 
       {/* Page Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="text-center mb-12 relative z-10"
-      >
+      <div className="text-center mb-12 relative z-10 animate-fade-down">
         <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-4" style={{ color: 'var(--accent-primary)' }}>
           关于本站
         </h1>
         {/* Decorative Heart */}
         <div className="flex justify-center mt-6">
-          <motion.div
-            animate={{ scale: [1, 1.1, 1], rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="w-8 h-8"
+          <div
+            className="w-8 h-8 animate-heart-beat"
             style={{ background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))' }}
           >
             <Heart className="w-8 h-8 text-white" fill="currentColor" />
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Bento Grid Layout */}
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-min">
 
           {/* Card 1: Disclaimer (Full Width, Top Priority) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="col-span-1 md:col-span-2 lg:col-span-3 rounded-2xl p-6 md:p-8 border-2 relative overflow-hidden disclaimer-card"
+          <div
+            className="col-span-1 md:col-span-2 lg:col-span-3 rounded-2xl p-6 md:p-8 border-2 relative overflow-hidden disclaimer-card animate-fade-up"
+            style={{ animationDelay: '0.1s' }}
           >
             {/* Warning Card - Light Mode */}
             <div className="dark:hidden relative">
@@ -111,14 +101,12 @@ export default function AboutPage() {
                 <ShieldAlert className="w-full h-full" />
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Card 2: Dev Note (The 'Murmur') */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="col-span-1 md:col-span-2 glass rounded-2xl p-6 hover:scale-[1.02] transition-transform duration-300"
+          <div
+            className="col-span-1 md:col-span-2 glass rounded-2xl p-6 hover:scale-[1.02] transition-transform duration-300 animate-fade-up"
+            style={{ animationDelay: '0.2s' }}
           >
             <h3 className="font-serif text-xl font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--accent-primary)' }}>
               <MessageCircle className="w-5 h-5" />
@@ -144,48 +132,43 @@ export default function AboutPage() {
               <p className="text-xs mb-3" style={{ color: 'var(--text-secondary)' }}>Built with</p>
               <div className="flex flex-wrap gap-3">
                 {/* Astro */}
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-300"
+                <div
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:scale-105 transition-transform duration-300"
                   style={{ backgroundColor: 'var(--bg-secondary)' }}
                 >
                   <div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ff5d01, #ff8c00)' }}>
                     <Zap className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>Astro</span>
-                </motion.div>
+                </div>
                 {/* React */}
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-300"
+                <div
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:scale-105 transition-transform duration-300"
                   style={{ backgroundColor: 'var(--bg-secondary)' }}
                 >
                   <div className="w-6 h-6 rounded flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #61dafb, #21a1f1)' }}>
                     <Layers className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>React</span>
-                </motion.div>
+                </div>
                 {/* Bun */}
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg transition-colors duration-300"
+                <div
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:scale-105 transition-transform duration-300"
                   style={{ backgroundColor: 'var(--bg-secondary)' }}
                 >
                   <div className="w-6 h-6 rounded flex items-center justify-center bun-gradient">
                     <Cpu className="w-4 h-4 bun-icon" />
                   </div>
                   <span className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>Bun</span>
-                </motion.div>
+                </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Card 3: Contact Method */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="col-span-1 glass rounded-2xl p-6 hover:scale-[1.02] transition-transform duration-300"
+          <div
+            className="col-span-1 glass rounded-2xl p-6 hover:scale-[1.02] transition-transform duration-300 animate-fade-up"
+            style={{ animationDelay: '0.3s' }}
           >
             <h3 className="font-serif text-xl font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--accent-primary)' }}>
               <Mail className="w-5 h-5" />
@@ -214,29 +197,22 @@ export default function AboutPage() {
                 GitHub
               </a>
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </div>
 
       {/* Decorative Bottom Heart */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-0 pointer-events-none"
+      <div
+        className="fixed bottom-24 md:bottom-8 left-1/2 z-0 pointer-events-none animate-fade-scale-center"
+        style={{ animationDelay: '0.6s' }}
       >
-        <motion.div
-          animate={{
-            y: [0, -10, 0],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="w-16 h-16"
+        <div
+          className="w-16 h-16 animate-blur-float"
           style={{ background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', filter: 'blur(40px)' }}
         >
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   );
 }

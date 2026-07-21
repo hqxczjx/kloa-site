@@ -1,7 +1,9 @@
 ---
+import { Picture } from 'astro:assets';
 import { ArrowRight, Tv, Volume2 } from 'lucide-react';
 import { BilibiliIcon } from '../ui/BrandIcons';
 import AnniversaryCards from '../react/AnniversaryCards';
+import characterImg from '../../images/character-1.png';
 ---
 
 <section class="relative h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -99,10 +101,13 @@ import AnniversaryCards from '../react/AnniversaryCards';
 
       <!-- Character Image Container -->
       <div class="-mt-6 md:-mt-5 w-72 h-72 md:w-100 md:h-100 rounded-full glass flex items-center justify-center relative overflow-hidden transition-transform duration-300 hover:scale-110">
-        <!-- Character Image -->
-        <img
-          src="/images/character-1.png"
+        <!-- Character Image (Astro <Image>: AVIF/WebP + responsive srcset + intrinsic w/h to avoid CLS) -->
+        <Picture
+          src={characterImg}
           alt="克罗雅角色立绘"
+          formats={['avif', 'webp']}
+          widths={[256, 384, 512]}
+          sizes="(min-width: 768px) 400px, 288px"
           class="w-full h-full object-contain"
         />
 
@@ -186,5 +191,5 @@ import AnniversaryCards from '../react/AnniversaryCards';
   </div>
 
   <!-- Anniversary Cards -->
-  <AnniversaryCards client:load />
+  <AnniversaryCards client:visible />
 </section>
