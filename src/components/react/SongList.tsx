@@ -7,7 +7,14 @@ import VirtualList from './VirtualList';
 interface Song {
   title: string;
   artist: string;
-  tags: string[];
+  languages: string[];
+  genres: string[];
+  gifts: string[];
+}
+
+// 合并 languages / genres / gifts 三源标签，用于筛选与展示
+function getTags(song: Song): string[] {
+  return [...song.languages, ...song.genres, ...song.gifts];
 }
 
 interface SongListProps {
@@ -24,7 +31,7 @@ export default function SongList({ songs }: SongListProps) {
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
     songs.forEach(song => {
-      song.tags.forEach(tag => tagSet.add(tag));
+      getTags(song).forEach(tag => tagSet.add(tag));
     });
 
     const tags = Array.from(tagSet);
@@ -49,7 +56,7 @@ export default function SongList({ songs }: SongListProps) {
   const filteredSongs = useMemo(() => {
     return songs.filter(song => {
       // Tag filter
-      if (selectedTag && !song.tags.includes(selectedTag)) {
+      if (selectedTag && !getTags(song).includes(selectedTag)) {
         return false;
       }
 
@@ -235,7 +242,7 @@ export default function SongList({ songs }: SongListProps) {
             <div className="flex items-center gap-3 shrink-0">
               {/* Tags (compact display) */}
               <div className="hidden sm:flex gap-1">
-                {song.tags.map(tag => (
+                {getTags(song).map(tag => (
                   <span
                     key={tag}
                     className="px-2 py-1 rounded-md text-xs font-medium"

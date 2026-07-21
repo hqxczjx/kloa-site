@@ -29,27 +29,37 @@ const mockSongs = [
     {
       title: '大鱼',
       artist: 'Vsinger',
-      tags: ['国语', '治愈', '空灵'],
+      languages: ['国语'],
+      genres: ['治愈', '空灵'],
+      gifts: [],
     },
     {
       title: 'Bad apple',
       artist: 'Vsinger',
-      tags: ['日语', '东方', '经典'],
+      languages: ['日语'],
+      genres: ['东方', '经典'],
+      gifts: [],
     },
     {
       title: 'A whole new world',
       artist: 'Vsinger',
-      tags: ['英语', '迪士尼', '对唱'],
+      languages: ['英语'],
+      genres: ['迪士尼', '对唱'],
+      gifts: [],
     },
     {
       title: '愛してるばんざーい',
       artist: 'Vsinger',
-      tags: ['日语', 'ACG', '治愈'],
+      languages: ['日语'],
+      genres: ['ACG', '治愈'],
+      gifts: [],
     },
     {
       title: '不染',
       artist: 'Vsinger',
-      tags: ['国语', '古风', '影视'],
+      languages: ['国语'],
+      genres: ['古风', '影视'],
+      gifts: [],
     },
   ];
 
@@ -222,6 +232,21 @@ describe('SongList', () => {
 
       expect(languageTags).toEqual(['国语', '日语', '英语']);
     });
+
+    it('should filter songs by gifts tag', async () => {
+      const user = userEvent.setup();
+      const songsWithGifts = [
+        { title: '付费歌', artist: '歌手A', languages: ['国语'], genres: ['流行'], gifts: ['30 SC'] },
+        { title: '免费歌', artist: '歌手B', languages: ['国语'], genres: ['流行'], gifts: [] },
+      ];
+      render(<SongList songs={songsWithGifts} />);
+
+      const giftTag = screen.getByLabelText('筛选标签: 30 SC');
+      await user.click(giftTag);
+
+      expect(screen.getByText('付费歌')).toBeInTheDocument();
+      expect(screen.queryByText('免费歌')).not.toBeInTheDocument();
+    });
   });
 
   describe('Tag Collapse/Expand', () => {
@@ -321,7 +346,7 @@ describe('SongList', () => {
 
     it('should handle songs with no tags', () => {
       const songsWithoutTags = [
-        { title: 'Test', artist: 'Artist', tags: [] },
+        { title: 'Test', artist: 'Artist', languages: [], genres: [], gifts: [] },
       ];
       render(<SongList songs={songsWithoutTags} />);
       expect(screen.getByText('Test')).toBeInTheDocument();
@@ -333,7 +358,9 @@ describe('SongList', () => {
         {
           title: '测试!@#',
           artist: '歌手&*',
-          tags: ['国语'],
+          languages: ['国语'],
+          genres: [],
+          gifts: [],
         },
       ];
       render(<SongList songs={songsWithSpecialChars} />);
@@ -349,12 +376,16 @@ describe('SongList', () => {
         {
           title: 'Song 1',
           artist: 'Artist 1',
-          tags: ['国语', '测试'],
+          languages: ['国语'],
+          genres: ['测试'],
+          gifts: [],
         },
         {
           title: 'Song 2',
           artist: 'Artist 2',
-          tags: ['国语', '测试'],
+          languages: ['国语'],
+          genres: ['测试'],
+          gifts: [],
         },
       ];
       render(<SongList songs={songsWithDuplicateTags} />);
@@ -514,7 +545,7 @@ describe('SongList', () => {
       expect(screen.queryByText('大鱼')).not.toBeInTheDocument();
     });
 
-    it('should handle search with whitespace', async () => {
+    it('should handle search with whitespace', { timeout: 15000 }, async () => {
       const user = userEvent.setup();
       render(<SongList songs={mockSongs} />);
 

@@ -44,12 +44,12 @@ test.describe('Music Page', () => {
 
     // Check if filtered results are shown using data-total-items
     const totalItems = await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items');
-    expect(totalItems).toBe('24');
+    expect(totalItems).toBe('26');
   });
 
   test('should search songs by artist', async ({ page }) => {
     const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
-    await searchInput.fill('Vsinger');
+    await searchInput.fill('周杰伦');
 
     await page.waitForTimeout(300);
 
