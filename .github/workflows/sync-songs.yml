@@ -1,0 +1,46 @@
+name: Sync Songs
+
+# 每日自动从 https://kloa.bilivup.cn/ 同步远程歌单到 src/data/songs.json。
+# push 到 main 后，Cloudflare Pages 会自动重新构建部署（现有链路，无需改动）。
+on:
+  schedule:
+    # UTC 20:00 = 北京 04:00
+    - cron: '0 20 * * *'
+  workflow_dispatch: # 允许在 GitHub Actions 页面手动触发
+
+permissions:
+  contents: write # 允许 GITHUB_TOKEN 提交
+
+concurrency:
+  group: sync-songs
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Fetch & update songs.json
+        run: node scripts/update-songs.mjs
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- src/data/songs.json; then
+            echo "songs.json 无变化，跳过提交"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/data/songs.json
+            git commit -m "chore(songs): 自动同步远程歌单 $(date -u +%Y-%m-%d)"
+            git push
+            echo "已提交并推送，CF Pages 将自动重新部署"
+          fi
