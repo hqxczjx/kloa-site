@@ -545,7 +545,7 @@ describe('SongList', () => {
       expect(screen.queryByText('大鱼')).not.toBeInTheDocument();
     });
 
-    it('should handle search with whitespace', { timeout: 15000 }, async () => {
+    it('should handle search with whitespace', async () => {
       const user = userEvent.setup();
       render(<SongList songs={mockSongs} />);
 
