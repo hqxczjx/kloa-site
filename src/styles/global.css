@@ -72,6 +72,10 @@
     --glass-bg: oklch(1.00 0.00 0 / 0.95);
     --glass-border: oklch(0.95 0.01 15 / 0.8);
     --glass-blur: 12px;
+    /* SC 礼物曲行底（极淡金水洗，与主题协调） */
+    --sc-tint: oklch(0.955 0.035 85);
+    /* 歌单表格列模板（表头与行共用，保证列对齐） */
+    --song-grid-cols: 3.5rem 1.4fr 1.3fr 4rem 4.5rem;
   }
 
   /* Demon Mode (Dark) */
@@ -86,6 +90,7 @@
     --glass-bg: oklch(0.15 0.02 270 / 0.7);
     --glass-border: oklch(0.25 0.03 270 / 0.4);
     --glass-blur: 16px;
+    --sc-tint: oklch(0.24 0.05 76 / 0.5);
   }
 
   html {
@@ -225,6 +230,72 @@
   *:where(.animate-levitation, .animate-float-1, .animate-float-2, .animate-float-3, .animate-float-4, .animate-float-5, .animate-float-6, .animate-halo-glow, .animate-horn-glow, .animate-light-ray, .animate-neon-glow, .animate-pulse-slow, .animate-glow-pulse, .animate-title-glow) {
     transition: none;
   }
+
+  /* === 歌单列表重设计（玻璃乐谱） === */
+  .sl-bar { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; padding:.6rem .75rem;
+            background:var(--glass-bg); border:1px solid var(--glass-border);
+            backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur));
+            border-radius:.75rem; }
+  .sl-search { flex:1; min-width:8rem; background:transparent; border:none; outline:none;
+               color:var(--text-primary); font-size:.95rem; }
+  .sl-chip { font-size:.75rem; font-weight:600; padding:.25rem .6rem; border-radius:9999px;
+             white-space:nowrap; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;
+             border:1px solid transparent; background:color-mix(in oklab, var(--text-primary) 8%, transparent);
+             color:var(--text-secondary); }
+  .sl-chip:hover { transform:translateY(-1px); }
+  .sl-chip.is-pink { background:color-mix(in oklab, var(--color-pink-500) 18%, transparent); color:var(--color-pink-500); }
+  .sl-chip.is-blue { background:color-mix(in oklab, var(--color-blue-500) 18%, transparent); color:var(--color-blue-500); }
+  .sl-chip.is-active { box-shadow:0 0 0 2px var(--accent-primary); }
+  .sl-chip.is-pink.is-active { box-shadow:0 0 0 2px var(--color-pink-500); }
+  .sl-chip.is-blue.is-active { box-shadow:0 0 0 2px var(--color-blue-500); }
+  .sl-chip:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+  .sl-more { font-size:.75rem; padding:.25rem .6rem; border-radius:9999px; cursor:pointer;
+             border:1px dashed var(--glass-border); color:var(--text-secondary); background:transparent; }
+  .sl-toggle { font-size:.75rem; font-weight:700; padding:.25rem .65rem; border-radius:9999px; cursor:pointer;
+               border:1px solid transparent; background:color-mix(in oklab, var(--color-pink-500) 14%, transparent);
+               color:var(--color-pink-500); }
+  .sl-toggle.is-active { box-shadow:0 0 0 2px var(--color-pink-500); }
+
+  .song-table { background:var(--glass-bg); border:1px solid var(--glass-border);
+                backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur));
+                border-radius:.75rem; overflow:hidden; }
+  .song-thead { display:grid; grid-template-columns:var(--song-grid-cols); gap:.5rem;
+                padding:.5rem .75rem; color:var(--text-secondary); font-size:.7rem;
+                text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--glass-border); }
+  .sort-col { display:flex; align-items:center; gap:.2rem; background:transparent; border:none; cursor:pointer;
+              color:inherit; font:inherit; text-transform:inherit; letter-spacing:inherit; padding:0; }
+  .sort-col:disabled { cursor:default; }
+  .sort-col.is-active { color:var(--accent-primary); }
+  .sort-arrow { font-size:.65rem; }
+
+  .song-row { width:100%; }
+  .song-row-grid { display:grid; grid-template-columns:var(--song-grid-cols); gap:.5rem;
+                   align-items:center; padding:0 .75rem; height:100%; cursor:pointer;
+                   transition:background-color .15s ease, box-shadow .15s ease; }
+  .song-row:hover { background:color-mix(in oklab, var(--accent-primary) 12%, transparent);
+                    box-shadow:inset 0 0 0 1px var(--accent-primary); }
+  .song-row.is-sc { background:var(--sc-tint); }
+  /* SC 行 hover：在金底上叠加主题色高光 */
+  .song-row.is-sc:hover { background:color-mix(in oklab, var(--sc-tint) 70%, var(--accent-primary) 12%); }
+  .song-row.is-copied { box-shadow:inset 0 0 0 2px var(--accent-primary); }
+  .song-row .col-title { font-weight:700; color:var(--text-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .song-row .col-artist { font-size:.8rem; color:var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .song-row .genre-tag { font-size:.65rem; padding:.05rem .35rem; border-radius:.3rem;
+                         background:color-mix(in oklab, var(--text-primary) 8%, transparent); color:var(--text-secondary); }
+  .song-row mark { background:color-mix(in oklab, var(--accent-primary) 35%, transparent);
+                   color:inherit; border-radius:.2rem; padding:0 .1rem; }
+
+  .song-card { display:flex; flex-direction:column; gap:.1rem; padding:.45rem .75rem; height:100%; cursor:pointer; }
+  .song-card .card-top { display:flex; align-items:center; gap:.4rem; }
+  .song-card .card-title { font-weight:700; color:var(--text-primary); }
+  .song-card .card-artist { font-size:.8rem; color:var(--text-secondary); }
+  .song-card .card-meta { display:flex; gap:.4rem; align-items:center; flex-wrap:wrap; margin-top:.1rem; }
+
+  .sc-badge { display:inline-flex; align-items:center; gap:.2rem; font-size:.7rem; font-weight:800;
+              padding:.15rem .45rem; border-radius:9999px; white-space:nowrap;
+              background:var(--accent-primary); color:#fff;
+              box-shadow:0 2px 8px color-mix(in oklab, var(--accent-primary) 45%, transparent); }
+  .sc-badge__gem { width:.8rem; height:.8rem; }
 }
 
 /* ========================================
