@@ -10,8 +10,14 @@ export function getTags(song: Song): string[] {
 
 const PINYIN_OPTS = { toneType: 'none', type: 'array' } as const;
 
+const pinyinCache = new Map<string, string>();
+
 export function pinyinKey(text: string): string {
-  return pinyin(text, PINYIN_OPTS).join('').toLowerCase();
+  const cached = pinyinCache.get(text);
+  if (cached !== undefined) return cached;
+  const result = pinyin(text, PINYIN_OPTS).join('').toLowerCase();
+  pinyinCache.set(text, result);
+  return result;
 }
 
 /** SC 金额：取 gifts 中数字最大值；无数字则回退首个原始字符串；无礼物返回 null */
@@ -61,7 +67,7 @@ function sortKeyValue(song: Song, key: SortKey): string {
 }
 
 export function sortSongs(songs: Song[], st: SortState): Song[] {
-  if (st.key === 'default') return songs;
+  if (st.key === 'default') return [...songs];
   const sorted = [...songs].sort((a, b) =>
     sortKeyValue(a, st.key).localeCompare(sortKeyValue(b, st.key), 'zh-Hans-CN'),
   );

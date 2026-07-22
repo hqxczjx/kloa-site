@@ -89,6 +89,10 @@ describe('songlist utils', () => {
       (pinyin as any).mockImplementation(() => 'dayu'.split(''));
       expect(matchesFilters(s({ title: '大鱼' }), { query: 'dayu', languages: [], genres: [], scOnly: false })).toBe(true);
     });
+    it('纯空白 query 视为无搜索', () => {
+      expect(matchesFilters(s({ title: '大鱼' }), { query: '   ', languages: [], genres: [], scOnly: false })).toBe(true);
+      expect(matchesFilters(s({ title: '其它' }), { query: '   ', languages: [], genres: [], scOnly: false })).toBe(true);
+    });
     it('维度间 AND（语言 AND 搜索）', () => {
       const f = { query: '大', languages: ['国语'], genres: [], scOnly: false };
       expect(matchesFilters(s({ title: '大鱼', languages: ['国语'] }), f)).toBe(true);
@@ -150,6 +154,16 @@ describe('songlist utils', () => {
       expect(f.topGenres[0]).toBe('流行');
       expect(f.topGenres).toHaveLength(3);
       expect(f.moreGenres).toEqual([]);
+    });
+    it('流派 >8 时切分为热门8 与其余', () => {
+      const genres = ['g1','g2','g3','g4','g5','g6','g7','g8','g9','g10'];
+      const songs2 = genres.map((g) => s({ languages: ['国语'], genres: [g] }));
+      const f = deriveFacets(songs2);
+      expect(f.topGenres).toHaveLength(8);
+      expect(f.moreGenres).toHaveLength(2);
+      // 按字典序：g1 < g10 < g2 < g3 < g4 < g5 < g6 < g7 < g8 < g9
+      expect(f.topGenres).toEqual(['g1','g10','g2','g3','g4','g5','g6','g7']);
+      expect(f.moreGenres).toEqual(['g8','g9']);
     });
   });
 });
