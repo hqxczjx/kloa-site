@@ -62,4 +62,24 @@ describe('SongRow', () => {
     expect(document.querySelector('.song-card')).toBeInTheDocument();
     expect(document.querySelector('.song-row-grid')).not.toBeInTheDocument();
   });
+
+  it('键盘 Enter 触发 onCopy', async () => {
+    const user = userEvent.setup();
+    const onCopy = vi.fn();
+    const { container } = render(<SongRow song={song} query="" variant="row" copied={false} onCopy={onCopy} />);
+    const row = container.querySelector('[data-testid="song-row"]') as HTMLElement;
+    row.focus();
+    await user.keyboard('{Enter}');
+    expect(onCopy).toHaveBeenCalledWith(song);
+  });
+
+  it('键盘 Space 触发 onCopy', async () => {
+    const user = userEvent.setup();
+    const onCopy = vi.fn();
+    const { container } = render(<SongRow song={song} query="" variant="row" copied={false} onCopy={onCopy} />);
+    const row = container.querySelector('[data-testid="song-row"]') as HTMLElement;
+    row.focus();
+    await user.keyboard(' ');
+    expect(onCopy).toHaveBeenCalledWith(song);
+  });
 });

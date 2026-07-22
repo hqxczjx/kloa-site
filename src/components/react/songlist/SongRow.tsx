@@ -34,12 +34,20 @@ export default function SongRow({ song, query, variant, copied, onCopy }: SongRo
 
   const handle = () => onCopy(song);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handle();
+    }
+  };
+
   if (variant === 'card') {
     return (
       <div
         className={classNames}
         data-testid="song-row"
         onClick={handle}
+        onKeyDown={handleKeyDown}
         role="button"
         tabIndex={0}
         aria-label={`点歌 ${song.title}`}
@@ -65,11 +73,12 @@ export default function SongRow({ song, query, variant, copied, onCopy }: SongRo
       className={classNames}
       data-testid="song-row"
       onClick={handle}
+      onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
       aria-label={`点歌 ${song.title}`}
     >
-      <span className={langClass}>{lang}</span>
+      {lang && <span className={langClass}>{lang}</span>}
       <span className="col-title"><Highlight text={song.title} query={query} /></span>
       <span className="col-artist"><Highlight text={song.artist} query={query} /></span>
       <span>
