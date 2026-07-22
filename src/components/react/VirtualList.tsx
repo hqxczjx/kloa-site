@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useMemo } from 'react';
+import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 
 interface VirtualListProps<T> {
   items: T[];
@@ -6,6 +6,8 @@ interface VirtualListProps<T> {
   containerHeight: number;
   renderItem: (item: T, index: number) => React.ReactNode;
   overscan?: number;
+  scrollToIndex?: number | null;
+  onScrollToHandled?: () => void;
 }
 
 export default function VirtualList<T>({
@@ -14,6 +16,8 @@ export default function VirtualList<T>({
   containerHeight,
   renderItem,
   overscan = 3,
+  scrollToIndex,
+  onScrollToHandled,
 }: VirtualListProps<T>) {
   const [scrollTop, setScrollTop] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,6 +37,15 @@ export default function VirtualList<T>({
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     setScrollTop(e.currentTarget.scrollTop);
   }, []);
+
+  // 受控滚动：外部传入 scrollToIndex 时定位并回调
+  useEffect(() => {
+    if (scrollToIndex == null || !containerRef.current) return;
+    const target = Math.max(0, Math.min(scrollToIndex, items.length - 1)) * itemHeight;
+    containerRef.current.scrollTop = target;
+    setScrollTop(target);
+    onScrollToHandled?.();
+  }, [scrollToIndex, itemHeight, items.length, onScrollToHandled]);
 
   // 获取可见的项目
   const visibleItems = items.slice(visibleRange.startIdx, visibleRange.endIdx + 1);

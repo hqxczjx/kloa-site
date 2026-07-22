@@ -569,4 +569,46 @@ describe('VirtualList', () => {
       });
     });
   });
+
+  describe('VirtualList scrollToIndex', () => {
+    it('设置 scrollToIndex 时滚动容器到对应位置并回调', async () => {
+      const items = Array.from({ length: 50 }, (_, i) => i);
+      const onHandled = vi.fn();
+      const { rerender } = render(
+        <VirtualList
+          items={items}
+          itemHeight={50}
+          containerHeight={200}
+          scrollToIndex={null}
+          onScrollToHandled={onHandled}
+          renderItem={(n) => <div>{n}</div>}
+        />
+      );
+      const list = screen.getByTestId('virtual-list');
+      expect(list.scrollTop).toBe(0);
+
+      rerender(
+        <VirtualList
+          items={items}
+          itemHeight={50}
+          containerHeight={200}
+          scrollToIndex={10}
+          onScrollToHandled={onHandled}
+          renderItem={(n) => <div>{n}</div>}
+        />
+      );
+      await waitFor(() => {
+        expect(list.scrollTop).toBe(500); // 10 * 50
+      });
+      expect(onHandled).toHaveBeenCalled();
+    });
+
+    it('scrollToIndex 为 null 时不滚动', () => {
+      render(
+        <VirtualList items={[0, 1, 2]} itemHeight={50} containerHeight={100} scrollToIndex={null}
+          renderItem={(n) => <div>{n}</div>} />
+      );
+      expect(screen.getByTestId('virtual-list').scrollTop).toBe(0);
+    });
+  });
 });
