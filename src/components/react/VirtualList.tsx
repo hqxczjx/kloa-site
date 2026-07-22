@@ -40,7 +40,7 @@ export default function VirtualList<T>({
 
   // 受控滚动：外部传入 scrollToIndex 时定位并回调
   useEffect(() => {
-    if (scrollToIndex == null || !containerRef.current) return;
+    if (scrollToIndex == null || items.length === 0 || !containerRef.current) return;
     const target = Math.max(0, Math.min(scrollToIndex, items.length - 1)) * itemHeight;
     containerRef.current.scrollTop = target;
     setScrollTop(target);

@@ -610,5 +610,39 @@ describe('VirtualList', () => {
       );
       expect(screen.getByTestId('virtual-list').scrollTop).toBe(0);
     });
+
+    it('空 items 时不滚动也不报错', () => {
+      const onHandled = vi.fn();
+      render(
+        <VirtualList items={[]} itemHeight={50} containerHeight={100}
+          scrollToIndex={0} onScrollToHandled={onHandled}
+          renderItem={(n: number) => <div>{n}</div>} />
+      );
+      expect(screen.getByTestId('virtual-list').scrollTop).toBe(0);
+    });
+
+    it('scrollToIndex 越界时 clamp 到有效范围', async () => {
+      const items = [0, 1, 2, 3, 4];
+      const onHandled = vi.fn();
+      const { rerender } = render(
+        <VirtualList items={items} itemHeight={50} containerHeight={100}
+          scrollToIndex={100} onScrollToHandled={onHandled}
+          renderItem={(n) => <div>{n}</div>} />
+      );
+      const list = screen.getByTestId('virtual-list');
+      await waitFor(() => {
+        // 100 越界 → clamp 到 index 4 → 4*50=200
+        expect(list.scrollTop).toBe(200);
+      });
+      // 负数 → clamp 到 0
+      rerender(
+        <VirtualList items={items} itemHeight={50} containerHeight={100}
+          scrollToIndex={-5} onScrollToHandled={onHandled}
+          renderItem={(n) => <div>{n}</div>} />
+      );
+      await waitFor(() => {
+        expect(list.scrollTop).toBe(0);
+      });
+    });
   });
 });
