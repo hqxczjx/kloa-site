@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import VirtualList from '../VirtualList';
 import type { Song, SortState, SortKey } from './types';
 import { songKey } from './utils';
@@ -22,23 +23,41 @@ const COLUMNS: { key: SortKey; label: string; sortable: boolean }[] = [
   { key: 'default', label: 'SC', sortable: false },
 ];
 
+function useIsMobile(): boolean {
+  const [mobile, setMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 639px)').matches,
+  );
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 639px)');
+    const handler = () => setMobile(mq.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return mobile;
+}
+
 function SortHeader({ sort, onSortChange }: { sort: SortState; onSortChange: (k: SortKey) => void }) {
   return (
-    <div className="song-thead" role="row">
+    <div className="song-thead">
       {COLUMNS.map((c) => {
         const active = sort.key === c.key;
+        if (!c.sortable) {
+          return <span key={c.key} className="sort-col">{c.label}</span>;
+        }
+        const label = active
+          ? `${c.label}，当前${sort.dir === 'asc' ? '升序' : '降序'}`
+          : `${c.label}，点击排序`;
         return (
           <button
             key={c.key}
             type="button"
-            role="columnheader"
             className={`sort-col ${active ? 'is-active' : ''}`}
-            disabled={!c.sortable}
-            aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none'}
-            onClick={() => c.sortable && onSortChange(c.key)}
+            aria-label={label}
+            onClick={() => onSortChange(c.key)}
           >
             {c.label}
-            {active && <span className="sort-arrow">{sort.dir === 'asc' ? '▲' : '▼'}</span>}
+            {active && <span className="sort-arrow" aria-hidden="true">{sort.dir === 'asc' ? '▲' : '▼'}</span>}
           </button>
         );
       })}
@@ -49,11 +68,9 @@ function SortHeader({ sort, onSortChange }: { sort: SortState; onSortChange: (k:
 export default function SongTable({
   songs, query, sort, onSortChange, onCopy, copiedId, scrollToIndex, onScrollToHandled,
 }: SongTableProps) {
-  // 断点切换行/卡片；jsdom 默认非移动端 → row
-  const isMobile = typeof window !== 'undefined'
-    && window.matchMedia('(max-width: 639px)').matches;
+  const isMobile = useIsMobile();
   const variant = isMobile ? 'card' : 'row';
-  const itemHeight = isMobile ? 84 : 52;
+  const itemHeight = isMobile ? 108 : 52;
 
   if (songs.length === 0) {
     return (
