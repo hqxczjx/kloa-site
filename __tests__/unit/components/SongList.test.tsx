@@ -82,6 +82,26 @@ describe('SongList (重设计)', () => {
     expect(rows[rows.length - 1]).toHaveTextContent('Bad apple');
   });
 
+  it('再次点击同一列头翻转为降序', async () => {
+    const user = userEvent.setup();
+    render(<SongList songs={songs} />);
+    const head = screen.getByRole('button', { name: /歌名/ });
+    await user.click(head); // 升序：Bad apple 在末尾
+    await user.click(head); // 降序：Bad apple 移到首位
+    const rows = screen.getAllByTestId('song-row');
+    expect(rows[0]).toHaveTextContent('Bad apple');
+  });
+
+  it('再次点击已选语言 chip 取消选择', async () => {
+    const user = userEvent.setup();
+    render(<SongList songs={songs} />);
+    const chip = screen.getByLabelText('筛选语言: 日语');
+    await user.click(chip);
+    expect(screen.queryByText('大鱼')).not.toBeInTheDocument();
+    await user.click(chip); // 取消
+    expect(screen.getByText('大鱼')).toBeInTheDocument();
+  });
+
   it('点击行触发复制（toast 成功反馈）', async () => {
     const user = userEvent.setup();
     render(<SongList songs={songs} />);
