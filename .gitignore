@@ -40,6 +40,7 @@ test-results/
 # Astro dev runtime files (generated types are tracked)
 .astro/dev.json
 .astro/settings.json
+.astro/dev.log
 
 # Superpowers brainstorm mockups (visual companion)
 .superpowers/
