@@ -11,8 +11,8 @@ export interface SongTableProps {
   onSortChange: (key: SortKey) => void;
   onCopy: (song: Song) => void;
   copiedId: string | null;
-  scrollToIndex: number | null;
-  onScrollToHandled: () => void;
+  scrollToIndex?: number | null;
+  onScrollToHandled?: () => void;
 }
 
 const COLUMNS: { key: SortKey; label: string; sortable: boolean }[] = [

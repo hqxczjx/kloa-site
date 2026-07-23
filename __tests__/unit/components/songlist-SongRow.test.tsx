@@ -39,10 +39,11 @@ describe('SongRow', () => {
     expect(container.querySelector('.song-row')).toHaveClass('is-sc');
   });
 
-  it('多流派只显示首个 + 计数', () => {
+  it('多流派显示全部流派文字（不折叠为 +N）', () => {
     renderRow();
     expect(screen.getByText('流行')).toBeInTheDocument();
-    expect(screen.getByText('+1')).toBeInTheDocument();
+    expect(screen.getByText('抒情')).toBeInTheDocument();
+    expect(screen.queryByText('+1')).not.toBeInTheDocument();
   });
 
   it('copied 时行有 is-copied 类', () => {

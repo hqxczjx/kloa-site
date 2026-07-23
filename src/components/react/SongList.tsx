@@ -15,7 +15,6 @@ export default function SongList({ songs }: SongListProps) {
   const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
   const [sort, setSort] = useState<SortState>({ key: 'default', dir: 'asc' });
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [scrollToIndex, setScrollToIndex] = useState<number | null>(null);
 
   const facets = useMemo(() => deriveFacets(songs), [songs]);
   const visible = useMemo(() => sortSongs(filterSongs(songs, filter), sort), [songs, filter, sort]);
@@ -40,7 +39,6 @@ export default function SongList({ songs }: SongListProps) {
   const handleRandom = useCallback(() => {
     if (visible.length === 0) return;
     const idx = Math.floor(Math.random() * visible.length);
-    setScrollToIndex(idx);
     void handleCopy(visible[idx]!);
   }, [visible, handleCopy]);
 
@@ -49,9 +47,6 @@ export default function SongList({ songs }: SongListProps) {
       ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' }
       : { key, dir: 'asc' }));
   }, []);
-
-  // 稳定引用，避免 VirtualList 的 scrollToIndex effect 反复触发
-  const handleScrollToHandled = useCallback(() => setScrollToIndex(null), []);
 
   const toggle = (key: 'languages' | 'genres') => (value: string) =>
     setFilter((f) => {
@@ -100,8 +95,6 @@ export default function SongList({ songs }: SongListProps) {
         onSortChange={handleSortChange}
         onCopy={handleCopy}
         copiedId={copiedId}
-        scrollToIndex={scrollToIndex}
-        onScrollToHandled={handleScrollToHandled}
       />
     </div>
   );

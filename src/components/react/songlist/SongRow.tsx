@@ -23,7 +23,6 @@ function Highlight({ text, query }: { text: string; query: string }) {
 export default function SongRow({ song, query, variant, copied, onCopy }: SongRowProps) {
   const lang = song.languages[0] ?? '';
   const sc = scAmount(song);
-  const extraGenres = Math.max(0, song.genres.length - 1);
   const classNames = [
     'song-row',
     variant === 'row' ? 'song-row-grid' : 'song-card',
@@ -60,8 +59,9 @@ export default function SongRow({ song, query, variant, copied, onCopy }: SongRo
         <div className="card-artist"><Highlight text={song.artist} query={query} /></div>
         {song.genres.length > 0 && (
           <div className="card-meta">
-            <span className="genre-tag">{song.genres[0]}</span>
-            {extraGenres > 0 && <span className="genre-tag">+{extraGenres}</span>}
+            {song.genres.map((g) => (
+              <span key={g} className="genre-tag">{g}</span>
+            ))}
           </div>
         )}
       </div>
@@ -81,9 +81,10 @@ export default function SongRow({ song, query, variant, copied, onCopy }: SongRo
       {lang && <span className={langClass}>{lang}</span>}
       <span className="col-title"><Highlight text={song.title} query={query} /></span>
       <span className="col-artist"><Highlight text={song.artist} query={query} /></span>
-      <span>
-        {song.genres[0] && <span className="genre-tag">{song.genres[0]}</span>}
-        {extraGenres > 0 && <span className="genre-tag">+{extraGenres}</span>}
+      <span className="col-genres">
+        {song.genres.map((g) => (
+          <span key={g} className="genre-tag">{g}</span>
+        ))}
       </span>
       <span>{sc && <ScBadge amount={sc} />}</span>
     </div>

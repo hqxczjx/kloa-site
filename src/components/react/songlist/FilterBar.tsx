@@ -69,36 +69,31 @@ export default function FilterBar({
         );
       })}
 
-      {moreGenres.length > 0 && (
-        <>
+      {showMore && moreGenres.map((g) => {
+        const active = selectedGenres.includes(g);
+        return (
           <button
+            key={g}
             type="button"
-            className="sl-more"
-            aria-expanded={showMore}
-            onClick={() => setShowMore((v) => !v)}
+            className={`sl-chip ${active ? 'is-active' : ''}`}
+            aria-label={`筛选流派: ${g}`}
+            aria-pressed={active}
+            onClick={() => onToggleGenre(g)}
           >
-            +{moreGenres.length} 更多流派
+            {g}
           </button>
-          {showMore && (
-            <div className="contents">
-              {moreGenres.map((g) => {
-                const active = selectedGenres.includes(g);
-                return (
-                  <button
-                    key={g}
-                    type="button"
-                    className={`sl-chip ${active ? 'is-active' : ''}`}
-                    aria-label={`筛选流派: ${g}`}
-                    aria-pressed={active}
-                    onClick={() => onToggleGenre(g)}
-                  >
-                    {g}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </>
+        );
+      })}
+
+      {moreGenres.length > 0 && (
+        <button
+          type="button"
+          className="sl-more"
+          aria-expanded={showMore}
+          onClick={() => setShowMore((v) => !v)}
+        >
+          {showMore ? '收起流派' : `+${moreGenres.length} 更多流派`}
+        </button>
       )}
 
       <button
