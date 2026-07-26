@@ -78,7 +78,7 @@ export default function SongRow({ song, query, variant, copied, onCopy }: SongRo
       tabIndex={0}
       aria-label={`点歌 ${song.title}`}
     >
-      {lang && <span className={langClass}>{lang}</span>}
+      <span className={lang ? langClass : ''}>{lang}</span>
       <span className="col-title"><Highlight text={song.title} query={query} /></span>
       <span className="col-artist"><Highlight text={song.artist} query={query} /></span>
       <span className="col-genres">

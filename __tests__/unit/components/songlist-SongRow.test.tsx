@@ -46,6 +46,14 @@ describe('SongRow', () => {
     expect(screen.queryByText('+1')).not.toBeInTheDocument();
   });
 
+  it('无语言时语言格仍占位，保持 5 列对齐', () => {
+    const { container } = render(
+      <SongRow song={{ ...song, languages: [] }} query="" variant="row" copied={false} onCopy={vi.fn()} />,
+    );
+    const grid = container.querySelector('.song-row-grid') as HTMLElement;
+    expect(grid.children.length).toBe(5); // 语言(占位)/歌名/歌手/流派/SC
+  });
+
   it('copied 时行有 is-copied 类', () => {
     const { container } = render(
       <SongRow song={song} query="" variant="row" copied={true} onCopy={vi.fn()} />,
