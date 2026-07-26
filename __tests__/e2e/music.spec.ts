@@ -17,24 +17,25 @@ test.describe('Music Page (重设计)', () => {
 
   test('按标题搜索缩小结果', async ({ page }) => {
     const search = page.getByPlaceholder('搜索歌名 / 歌手 / 拼音…');
+    const list = page.locator('[data-testid="virtual-list"]');
     await search.fill('爱');
-    await page.waitForTimeout(800);
-    const total = Number(await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items'));
+    await expect(list).not.toHaveAttribute('data-total-items', '418');
+    const total = Number(await list.getAttribute('data-total-items'));
     expect(total).toBeGreaterThan(0);
     expect(total).toBeLessThan(418);
   });
 
   test('点击语言 chip 过滤', async ({ page }) => {
-    await page.getByLabelText('筛选语言: 日语').click();
-    await page.waitForTimeout(500);
-    const total = Number(await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items'));
+    const list = page.locator('[data-testid="virtual-list"]');
+    await page.getByLabel('筛选语言: 日语').click();
+    await expect(list).not.toHaveAttribute('data-total-items', '418');
+    const total = Number(await list.getAttribute('data-total-items'));
     expect(total).toBeGreaterThan(0);
     expect(total).toBeLessThan(418);
   });
 
   test('仅 SC 开关只留礼物曲并显示徽章', async ({ page }) => {
     await page.getByTestId('sc-toggle').click();
-    await page.waitForTimeout(500);
     await expect(page.locator('.sc-badge').first()).toBeVisible();
     const total = Number(await page.locator('[data-testid="virtual-list"]').getAttribute('data-total-items'));
     expect(total).toBeLessThanOrEqual(20);

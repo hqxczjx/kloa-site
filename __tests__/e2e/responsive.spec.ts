@@ -121,18 +121,18 @@ test.describe('Responsive Design', () => {
     test('should display search bar', async ({ page }) => {
       await page.goto('/music');
 
-      const searchInput = page.getByPlaceholder('搜索歌曲（支持拼音）...');
+      const searchInput = page.getByPlaceholder('搜索歌名 / 歌手 / 拼音…');
       await expect(searchInput).toBeVisible();
     });
 
-    test('should display tag filter', async ({ page }) => {
+    test('should display filter bar', async ({ page }) => {
       await page.goto('/music', { timeout: 15000 });
 
       // Wait for page to be fully loaded
       await page.waitForLoadState('networkidle', { timeout: 15000 });
 
-      await expect(page.getByText('筛选标签')).toBeVisible();
-      await expect(page.getByText('全部')).toBeVisible();
+      await expect(page.getByTestId('filter-bar')).toBeVisible();
+      await expect(page.getByLabel('筛选语言: 国语')).toBeVisible();
     });
 
     test('should display song list', async ({ page }) => {
@@ -141,17 +141,19 @@ test.describe('Responsive Design', () => {
       // Wait for page to be fully loaded
       await page.waitForLoadState('networkidle', { timeout: 15000 });
 
-      const songItems = page.locator('[data-testid="virtual-list"]').locator('.group');
-      const count = await songItems.count();
-      expect(count).toBeGreaterThan(0);
+      const songItems = page.locator('[data-testid="virtual-list"]').locator('[data-testid="song-row"]');
+      await expect(songItems.first()).toBeVisible();
     });
 
     test('should scroll through song list', async ({ page }) => {
-      await page.goto('/music');
+      await page.goto('/music', { timeout: 15000 });
+      await page.waitForLoadState('networkidle', { timeout: 15000 });
 
       const listContainer = page.locator('[data-testid="virtual-list"]');
-      await listContainer.evaluate((el: any) => el.scrollTop = 500);
-      await page.waitForTimeout(500);
+      await expect(listContainer).toBeVisible();
+      await expect(page.locator('[data-testid="song-row"]').first()).toBeVisible();
+      await listContainer.evaluate((el: any) => { el.scrollTop = 500; });
+      await page.waitForTimeout(300);
 
       const scrollTop = await listContainer.evaluate((el: any) => el.scrollTop);
       expect(scrollTop).toBeGreaterThan(0);
