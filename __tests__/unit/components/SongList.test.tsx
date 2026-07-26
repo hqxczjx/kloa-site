@@ -92,6 +92,18 @@ describe('SongList (重设计)', () => {
     expect(rows[0]).toHaveTextContent('Bad apple');
   });
 
+  it('第三次点击同一列头回到默认排序', async () => {
+    const user = userEvent.setup();
+    render(<SongList songs={songs} />);
+    const head = screen.getByRole('button', { name: /歌名/ });
+    await user.click(head); // 升序
+    await user.click(head); // 降序
+    await user.click(head); // 默认 → 回到原始顺序
+    const rows = screen.getAllByTestId('song-row');
+    expect(rows[0]).toHaveTextContent('大鱼'); // 原始顺序首位
+    expect(head).not.toHaveClass('is-active'); // 无激活箭头
+  });
+
   it('再次点击已选语言 chip 取消选择', async () => {
     const user = userEvent.setup();
     render(<SongList songs={songs} />);

@@ -42,10 +42,13 @@ export default function SongList({ songs }: SongListProps) {
     void handleCopy(visible[idx]!);
   }, [visible, handleCopy]);
 
+  // 三态：不同列→升序；同列升序→降序；同列降序→回到默认（原始顺序）
   const handleSortChange = useCallback((key: SortKey) => {
-    setSort((prev) => (prev.key === key
-      ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' }
-      : { key, dir: 'asc' }));
+    setSort((prev) => {
+      if (prev.key !== key) return { key, dir: 'asc' };
+      if (prev.dir === 'asc') return { key, dir: 'desc' };
+      return { key: 'default', dir: 'asc' };
+    });
   }, []);
 
   const toggle = (key: 'languages' | 'genres') => (value: string) =>
