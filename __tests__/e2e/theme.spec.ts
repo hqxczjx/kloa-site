@@ -132,7 +132,10 @@ test.describe('Theme Toggle', () => {
     const pages = ['/', '/music', '/about'];
 
     for (const url of pages) {
+      // 每页重置 localStorage 并 reload，避免上一页 theme 残留干扰本页初始状态
       await page.goto(url);
+      await page.evaluate(() => localStorage.removeItem('theme'));
+      await page.reload();
       const themeToggle = page.locator('button[aria-label*="切换"]').first();
       await expect(themeToggle).toBeVisible();
 

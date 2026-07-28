@@ -126,28 +126,21 @@ test.describe('Responsive Design', () => {
     });
 
     test('should display filter bar', async ({ page }) => {
-      await page.goto('/music', { timeout: 15000 });
-
-      // Wait for page to be fully loaded
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
+      await page.goto('/music', { waitUntil: 'domcontentloaded' });
 
       await expect(page.getByTestId('filter-bar')).toBeVisible();
       await expect(page.getByLabel('筛选语言: 国语')).toBeVisible();
     });
 
     test('should display song list', async ({ page }) => {
-      await page.goto('/music', { timeout: 15000 });
-
-      // Wait for page to be fully loaded
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
+      await page.goto('/music', { waitUntil: 'domcontentloaded' });
 
       const songItems = page.locator('[data-testid="virtual-list"]').locator('[data-testid="song-row"]');
       await expect(songItems.first()).toBeVisible();
     });
 
     test('should scroll through song list', async ({ page }) => {
-      await page.goto('/music', { timeout: 15000 });
-      await page.waitForLoadState('networkidle', { timeout: 15000 });
+      await page.goto('/music', { waitUntil: 'domcontentloaded' });
 
       const listContainer = page.locator('[data-testid="virtual-list"]');
       await expect(listContainer).toBeVisible();
