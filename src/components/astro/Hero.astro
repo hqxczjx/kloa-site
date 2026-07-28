@@ -1,6 +1,6 @@
 ---
 import { Picture } from 'astro:assets';
-import { ArrowRight, Tv, Volume2 } from 'lucide-react';
+import { ArrowDown, Tv, Volume2 } from 'lucide-react';
 import { BilibiliIcon } from '../ui/BrandIcons';
 import AnniversaryCards from '../react/AnniversaryCards';
 import characterImg from '../../images/character-1.png';
@@ -128,7 +128,7 @@ import characterImg from '../../images/character-1.png';
   <!-- CTA Button - Glassmorphism -->
   <div class="relative z-10 mt-12 flex flex-col items-center gap-4">
     <a
-      href="/music"
+      href="#songs"
       class="group relative px-8 py-4 rounded-2xl glass flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
     >
       <!-- Button Glow Effect -->
@@ -138,7 +138,7 @@ import characterImg from '../../images/character-1.png';
       <span class="relative z-10 text-lg font-medium" style="color: var(--accent-primary);">
         进入歌单
       </span>
-      <ArrowRight className="relative z-10 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" style={{ color: 'var(--accent-primary)' }} />
+      <ArrowDown className="relative z-10 w-5 h-5 transition-transform duration-300 group-hover:translate-y-1" style={{ color: 'var(--accent-primary)' }} />
     </a>
 
     <!-- Bilibili Links - Horizontal Row -->

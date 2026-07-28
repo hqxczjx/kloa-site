@@ -136,4 +136,15 @@ test.describe('Home Page', () => {
     // 歌曲行可见（SongList 水合 + VirtualList 渲染可见行）
     await expect(page.locator('[data-testid="song-row"]').first()).toBeVisible();
   });
+
+  test('should scroll to song list via hero CTA (no navigation)', async ({ page }) => {
+    const cta = page.getByRole('link', { name: /进入歌单/ });
+    await expect(cta).toBeVisible();
+
+    await cta.click();
+
+    // 仍停留在首页，URL 含 #songs（锚点跳转，非 /music 导航）
+    await expect(page).toHaveURL(/#songs/);
+    await expect(page).not.toHaveURL(/\/music/);
+  });
 });
