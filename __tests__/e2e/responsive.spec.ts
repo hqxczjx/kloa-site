@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './test';
 
 test.describe('Responsive Design', () => {
   test.describe('Desktop Viewport (1280x720)', () => {
@@ -145,11 +145,15 @@ test.describe('Responsive Design', () => {
       const listContainer = page.locator('[data-testid="virtual-list"]');
       await expect(listContainer).toBeVisible();
       await expect(page.locator('[data-testid="song-row"]').first()).toBeVisible();
-      await listContainer.evaluate((el: any) => { el.scrollTop = 500; });
-      await page.waitForTimeout(300);
+      // 等 VirtualList 测量完容器高度（ResizeObserver 异步），容器才可滚动
+      await expect.poll(
+        async () => await listContainer.evaluate((el: any) => el.clientHeight)
+      ).toBeGreaterThan(0);
 
-      const scrollTop = await listContainer.evaluate((el: any) => el.scrollTop);
-      expect(scrollTop).toBeGreaterThan(0);
+      await listContainer.evaluate((el: any) => { el.scrollTop = 500; });
+      await expect.poll(
+        async () => await listContainer.evaluate((el: any) => el.scrollTop)
+      ).toBeGreaterThan(0);
     });
   });
 

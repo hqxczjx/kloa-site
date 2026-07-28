@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './test';
 
 test.describe('Music Page (重设计)', () => {
   test.beforeEach(async ({ page }) => {
