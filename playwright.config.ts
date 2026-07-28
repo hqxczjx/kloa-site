@@ -15,7 +15,7 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 10000,
-    navigationTimeout: 10000,
+    navigationTimeout: 30000,
     launchOptions: {
       args: [
         '--disable-blink-features=AutomationControlled',
@@ -38,7 +38,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'PUBLIC_ASTRO_DEV_TOOLBAR_DISABLED=true bun run dev',
+    // 用 build + preview（生产静态产物）而非 dev：避免 vite 逐页编译导致的
+    // 加载超时/flaky，e2e 更快更稳；preview 也不触发 astro 的 AI-agent 后台 daemon。
+    command: 'PUBLIC_ASTRO_DEV_TOOLBAR_DISABLED=true bun run build && bun run preview',
     url: 'http://localhost:4321',
     timeout: 120000,
   },
