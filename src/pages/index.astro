@@ -1,8 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/astro/Hero.astro';
+import SongListSection from '../components/astro/SongListSection.astro';
 ---
 
 <BaseLayout title="首页">
   <Hero />
+  <SongListSection showBackLink={false} />
 </BaseLayout>

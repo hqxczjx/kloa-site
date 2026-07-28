@@ -124,4 +124,16 @@ test.describe('Home Page', () => {
     const viewport = await page.getAttribute('meta[name="viewport"]', 'content');
     expect(viewport).toContain('width=device-width');
   });
+
+  test('should display song list section on home (scroll to see)', async ({ page }) => {
+    // 首页应内嵌歌单区
+    const songSection = page.locator('#songs');
+    await expect(songSection).toBeAttached();
+
+    // 滚动到歌单区
+    await songSection.scrollIntoViewIfNeeded();
+
+    // 歌曲行可见（SongList 水合 + VirtualList 渲染可见行）
+    await expect(page.locator('[data-testid="song-row"]').first()).toBeVisible();
+  });
 });
