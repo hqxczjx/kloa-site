@@ -75,7 +75,7 @@ export default function SongList({ songs }: SongListProps) {
         </button>
       </div>
 
-      <div className="sticky top-2 z-20 mb-4">
+      <div className="sticky top-20 z-30 mb-4">
         <FilterBar
           query={filter.query}
           onQueryChange={(v) => setFilter((f) => ({ ...f, query: v }))}
