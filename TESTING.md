@@ -29,8 +29,8 @@
   - @testing-library/user-event v14.6.1
 
 ### 2.2 辅助工具
-- **jsdom v28.0.0**: 浏览器环境模拟
-- **happy-dom v20.5.0**: 轻量级DOM模拟（可选）
+- **happy-dom v20.5.0**: 浏览器环境模拟（vitest 默认环境，比 jsdom 启动快 2-3 倍）
+- **jsdom v28.0.0**: 备用 DOM 模拟（未启用）
 - **@vitest/coverage-v8**: 代码覆盖率报告
 
 ### 2.3 React相关
