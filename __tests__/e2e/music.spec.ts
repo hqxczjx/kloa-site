@@ -3,6 +3,11 @@ import { test, expect } from './test';
 test.describe('Music Page (重设计)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/music');
+    // song-row / chip 都是 SSR HTML，可见 ≠ React 水合。未水合时受控 input 的 onChange
+    // 尚未绑定，fill 设 DOM value 不触发过滤（空状态 flaky 根因）。
+    // networkidle 等 island 脚本加载并完成水合（client:load 在脚本就绪后立即水合）。
+    await page.waitForLoadState('networkidle');
+    await expect(page.locator('[data-testid="song-row"]').first()).toBeVisible();
   });
 
   test('页面加载成功', async ({ page }) => {
@@ -57,8 +62,10 @@ test.describe('Music Page (重设计)', () => {
   });
 
   test('无结果显示空状态', async ({ page }) => {
-    await page.getByPlaceholder('搜索歌名 / 歌手 / 拼音…').fill('zzz不存在的歌xyz123');
-    await page.waitForTimeout(800);
+    const search = page.getByPlaceholder('搜索歌名 / 歌手 / 拼音…');
+    await search.fill('zzz不存在的歌xyz123');
+    // 无匹配时 SongTable 渲染空状态、VirtualList 被卸载——断言空状态本身，而非已消失的 virtual-list
+    await expect(page.getByTestId('empty-state')).toBeVisible();
     await expect(page.getByText('没有找到匹配的歌曲')).toBeVisible();
   });
 

@@ -61,7 +61,6 @@ test.describe('Home Page', () => {
 
     // Toggle to Demon mode
     await themeToggle.click();
-    await page.waitForTimeout(100);
 
     // Check new state
     const newAriaLabel = await themeToggle.getAttribute('aria-label');
@@ -83,27 +82,21 @@ test.describe('Home Page', () => {
     // Toggle to dark mode
     await themeToggle.click();
 
-    // Wait for theme to be saved to localStorage
-    await page.waitForTimeout(1000);
+    // 主题写入 localStorage（自动等待，替代固定 sleep）
+    await expect.poll(
+      async () => await page.evaluate(() => localStorage.getItem('theme'))
+    ).toBe('dark');
 
-    // Verify theme was saved
-    const savedTheme = await page.evaluate(() => localStorage.getItem('theme'));
-    expect(savedTheme).toBe('dark');
-
-    // Reload page
+    // Reload，theme store 水合后异步从 localStorage 恢复
     await page.reload();
 
-    // Wait for page to fully load and React to mount
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
-
-    // Theme should still be dark
-    await expect(page.locator('html')).toHaveClass(/dark/);
-
-    // Get fresh reference to the element
+    // 先等按钮回到 dark 状态（store 异步恢复的稳定信号，替代 networkidle + 固定 sleep）；
+    // html 的 dark 类是 SSR 瞬间值，水合中可能短暂丢失，故以按钮为准
     const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
-    const ariaLabel = await themeToggleAfterReload.getAttribute('aria-label');
-    expect(ariaLabel).toContain('切换到天使模式');
+    await expect(themeToggleAfterReload).toHaveAttribute('aria-label', /切换到天使模式/);
+
+    // store 恢复后 html 带 dark 类
+    await expect(page.locator('html')).toHaveClass(/dark/);
   });
 
   test('should display footer on desktop', async ({ page }) => {

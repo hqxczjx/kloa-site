@@ -150,9 +150,17 @@ test.describe('Responsive Design', () => {
         async () => await listContainer.evaluate((el: any) => el.clientHeight)
       ).toBeGreaterThan(0);
 
-      await listContainer.evaluate((el: any) => { el.scrollTop = 500; });
+      // 等容器完成布局测量（ResizeObserver 异步），确保内容溢出、可滚动
       await expect.poll(
-        async () => await listContainer.evaluate((el: any) => el.scrollTop)
+        async () => await listContainer.evaluate((el) => el.scrollHeight - el.clientHeight)
+      ).toBeGreaterThan(0);
+
+      // 真实滚动（hover + wheel 触发原生 scroll → React onScroll）；
+      // 程序化设 scrollTop 不触发合成事件，且在未定型容器上会被钳为 0
+      await listContainer.hover();
+      await page.mouse.wheel(0, 500);
+      await expect.poll(
+        async () => await listContainer.evaluate((el) => el.scrollTop)
       ).toBeGreaterThan(0);
     });
   });
