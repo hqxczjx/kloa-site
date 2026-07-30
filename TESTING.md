@@ -398,7 +398,7 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: 1,
+  workers: process.env.CI ? 2 : 1,
   reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
   use: {
     baseURL: 'http://localhost:4321',
@@ -434,7 +434,7 @@ export default defineConfig({
 
 要点：
 - **仅 chromium** 一个 project（CI 上安装也只装 chromium）。
-- `workers: 1` + `fullyParallel: false`：串行执行。历史上为规避 flaky 而设，如需提速可评估放开（先验证不引入新的不稳定）。
+- `workers: process.env.CI ? 2 : 1` + `fullyParallel: false`：CI 上 2 个 worker 跨文件并行（同文件内仍串行），本地保持 1 便于调试。历史上全串行是为规避 flaky，现已修好水合时序（见 music `beforeEach` 的 `networkidle`），可安全并行。
 - `webServer` 用 **build + preview**，不是 `bun run dev`。
 
 ## 6. Astro 页面测试
