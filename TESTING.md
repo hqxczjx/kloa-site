@@ -423,9 +423,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    // 用 build + preview（生产静态产物）而非 dev：避免 vite 逐页编译导致
+    // 用 astro build + preview（生产静态产物）而非 dev：避免 vite 逐页编译导致
     // 加载超时/flaky，e2e 更快更稳；preview 也不触发 astro 的 AI-agent 后台 daemon。
-    command: 'PUBLIC_ASTRO_DEV_TOOLBAR_DISABLED=true bun run build && bun run preview',
+    // 直接 astro build 跳过 astro check（类型检查由 test.yml 负责），省 ~5s。
+    command: 'PUBLIC_ASTRO_DEV_TOOLBAR_DISABLED=true bunx astro build && bun run preview',
     url: 'http://localhost:4321',
     timeout: 120000,
   },
@@ -435,7 +436,7 @@ export default defineConfig({
 要点：
 - **仅 chromium** 一个 project（CI 上安装也只装 chromium）。
 - `workers: process.env.CI ? 2 : 1` + `fullyParallel: false`：CI 上 2 个 worker 跨文件并行（同文件内仍串行），本地保持 1 便于调试。历史上全串行是为规避 flaky，现已修好水合时序（见 music `beforeEach` 的 `networkidle`），可安全并行。
-- `webServer` 用 **build + preview**，不是 `bun run dev`。
+- `webServer` 用 **astro build + preview**（跳过 astro check，类型检查由 test.yml 负责），不是 `bun run dev`。
 
 ## 6. Astro 页面测试
 
@@ -604,7 +605,7 @@ CI 配置在 `.github/workflows/`（**以源文件为准**），共 4 个 workfl
 ### 10.1 关键优化（已落地）
 
 - **依赖缓存**：所有 workflow 用 `actions/cache` 缓存 `~/.bun/install/cache`（按 `bun.lock` 哈希；`setup-node`/`setup-bun` 均不内置 bun 依赖缓存），`bun install` 从 ~40s 降到 ~5s。
-- **Playwright 浏览器缓存**：`e2e.yml` 用 `actions/cache` 按 Playwright 版本号缓存 `~/.cache/ms-playwright`；命中时只补系统依赖，不重下浏览器。
+- **Playwright 浏览器缓存**：`e2e.yml` 用 `actions/cache` 按 Playwright 版本号缓存 `~/.cache/ms-playwright`；命中时直接复用（ubuntu runner 已预装浏览器运行所需的全部系统库，故跳过 `install-deps`，省 ~15s apt 字体安装）。
 - **路径过滤**：`test.yml`/`e2e.yml`/`coverage.yml` 配置 `paths-ignore`，纯文档/数据（`**.md`、`docs/`、`src/data/` 等）变更不触发测试；并保留 `workflow_dispatch` 以便手动触发。
 
 ### 10.2 本地复现 CI 的测试流程
