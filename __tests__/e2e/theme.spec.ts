@@ -28,14 +28,13 @@ test.describe('Theme Toggle', () => {
     // Set system preference to dark
     await page.emulateMedia({ colorScheme: 'dark' });
 
-    // Reload and wait for page to fully load
+    // Reload，theme store 水合后异步按系统偏好恢复 dark
     await page.reload();
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
 
+    // 先等按钮回到 dark 状态（store 异步恢复的稳定信号，替代 networkidle + 固定 sleep）；
+    // html 的 dark 类是 SSR 瞬间值，水合中可能短暂丢失，故以按钮为准
     const themeToggle = page.locator('button[aria-label*="切换"]').first();
-    const ariaLabel = await themeToggle.getAttribute('aria-label');
-    expect(ariaLabel).toBe('切换到天使模式');
+    await expect(themeToggle).toHaveAttribute('aria-label', '切换到天使模式');
 
     await expect(page.locator('html')).toHaveClass(/dark/);
   });
@@ -84,21 +83,20 @@ test.describe('Theme Toggle', () => {
     await themeToggle.click();
     await expect(page.locator('html')).toHaveClass(/dark/);
 
-    // Wait for theme to be saved
-    await page.waitForTimeout(1000);
+    // 主题写入 localStorage（自动等待，替代固定 sleep）
+    await expect.poll(
+      async () => await page.evaluate(() => localStorage.getItem('theme'))
+    ).toBe('dark');
 
-    // Reload page and wait for full load
+    // Reload，theme store 水合后异步恢复 dark
     await page.reload();
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+
+    // 先等按钮回到 dark 状态（store 异步恢复的稳定信号，替代 networkidle + 固定 sleep）
+    const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
+    await expect(themeToggleAfterReload).toHaveAttribute('aria-label', '切换到天使模式');
 
     // Theme should still be dark
     await expect(page.locator('html')).toHaveClass(/dark/);
-
-    // Get fresh reference to the element
-    const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
-    const ariaLabel = await themeToggleAfterReload.getAttribute('aria-label');
-    expect(ariaLabel).toBe('切换到天使模式');
   });
 
   test('should save light theme preference', async ({ page }) => {
@@ -175,17 +173,11 @@ test.describe('Theme Toggle', () => {
     const themeToggle = page.locator('button[aria-label*="切换"]').first();
     await themeToggle.focus();
 
-    // Wait for focus to be applied
-    await page.waitForTimeout(200);
-
     await page.keyboard.press('Enter');
-    // Wait for theme to change and React state to update
-    await page.waitForTimeout(1500);
+    // html.dark 自动等待（替代固定 sleep）
     await expect(page.locator('html')).toHaveClass(/dark/);
 
     await page.keyboard.press('Enter');
-    // Wait for theme to change back and React state to update
-    await page.waitForTimeout(1500);
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
 });
