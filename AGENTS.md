@@ -18,8 +18,8 @@ Vsinger FanSite (Angel/Demon Edition) - Chinese Vtuber character fan site with d
 - `bun run preview` - Preview production build
 
 ### Testing
-- `bun test` - Run unit tests (Vitest) in watch mode
-- `bun test:run` - Run all unit tests once
+- `bun test` - Run unit tests once (Vitest; equivalent to `bun test:run`)
+- `bun test:watch` - Run unit tests in watch mode
 - `bun test:ui` - Run unit tests with UI
 - `bun test:coverage` - Run tests with coverage report (90% thresholds)
 - `bun test:e2e` - Run Playwright E2E tests
@@ -34,14 +34,14 @@ Vsinger FanSite (Angel/Demon Edition) - Chinese Vtuber character fan site with d
 
 ### Running Single Tests
 - Unit: `bun test -- SongList.test.tsx` or `bun test -- -t "search"`
-- E2E: `bun test:e2e music.spec.ts` or `bun test:e2e -g "theme toggle"`
+- E2E: `bun run test:e2e:raw music.spec.ts` or `bun run test:e2e:raw -g "theme toggle"` (the `test:e2e` wrapper auto-installs browsers but does NOT forward args)
 
 ## Tech Stack
-- Runtime: Bun v1.3.6
-- Framework: Astro 6.0 Beta (static output)
-- UI: React 19 (Server Components enabled)
+- Runtime: Bun v1.3.14
+- Framework: Astro 7.1 (static output)
+- UI: React 19 (island architecture via `client:` directives)
 - Styling: Tailwind CSS v4.0 (CSS-first @theme)
-- Animation: Framer Motion
+- Animation: CSS animations / View Transitions (Framer Motion removed to save ~116K)
 - Icons: Lucide React
 - Testing: Vitest + Playwright
 

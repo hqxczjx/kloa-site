@@ -9,14 +9,14 @@
 - 使用中文编写测试描述
 
 ### 1.2 测试类型
-- **单元测试**: 组件级别的测试
-- **E2E测试**: 端到端用户流程测试
-- **Astro测试**: Astro组件和页面测试（待完善）
+- **单元测试**: 组件级别的测试（Vitest + Testing Library）
+- **E2E测试**: 端到端用户流程测试（Playwright）
+- **Astro页面**: 通过读取源文件内容或 E2E 验证（无专用 Astro 测试框架）
 
 ### 1.3 当前测试状态
-- 单元测试：170+ 个测试用例
-- E2E测试：80+ 个测试用例
-- 覆盖率：部分组件达到90%+
+- 单元测试：**266 个用例 / 25 个文件**
+- E2E测试：**75 个用例 / 5 个文件**
+- 覆盖率：阈值 90%（statements/branches/functions/lines）
 
 ## 2. 测试工具栈
 
@@ -41,17 +41,19 @@
 
 ### 3.1 单元测试
 ```bash
-# 运行所有单元测试（watch模式）
+# 运行单元测试（一次）
 bun test
-
-# 运行一次
+# 等价于 bun test（package.json 的 test 脚本即 vitest run）
 bun test:run
 
-# 运行单个测试文件
-bun test ComponentName.test.tsx
+# watch 模式（监听文件变更自动重跑）
+bun test:watch
+
+# 运行单个测试文件（透传给 vitest）
+bun test -- SongList.test.tsx
 
 # 运行特定测试（通过名称匹配）
-bun test -t "应该渲染"
+bun test -- -t "应该渲染"
 
 # 带UI运行
 bun test:ui
@@ -60,16 +62,20 @@ bun test:ui
 bun test:coverage
 ```
 
+> **注意**：`bun test` 与 `bun test:run` 都是「运行一次」（`vitest run`）。需要监听模式请用 `bun test:watch`。
+
 ### 3.2 E2E测试
 ```bash
-# 运行所有E2E测试
+# 运行所有E2E测试（包装脚本会自动检查/安装浏览器）
 bun test:e2e
 
-# 运行单个测试文件
-bun test:e2e home.spec.ts
+# 运行单个测试文件 / 按名称过滤
+# ⚠️ 必须用 :raw 透传参数；test:e2e 包装脚本不透传命令行参数
+bun run test:e2e:raw music.spec.ts
+bun run test:e2e:raw -g "theme toggle"
 
-# 运行特定测试（通过grep）
-bun test:e2e -g "theme toggle"
+# 直接调用 Playwright（等价于 :raw）
+bun run test:e2e:raw
 
 # 带UI运行
 bun test:e2e:ui
@@ -94,6 +100,9 @@ bun run type-check
 
 # Astro类型检查
 bun run astro-check
+
+# 预装 Playwright 浏览器（约 200MB）
+bun run setup:e2e
 ```
 
 ## 4. 单元测试规范
@@ -104,17 +113,33 @@ __tests__/
 ├── unit/
 │   ├── components/
 │   │   ├── SongList.test.tsx
+│   │   ├── songlist-SongTable.test.tsx
+│   │   ├── songlist-SongRow.test.tsx
+│   │   ├── songlist-FilterBar.test.tsx
+│   │   ├── songlist-ScBadge.test.tsx
+│   │   ├── songlist-pinyin.test.ts
+│   │   ├── songlist-utils.test.ts
 │   │   ├── ThemeToggle.test.tsx
 │   │   ├── PersistentPlayer.test.tsx
 │   │   ├── AboutPage.test.tsx
 │   │   ├── VirtualList.test.tsx
 │   │   ├── ToasterWrapper.test.tsx
 │   │   ├── BrandIcons.test.tsx
-│   │   └── Hero.test.tsx
+│   │   ├── Hero.test.tsx
+│   │   └── AnniversaryCard.test.tsx
 │   ├── layouts/
 │   │   └── BaseLayout.test.tsx
 │   ├── pages/
 │   │   └── meta.test.tsx
+│   ├── optimizations/
+│   │   ├── hydration.test.ts
+│   │   ├── prefetch.test.ts
+│   │   ├── dependencies.test.ts
+│   │   ├── font-loading.test.ts
+│   │   ├── image-optimization.test.ts
+│   │   ├── assets-seo.test.ts
+│   │   ├── transitions.test.ts
+│   │   └── code-quality.test.ts
 │   ├── mocks.ts
 │   └── setup.ts
 ├── e2e/
@@ -127,10 +152,12 @@ __tests__/
     └── songs.json
 ```
 
+> `songlist-*` 前缀的文件是对同一主组件（SongTable/FilterBar 等）按子模块拆分的测试，便于聚焦维护。
+
 ### 4.2 命名约定
-- **文件名**: `ComponentName.test.tsx` 或 `PageName.test.astro`
+- **文件名**: `ComponentName.test.tsx`（组件）/ `module.test.ts`（纯逻辑）
 - **测试描述**: 使用中文，清晰描述测试目的
-- **测试用例**: `it('应该做什么', () => {})` 或 `it('应该...测试场景', () => {})`
+- **测试用例**: `it('应该做什么', () => {})`
 
 ### 4.3 测试结构模板
 
@@ -218,59 +245,66 @@ describe('ComponentName', () => {
 });
 ```
 
-### 4.4 Mock使用规范
+### 4.4 全局 Mock 配置
 
-在 `__tests__/unit/setup.ts` 中配置全局mock：
+在 `__tests__/unit/setup.ts` 中通过 `beforeEach` 配置全局 mock（以实际文件为准，以下为当前内容概要）：
 
 ```typescript
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
-import { afterEach, vi } from 'vitest';
+import { afterEach, vi, beforeEach } from 'vitest';
 
-// Clean up after each test
 afterEach(() => {
   cleanup();
 });
 
-// Mock window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: vi.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
-});
+beforeEach(() => {
+  // 清理 document 上的主题类
+  document.documentElement.classList.remove('dark');
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-};
-Object.defineProperty(global, 'localStorage', {
-  value: localStorageMock as unknown as Storage,
-  writable: true,
-  configurable: true,
-});
+  // Mock window.matchMedia
+  Object.defineProperty(globalThis, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
 
-// Mock navigator.clipboard
-Object.defineProperty(navigator, 'clipboard', {
-  value: {
-    writeText: vi.fn(() => Promise.resolve()),
-  },
-  writable: true,
-  configurable: true,
+  // Mock localStorage
+  const localStorageMock = {
+    getItem: vi.fn(),
+    setItem: vi.fn(),
+    removeItem: vi.fn(),
+    clear: vi.fn(),
+  };
+  Object.defineProperty(globalThis, 'localStorage', {
+    value: localStorageMock as unknown as Storage,
+    writable: true,
+    configurable: true,
+  });
+
+  // Mock navigator.clipboard
+  Object.defineProperty(navigator, 'clipboard', {
+    value: { writeText: vi.fn(() => Promise.resolve()) },
+    writable: true,
+    configurable: true,
+  });
+
+  // Mock scrollTo / 音视频播放
+  globalThis.scrollTo = vi.fn();
+  HTMLMediaElement.prototype.play = vi.fn(() => Promise.resolve());
+  HTMLMediaElement.prototype.pause = vi.fn();
 });
 ```
 
-在测试文件中mock特定模块：
+在测试文件中 mock 特定模块：
 
 ```typescript
 vi.mock('pinyin-pro', () => ({
@@ -349,79 +383,66 @@ test.describe('功能名称', () => {
     await expect(page).toHaveURL('/new-path');
     await expect(page.getByText('成功')).toBeVisible();
   });
-
-  test('应该处理表单提交', async ({ page }) => {
-    const nameInput = page.getByRole('textbox', { name: '姓名' });
-    await nameInput.fill('测试用户');
-
-    const submitButton = page.getByRole('button', { name: '提交' });
-    await submitButton.click();
-
-    await expect(page.getByText('提交成功')).toBeVisible();
-  });
 });
 ```
 
 ### 5.4 测试配置
 
-在 `playwright.config.ts` 中配置：
+配置文件为 `playwright.config.ts`（以下为当前实际配置，**以源文件为准**）：
 
 ```typescript
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './__tests__/e2e',
-  fullyParallel: true,
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['list'],
-  ],
+  retries: process.env.CI ? 1 : 0,
+  workers: 1,
+  reporter: [['html', { outputFolder: 'playwright-report' }], ['list']],
   use: {
     baseURL: 'http://localhost:4321',
-    trace: 'retain-on-failure',
+    trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    actionTimeout: 10000,
+    navigationTimeout: 30000,
+    launchOptions: {
+      args: [
+        '--disable-blink-features=AutomationControlled',
+        '--disable-extensions',
+        '--disable-dev-shm-usage',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+      ],
+    },
   },
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
+      use: { ...devices['Desktop Chrome'], /* ... */ },
     },
   ],
   webServer: {
-    command: 'bun run dev',
+    // 用 build + preview（生产静态产物）而非 dev：避免 vite 逐页编译导致
+    // 加载超时/flaky，e2e 更快更稳；preview 也不触发 astro 的 AI-agent 后台 daemon。
+    command: 'PUBLIC_ASTRO_DEV_TOOLBAR_DISABLED=true bun run build && bun run preview',
     url: 'http://localhost:4321',
-    reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
 });
 ```
 
-## 6. Astro组件测试
+要点：
+- **仅 chromium** 一个 project（CI 上安装也只装 chromium）。
+- `workers: 1` + `fullyParallel: false`：串行执行。历史上为规避 flaky 而设，如需提速可评估放开（先验证不引入新的不稳定）。
+- `webServer` 用 **build + preview**，不是 `bun run dev`。
 
-### 6.1 当前状态
-Astro组件测试目前使用placeholder测试，因为：
-- `@astrojs/test` 包暂不可用
-- Astro组件需要特殊的测试框架
+## 6. Astro 页面测试
 
-### 6.2 替代方案
-对于Astro组件，可以采用以下测试方式：
+### 6.1 当前做法
+`@astrojs/test` 暂未启用，Astro 页面/组件通过两种方式验证：
 
-**方案1：测试文件内容**
+**方式1：读取源文件内容**（见 `__tests__/unit/optimizations/code-quality.test.ts`、`assets-seo.test.ts` 等）
 ```typescript
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -435,30 +456,7 @@ describe('Hero组件', () => {
 });
 ```
 
-**方案2：测试页面路由**
-通过E2E测试验证Astro组件的正确性。
-
-**方案3：使用@astrojs/compiler（高级）**
-```typescript
-import { compile } from '@astrojs/compiler';
-
-describe('Astro编译', () => {
-  it('应该成功编译组件', async () => {
-    const result = await compile(source, { filename: 'Hero.astro' });
-    expect(result.errors.length).toBe(0);
-  });
-});
-```
-
-### 6.3 占位符测试示例
-```typescript
-describe('Hero组件', () => {
-  it('应该渲染Hero组件', () => {
-    // Placeholder - 需要正确的Astro测试框架
-    expect(true).toBe(true);
-  });
-});
-```
+**方式2：通过 E2E 验证渲染后的真实页面**（见 `__tests__/e2e/`）。
 
 ## 7. 测试数据管理
 
@@ -468,7 +466,6 @@ describe('Hero组件', () => {
 ```
 __tests__/fixtures/
 ├── songs.json
-├── users.json
 └── ...
 ```
 
@@ -521,6 +518,8 @@ Object.defineProperty(window, 'matchMedia', {
 });
 ```
 
+> 全局场景已在 `setup.ts` 统一配置（见 4.4），通常无需在各测试文件重复。
+
 ### 8.2 处理异步操作
 
 **使用waitFor:**
@@ -541,16 +540,8 @@ await user.type(input, 'text');
 
 **运行单个测试：**
 ```bash
-bun test SongList.test.tsx
-bun test -t "应该渲染"
-```
-
-**使用console.log调试：**
-```typescript
-it('应该...', () => {
-  console.log('Debug:', element);
-  expect(true).toBe(true);
-});
+bun test -- SongList.test.tsx
+bun test -- -t "应该渲染"
 ```
 
 **查看详细输出：**
@@ -573,17 +564,6 @@ test.skip('慢速测试', () => {
 const mockItems = Array.from({ length: 25 }, (_, i) => ({ id: i }));
 ```
 
-**并行运行测试：**
-Vitest默认并行运行测试，可以通过配置调整：
-```typescript
-// vitest.config.ts
-export default defineConfig({
-  test: {
-    maxConcurrency: 4, // 并行测试数量
-  },
-});
-```
-
 ## 9. 覆盖率报告
 
 ### 9.1 生成覆盖率报告
@@ -598,9 +578,8 @@ bun test:coverage
 - `lcov.info`: LCOV格式
 
 ### 9.3 覆盖率阈值
-当前配置的阈值（90%）：
+当前配置（`vitest.config.ts`）：
 ```typescript
-// vitest.config.ts
 coverage: {
   thresholds: {
     statements: 90,
@@ -613,60 +592,30 @@ coverage: {
 
 ## 10. CI/CD集成
 
-### 10.1 GitHub Actions示例
+CI 配置在 `.github/workflows/`（**以源文件为准**），共 4 个 workflow：
 
-```yaml
-name: Tests
+| Workflow | 触发 | 职责 |
+|----------|------|------|
+| `test.yml` | push/PR → main, develop | astro-check + type-check + 单元测试 + Codecov |
+| `e2e.yml` | push/PR → main, develop | Playwright E2E（build + preview） |
+| `coverage.yml` | PR → main | 单元测试带覆盖率 + PR 覆盖率评论 |
+| `sync-songs.yml` | 定时 cron + 手动 | 从远程同步歌单到 `src/data/songs.json` |
 
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+### 10.1 关键优化（已落地）
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+- **依赖缓存**：所有 workflow 的 `setup-node` 启用 `cache: 'bun'`（按 `bun.lock` 哈希），`bun install` 从 ~40s 降到 ~5s。
+- **Playwright 浏览器缓存**：`e2e.yml` 用 `actions/cache` 按 Playwright 版本号缓存 `~/.cache/ms-playwright`；命中时只补系统依赖，不重下浏览器。
+- **路径过滤**：`test.yml`/`e2e.yml`/`coverage.yml` 配置 `paths-ignore`，纯文档/数据（`**.md`、`docs/`、`src/data/` 等）变更不触发测试；并保留 `workflow_dispatch` 以便手动触发。
 
-    steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+### 10.2 本地复现 CI 的测试流程
 
-      - name: 安装Bun
-        uses: oven-sh/setup-bun@v1
-        with:
-          bun-version: '1.3.6'
-
-      - name: 安装依赖
-        run: bun install
-
-      - name: 运行类型检查
-        run: bun run type-check
-
-      - name: 运行单元测试
-        run: bun test:run
-
-      - name: 生成覆盖率报告
-        run: bun test:coverage
-
-      - name: 上传覆盖率报告
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./coverage/lcov.info
-
-      - name: 启动开发服务器
-        run: bun run dev &
-          sleep 10
-
-      - name: 运行E2E测试
-        run: bun test:e2e
-
-      - name: 上传Playwright报告
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: playwright-report
-          path: playwright-report/
+```bash
+bun install
+bun run astro-check
+bun run type-check
+bun test:run          # 单元
+bun run setup:e2e     # 首次安装浏览器
+bun test:e2e          # E2E（会自动 build + preview）
 ```
 
 ## 11. 最佳实践
@@ -744,12 +693,7 @@ expect(screen.getAllByRole('button')).toHaveLength(3);
 - [Playwright测试最佳实践](https://playwright.dev/docs/best-practices)
 - [测试金字塔理论](https://martinfowler.com/articles/practical-test-pyramid.html)
 
-### 13.3 联系方式
-如有问题或建议，请通过以下方式联系：
-- GitHub Issues: [项目地址]
-- Email: qwqtest1@outlook.com
-
 ---
 
-**最后更新**: 2026年2月
+**最后更新**: 2026年7月
 **维护者**: kloa-site 开发团队
