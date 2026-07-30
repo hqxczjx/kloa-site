@@ -603,7 +603,7 @@ CI 配置在 `.github/workflows/`（**以源文件为准**），共 4 个 workfl
 
 ### 10.1 关键优化（已落地）
 
-- **依赖缓存**：所有 workflow 的 `setup-node` 启用 `cache: 'bun'`（按 `bun.lock` 哈希），`bun install` 从 ~40s 降到 ~5s。
+- **依赖缓存**：所有 workflow 用 `actions/cache` 缓存 `~/.bun/install/cache`（按 `bun.lock` 哈希；`setup-node`/`setup-bun` 均不内置 bun 依赖缓存），`bun install` 从 ~40s 降到 ~5s。
 - **Playwright 浏览器缓存**：`e2e.yml` 用 `actions/cache` 按 Playwright 版本号缓存 `~/.cache/ms-playwright`；命中时只补系统依赖，不重下浏览器。
 - **路径过滤**：`test.yml`/`e2e.yml`/`coverage.yml` 配置 `paths-ignore`，纯文档/数据（`**.md`、`docs/`、`src/data/` 等）变更不触发测试；并保留 `workflow_dispatch` 以便手动触发。
 
