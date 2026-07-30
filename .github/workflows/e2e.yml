@@ -59,14 +59,12 @@ jobs:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-chromium-${{ steps.playwright-version.outputs.version }}
 
-      # 缓存命中：浏览器二进制已在，只补系统依赖（apt）
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: bunx playwright install --with-deps chromium
-
-      - name: Install Playwright system deps
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: bunx playwright install-deps chromium
+      # 缓存命中时不再跑 install-deps：ubuntu runner 已预装浏览器运行所需的全部系统库
+      # （libnss3/libatk/libgbm/libpango 等），install-deps 此时实际只装字体；
+      # e2e 不校验字体外观（且已 abort 字体 CDN），省 ~15s apt 安装
 
       - name: Run E2E tests
         run: bun run test:e2e
