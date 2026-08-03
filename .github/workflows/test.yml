@@ -20,7 +20,9 @@ on:
   workflow_dispatch: # paths-ignore 跳过时，可在此手动触发
 
 concurrency:
-  group: ${{ github.event.pull_request.number || github.ref }}
+  # 加 github.workflow 前缀，避免 Unit Tests 与 E2E Tests 互相取消；
+  # 同一 workflow 连续 push 仍会取消旧的（省资源）
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
