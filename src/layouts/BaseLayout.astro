@@ -32,11 +32,6 @@ const yearDisplay = currentYear === startYear
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:locale" content="zh_CN" />
     <meta name="twitter:card" content="summary" />
-    <!-- Fonts: preconnect (early handshake) + stylesheet replaces the
-         render-blocking CSS @import that used to live in global.css.
-         display=swap keeps text visible with fallback while fonts load. -->
-    <link rel="preconnect" href="https://fonts.loli.net" crossorigin />
-    <link rel="stylesheet" href="https://fonts.loli.net/css2?family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700&display=swap" />
     <script is:inline>
       // Apply theme immediately to prevent flash
       (function() {

@@ -44,3 +44,6 @@ test-results/
 
 # Superpowers brainstorm mockups (visual companion)
 .superpowers/
+
+# Font subset source fonts (downloaded by scripts/generate-font-subset.mjs, ~50MB)
+scripts/fonts/

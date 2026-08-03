@@ -14,24 +14,22 @@ describe('字体加载优化（消除渲染阻塞）', () => {
     expect(css).not.toContain('fonts.loli.net');
   });
 
-  it('BaseLayout head 含字体源 preconnect（提前建连）', () => {
+  it('BaseLayout 不再加载任何远程字体（无 fonts.loli.net / 字体 stylesheet / preconnect）', () => {
     const layout = readSrc('src/layouts/BaseLayout.astro');
-    expect(layout).toContain('rel="preconnect"');
-    expect(layout).toContain('fonts.loli.net');
+    expect(layout).not.toMatch(/fonts\.loli\.net/);
+    expect(layout).not.toMatch(/rel="stylesheet"\s+href="https?:\/\/[^"]*font/i);
   });
 
-  it('BaseLayout head 用 <link rel="stylesheet"> 异步加载字体 CSS', () => {
-    const layout = readSrc('src/layouts/BaseLayout.astro');
-    expect(layout).toMatch(/fonts\.loli\.net/);
-    expect(layout).toMatch(/rel="stylesheet"/);
+  it('global.css 用本地 @font-face 子集（600/700）+ font-display:swap', () => {
+    const css = readSrc('src/styles/global.css');
+    expect(css).toMatch(/url\("\/fonts\/noto-serif-sc-600\.woff2"\)/);
+    expect(css).toMatch(/url\("\/fonts\/noto-serif-sc-700\.woff2"\)/);
+    expect(css).toMatch(/font-display:\s*swap/);
   });
 
-  it('字体不再加载无引用的 300 字重（精简 Sans 子集）', () => {
-    const layout = readSrc('src/layouts/BaseLayout.astro');
-    const fontUrlMatch = layout.match(/https:\/\/fonts\.loli\.net\/css2\?[^"']+/);
-    expect(fontUrlMatch, '应在 BaseLayout 找到字体 URL').not.toBeNull();
-    const fontUrl = fontUrlMatch![0];
-    expect(fontUrl).not.toContain('wght@300');
-    expect(fontUrl).not.toMatch(/;\s*300/);
+  it('正文改用系统中文字栈，不再依赖 Noto Sans SC', () => {
+    const css = readSrc('src/styles/global.css');
+    expect(css).not.toMatch(/Noto Sans SC/);
+    expect(css).toMatch(/PingFang SC|Microsoft YaHei/);
   });
 });
