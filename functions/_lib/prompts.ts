@@ -28,11 +28,10 @@ export function buildAgnesMessages(opts: {
   form: ChatForm;
   topic?: string;
   message: string;
-  history?: ChatMessage[];
+  history: ChatMessage[];
 }): AgnesChatMessage[] {
   const messages: AgnesChatMessage[] = [{ role: 'system', content: systemPrompt(opts.form) }];
-  const history = opts.history || [];
-  for (const m of history) {
+  for (const m of opts.history) {
     messages.push({ role: m.role, content: m.content });
   }
   let userContent = opts.message;

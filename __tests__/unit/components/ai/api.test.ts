@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { streamChat } from '../../../../src/components/react/ai/api';
+import { streamChat, TOPICS } from '../../../../src/components/react/ai/api';
+import { TOPIC_HINTS } from '../../../../functions/_lib/prompts';
 
 function sseResponse(chunks: string[]): Response {
   const enc = new TextEncoder();
@@ -39,5 +40,11 @@ describe('streamChat', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('net')));
     await streamChat({ form: 'angel', message: 'hi', history: [] }, { onDelta: vi.fn(), onDone: vi.fn(), onError });
     expect(onError).toHaveBeenCalledWith('网络错误，请重试');
+  });
+});
+
+describe('TOPICS 同步', () => {
+  it('前端 TOPICS 与后端 TOPIC_HINTS key 完全一致', () => {
+    expect([...TOPICS].sort()).toEqual(Object.keys(TOPIC_HINTS).sort());
   });
 });

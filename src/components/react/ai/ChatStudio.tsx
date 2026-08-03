@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Send, Sparkles, Heart, Ghost } from 'lucide-react';
 import { streamChat, TOPICS } from './api';
 import type { ChatForm, ChatMessage } from './types';
@@ -12,6 +12,10 @@ export default function ChatStudio() {
   const [streaming, setStreaming] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
 
+  useEffect(() => () => {
+    abortRef.current?.abort();
+  }, []);
+
   const send = useCallback(async () => {
     const message = input.trim();
     if (!message || streaming) return;
@@ -20,6 +24,7 @@ export default function ChatStudio() {
     setMessages((m) => [...m, { role: 'user', content: message }, { role: 'assistant', content: '' }]);
     setStreaming(true);
     const assistantIdx = messages.length + 1;
+    abortRef.current = new AbortController();
     await streamChat(
       { form, message, history },
       {

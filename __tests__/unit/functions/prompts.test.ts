@@ -19,13 +19,13 @@ describe('prompts', () => {
   });
 
   it('topic 命中时把提示拼到 user 内容前', () => {
-    const msgs = buildAgnesMessages({ form: 'angel', topic: '推荐一首歌', message: '详细点' });
+    const msgs = buildAgnesMessages({ form: 'angel', topic: '推荐一首歌', message: '详细点', history: [] });
     expect(msgs.at(-1)!.content).toContain('推荐一首歌');
     expect(msgs.at(-1)!.content).toContain('详细点');
   });
 
   it('未知 topic 不注入', () => {
-    const msgs = buildAgnesMessages({ form: 'angel', topic: '乱七八糟', message: 'hi' });
+    const msgs = buildAgnesMessages({ form: 'angel', topic: '乱七八糟', message: 'hi', history: [] });
     expect(msgs.at(-1)!.content).toBe('hi');
   });
 
