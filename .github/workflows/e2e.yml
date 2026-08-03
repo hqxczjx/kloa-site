@@ -19,6 +19,10 @@ on:
       - 'LICENSE'
   workflow_dispatch: # paths-ignore 跳过时，可在此手动触发
 
+concurrency:
+  group: ${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     timeout-minutes: 30
@@ -46,7 +50,15 @@ jobs:
           restore-keys: ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
+
+      - name: Cache Astro image assets
+        uses: actions/cache@v6
+        with:
+          path: node_modules/.astro/assets
+          key: ${{ runner.os }}-astro-assets-${{ hashFiles('src/images/**', 'bun.lock', 'package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-astro-assets-
 
       - name: Get Playwright version
         id: playwright-version
@@ -67,12 +79,12 @@ jobs:
       # e2e 不校验字体外观（且已 abort 字体 CDN），省 ~15s apt 安装
 
       - name: Run E2E tests
-        run: bun run test:e2e
+        run: bun run test:e2e:raw
         env:
           CI: true
 
       - name: Upload test results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@v7
         with:
           name: playwright-report
