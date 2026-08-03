@@ -2,20 +2,20 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: 用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现。步骤用 checkbox（`- [ ]`）跟踪。
 
-**Goal:** 新增「给克罗雅换装」——前端 `/ai/image` 选风格模板（＋可选追加）→ `POST /api/image`（Pages Function）→ agnes `agnes-image-2.1-flash` 图生图（固定立绘）→ 返回图 URL 就地展示＋下载。
+**Goal:** 新增「给克罗雅换装」——前端 `/ai/image` 选风格模板（＋可选追加）→ `POST /api/image`（Worker endpoint）→ agnes `agnes-image-2.1-flash` 图生图（固定立绘）→ 返回图 URL 就地展示＋下载。
 
 **Architecture:** 复用 Plan 1 的 `_lib` 地基（types/config/agnes/ratelimit）。新增立绘公开 URL（复制到 `public/images/`）、绘图风格模板、`/api/image` endpoint（同步）、`ImageStudio` island。`response_format` 严格放 `extra_body` 内，图生图用 `extra_body.image`。
 
-**Tech Stack:** 同 Plan 1（Astro SSG ＋ React island ＋ Pages Functions ＋ Vitest/Playwright）。
+**Tech Stack:** 同 Plan 1（Astro SSG ＋ React island ＋ Workers + Static Assets ＋ Vitest/Playwright）。
 
-**前置依赖:** Plan 1 已完成（`functions/_lib/{types,config,agnes,ratelimit,prompts}.ts`、`src/components/react/ai/{types,api}.ts` 存在）。
+**前置依赖:** Plan 1 已完成（`worker/_lib/{types,config,agnes,ratelimit,prompts}.ts`、`src/components/react/ai/{types,api}.ts` 存在）。
 
 **关联:** spec `docs/superpowers/specs/2026-08-03-agnes-ai-integration-design.md` 第 5.3、6.2、6.3、6.4、7.2、8 节。
 
 **关键约束:**
 - agnes 图生图必须 `extra_body.image`（非顶层 `image`），`response_format` 必须在 `extra_body` 内（放顶层会被忽略）。
 - 立绘要让 agnes 公开拉取，用绝对 URL `https://kloa.fans/images/character-1.png`。本地真冒烟需该 URL 已部署可达（首次部署后），本地 dev 流程验证用 mock。
-- `astro check` 不查 `functions/`；functions 运行时正确即可。
+- `astro check` 不查 `worker/`；worker 运行时正确即可。
 
 ---
 
@@ -24,9 +24,10 @@
 **新建/修改（后端）:**
 | 文件 | 改动 |
 |---|---|
-| `functions/_lib/config.ts` | 加 `IMAGE_MODEL`、`DEFAULT_CHARACTER_IMAGE_URL`、`MAX_IMAGE_EXTRA_CHARS` |
-| `functions/_lib/prompts.ts` | 加 `STYLE_PROMPTS` ＋ `buildImagePrompt` |
-| `functions/api/image.ts` | 新建 `POST /api/image` |
+| `worker/_lib/config.ts` | 加 `IMAGE_MODEL`、`DEFAULT_CHARACTER_IMAGE_URL`、`MAX_IMAGE_EXTRA_CHARS` |
+| `worker/_lib/prompts.ts` | 加 `STYLE_PROMPTS` ＋ `buildImagePrompt` |
+| `worker/api/image.ts` | 新建 `imageHandler(request, env)` 图生图 handler |
+| `worker/index.ts` | 在 fetch handler 加 `/api/image` 路由分支 |
 
 **新建（前端）:**
 | 文件 | 职责 |
@@ -45,8 +46,8 @@
 **测试:**
 | 文件 | 覆盖 |
 |---|---|
-| `__tests__/unit/functions/image-prompts.test.ts` | `buildImagePrompt`（风格片段＋追加＋preserve）、未知风格 |
-| `__tests__/unit/functions/image.test.ts` | endpoint：风格校验、extra 限长、无 key、上游成功返 url、上游错误归一、限流 |
+| `__tests__/unit/worker/image-prompts.test.ts` | `buildImagePrompt`（风格片段＋追加＋preserve）、未知风格 |
+| `__tests__/unit/worker/image.test.ts` | endpoint：风格校验、extra 限长、无 key、上游成功返 url、上游错误归一、限流 |
 | `__tests__/unit/components/ai/ImageStudio.test.tsx` | 选风格、追加、生成触发 `generateImage`、结果图渲染 |
 | `__tests__/e2e/ai-image.spec.ts` | mock `/api/image`，端到端绘图流程 |
 
@@ -56,7 +57,7 @@
 
 **Files:**
 - Create: `public/images/character-1.png`
-- Modify: `functions/_lib/config.ts`
+- Modify: `worker/_lib/config.ts`
 
 - [ ] **Step 1: 复制立绘到 public**
 
@@ -64,7 +65,7 @@
 mkdir -p public/images && cp src/images/character-1.png public/images/character-1.png
 ```
 
-- [ ] **Step 2: 在 `functions/_lib/config.ts` 末尾追加**
+- [ ] **Step 2: 在 `worker/_lib/config.ts` 末尾追加**
 
 ```ts
 export const IMAGE_MODEL = 'agnes-image-2.1-flash';
@@ -83,7 +84,7 @@ Expected: 通过；`dist/images/character-1.png` 存在。
 - [ ] **Step 4: Commit**
 
 ```bash
-git add public/images/character-1.png functions/_lib/config.ts
+git add public/images/character-1.png worker/_lib/config.ts
 git commit -m "feat(ai): 立绘公开副本与绘图配置常量"
 ```
 
@@ -92,14 +93,14 @@ git commit -m "feat(ai): 立绘公开副本与绘图配置常量"
 ## Task 2: 绘图风格模板
 
 **Files:**
-- Modify: `functions/_lib/prompts.ts`
-- Test: `__tests__/unit/functions/image-prompts.test.ts`
+- Modify: `worker/_lib/prompts.ts`
+- Test: `__tests__/unit/worker/image-prompts.test.ts`
 
-- [ ] **Step 1: 写失败测试 `__tests__/unit/functions/image-prompts.test.ts`**
+- [ ] **Step 1: 写失败测试 `__tests__/unit/worker/image-prompts.test.ts`**
 
 ```ts
 import { describe, it, expect } from 'vitest';
-import { STYLE_PROMPTS, buildImagePrompt } from '../../../functions/_lib/prompts';
+import { STYLE_PROMPTS, buildImagePrompt } from '../../../worker/_lib/prompts';
 
 describe('image prompts', () => {
   it('STYLE_PROMPTS 含五个风格', () => {
@@ -129,11 +130,11 @@ describe('image prompts', () => {
 - [ ] **Step 2: 跑测试，确认失败**
 
 ```bash
-bunx vitest run __tests__/unit/functions/image-prompts.test.ts
+bunx vitest run __tests__/unit/worker/image-prompts.test.ts
 ```
 Expected: FAIL（导出不存在）。
 
-- [ ] **Step 3: 在 `functions/_lib/prompts.ts` 末尾追加**
+- [ ] **Step 3: 在 `worker/_lib/prompts.ts` 末尾追加**
 
 ```ts
 export const STYLE_PROMPTS: Record<string, string> = {
@@ -156,26 +157,27 @@ export function buildImagePrompt(style: string, extra?: string): string {
 - [ ] **Step 4: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/image-prompts.test.ts
+bunx vitest run __tests__/unit/worker/image-prompts.test.ts
 ```
 Expected: PASS（4 tests）。
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add functions/_lib/prompts.ts __tests__/unit/functions/image-prompts.test.ts
+git add worker/_lib/prompts.ts __tests__/unit/worker/image-prompts.test.ts
 git commit -m "feat(ai): 绘图风格模板与 prompt 组装"
 ```
 
 ---
 
-## Task 3: `/api/image` endpoint
+## Task 3: `/api/image` endpoint（Worker handler）
 
 **Files:**
-- Create: `functions/api/image.ts`
-- Test: `__tests__/unit/functions/image.test.ts`
+- Create: `worker/api/image.ts`
+- Modify: `worker/index.ts`（加路由）
+- Test: `__tests__/unit/worker/image.test.ts`
 
-- [ ] **Step 1: 写失败测试 `__tests__/unit/functions/image.test.ts`**
+- [ ] **Step 1: 写失败测试 `__tests__/unit/worker/image.test.ts`**
 
 ```ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -189,17 +191,17 @@ function makeCache() {
 }
 
 async function call(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
-  const mod = await import('../../../functions/api/image');
+  const mod = await import('../../../worker/api/image');
   globalThis.fetch = fetchMock as typeof fetch;
   globalThis.caches = { default: makeCache() } as unknown as typeof caches;
-  return mod.onRequestPost({
-    request: new Request('https://kloa.fans/api/image', {
+  return mod.imageHandler(
+    new Request('https://kloa.fans/api/image', {
       method: 'POST',
       headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '2.2.2.2' },
       body: JSON.stringify(body),
     }),
-    env, waitUntil: async () => {}, params: {},
-  } as any);
+    env
+  );
 }
 
 describe('image endpoint', () => {
@@ -245,11 +247,11 @@ describe('image endpoint', () => {
 - [ ] **Step 2: 跑测试，确认失败**
 
 ```bash
-bunx vitest run __tests__/unit/functions/image.test.ts
+bunx vitest run __tests__/unit/worker/image.test.ts
 ```
 Expected: FAIL（模块不存在）。
 
-- [ ] **Step 3: 写 `functions/api/image.ts`**
+- [ ] **Step 3: 写 `worker/api/image.ts`**
 
 ```ts
 import { buildImagePrompt } from '../_lib/prompts';
@@ -267,8 +269,7 @@ interface ImageRequest {
 
 const RATIOS = new Set(['1:1', '3:4', '4:3', '16:9', '9:16']);
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
+export async function imageHandler(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
 
   if (!(await checkRateLimit(clientIP(request), caches.default)).allowed) {
@@ -309,24 +310,35 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const url = data.data?.[0]?.url;
   if (!url) return json({ error: '生成失败，请重试' }, 502);
   return json({ url }, 200);
-};
+}
 
 function json(data: unknown, status: number): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8' } });
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [ ] **Step 4: 在 `worker/index.ts` 的 fetch handler 加路由**
+
+在 fetch handler 的路由分支中（通常在其他 endpoint 路由附近）加：
+
+```ts
+if (url.pathname === '/api/image') {
+  const imageMod = await import('./api/image');
+  return imageMod.imageHandler(request, env);
+}
+```
+
+- [ ] **Step 5: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/image.test.ts
+bunx vitest run __tests__/unit/worker/image.test.ts
 ```
 Expected: PASS（5 tests）。
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add functions/api/image.ts __tests__/unit/functions/image.test.ts
+git add worker/api/image.ts __tests__/unit/worker/image.test.ts
 git commit -m "feat(ai): /api/image 图生图 endpoint（风格校验＋extra_body 坑）"
 ```
 
@@ -654,13 +666,13 @@ git commit -m "feat(ai): /ai/image 绘图页路由与 e2e"
 
 ## 部署与冒烟（实现完成后）
 
-1. push → CF Pages 自动部署（`public/images/character-1.png` 上线 → `https://kloa.fans/images/character-1.png` 可达）。
-2. 本地真联调：`.dev.vars` 填 key → `bun run dev:pages` → `/ai/image/` 选风格生成（agnes 拉生产立绘 URL，需已部署）。
+1. push → wrangler.jsonc 的 main + ASSETS 部署为 Worker（`public/images/character-1.png` 上线 → `https://kloa.fans/images/character-1.png` 可达）。
+2. 本地真联调：`wrangler dev` 或 `.dev.vars` 填 key → `/ai/image/` 选风格生成（agnes 拉生产立绘 URL，需已部署）。
 3. 生产冒烟：`https://kloa.fans/ai/image/` 选风格生成，确认出图、下载。
 
 ## Self-Review
 
 - **Spec 覆盖**：5.3 绘图页、6.2 image 契约、6.3 风格模板、6.4 立绘复制、7.2 negative（注：本版未加 negative_prompt，因 agnes image 接口 negative 非标准字段，留作实现时按实际支持追加——已在风险注明）、8 错误归一、9 测试。✅
-- **类型一致**：`ImageRequest`/`ImageResponse` 前后端镜像；`STYLES` 前端与后端 `STYLE_PROMPTS` key 完全对齐（5 个同名）；endpoint `PagesFunction<Env>`。✅
+- **类型一致**：`ImageRequest`/`ImageResponse` 前后端镜像；`STYLES` 前端与后端 `STYLE_PROMPTS` key 完全对齐（5 个同名）；endpoint `imageHandler(request, env): Promise<Response>`。✅
 - **占位符**：无；wrangler/冒烟注明前置条件。✅
-- **风险点**：agnes image 接口是否支持 `negative_prompt` 字段未在文档明确；若需，在 Task 3 `extra_body` 内追加 `negative_prompt`（实现者按真 key 联调结果决定）。立绘本地真冒烟依赖生产 URL 已部署。
+- **风险点**：agnes image 接口是否支持 `negative_prompt` 字段未在文档明确；若需，在 Task 3 `extra_body` 内追加 `negative_prompt`（实现者按真 key 联调结果决定）。立绘本地真冒烟依赖生产 URL 已部署。`wrangler dev` 启动 Worker dev server。

@@ -26,7 +26,7 @@
 | 功能定位 | **轻量实验性**：预置模板为主，不持久化 | 最省成本/防滥用，适合首发探路 |
 | 页面结构 | **入口聚合页 + 子页**（`/ai` + `/ai/chat`、`/ai/image`、`/ai/video`） | 三种交互差异大，独立空间更清晰；入口页可放立绘做展示 |
 | 输入自由度 | **模板为主 + 轻输入** | 模板兜底防 OOC/滥用，留短追加空间保趣味 |
-| 后端架构 | **Cloudflare Pages Functions** | 侵入性最小，保持 SSG，不破坏现有性能优化 |
+| 后端架构 | **Cloudflare Workers + Static Assets** | 保持 SSG，main Worker 路由 /api/*，静态资源走 ASSETS，不破坏现有性能优化 |
 
 ## 3. 适用场景分析
 
@@ -45,14 +45,14 @@
 
 ## 4. 架构前提
 
-kloa-site 当前是 **Astro 7.1 纯静态（SSG）**，部署在 **Cloudflare Pages（仅托管静态资源，无 Functions/Workers）**。代码中无任何 `fetch`/`import.meta.env`/API key 使用先例。
+kloa-site 当前是 **Astro 7.1 纯静态（SSG）**，部署在 **Cloudflare Workers + Static Assets** 模式。代码中无任何 `fetch`/`import.meta.env`/API key 使用先例。
 
-三个 agnes 能力都带 Bearer key，**绝不能进前端 bundle**。引入 **Cloudflare Pages Functions**：在仓库根新建 `functions/` 目录，CF Pages 自动部署为边缘函数；不动 `astro.config`、保持 SSG；`AGNES_API_KEY` 在 Pages Dashboard 配置，代码经 `request.env` 读取。
+三个 agnes 能力都带 Bearer key，**绝不能进前端 bundle**。改为 **Workers + Static Assets**：wrangler.jsonc 加 `main` 字段指向 Worker 入口 + ASSETS binding + `run_worker_first: true`，`worker/index.ts` 路由 `/api/*` 至各 handler，非 API 请求走 `env.ASSETS.fetch(request)`；不动 `astro.config`、保持 SSG；`AGNES_API_KEY` 通过 Workers Variables and Secrets 配置，代码经 `env.AGNES_API_KEY` 读取。
 
 **数据流（以图生图为例）**：
 ```
 浏览器 React island (/ai/image)
-  → POST /api/image            ← Pages Function 注入 Bearer key、拼装 prompt
+  → POST /api/image            ← Worker 注入 Bearer key、拼装 prompt
       → POST api.agnes-ai.cn/v1/images/generations
       ← 图 URL
   ← 透传回浏览器就地展示
@@ -103,26 +103,47 @@ kloa-site 当前是 **Astro 7.1 纯静态（SSG）**，部署在 **Cloudflare Pa
 
 > 注：子页路由用 `.astro` 文件挂 React island（与现有 `music.astro`/`soundboard.astro` 模式一致），island 组件放 `src/components/react/ai/`。
 
-## 6. 后端设计（Pages Functions）
+## 6. 后端设计（Workers + Static Assets）
 
-### 6.1 目录结构（仓库根新建 `functions/`）
+### 6.1 目录结构（仓库根新建 `worker/`）
 
 ```
-functions/api/
+worker/index.ts          fetch 入口，路由 /api/* 至各 handler，其余 → env.ASSETS
+worker/api/
   chat.ts             POST  对话（流式 SSE 透传）
   image.ts            POST  绘图（图生图，同步）
   video/
     index.ts          POST  创建视频任务 → {video_id}
     status.ts         GET   按 id 轮询 → {status, progress, url?}
-functions/_lib/
+worker/_lib/
   agnes.ts            fetch 封装 + Bearer 注入 + 错误归一
   prompts.ts          模板 prompt 片段 + system prompt
   ratelimit.ts        IP 限流（CF Cache API）
   config.ts           立绘 URL、模型名、超时、限流阈值
-  types.ts            请求/响应类型
+  types.ts            Env 类型（{AGNES_API_KEY: string; ASSETS: Fetcher}） + 请求/响应类型
 ```
 
-> `functions/_lib` 以下划线开头不会被 CF 当路由暴露。前端（`src/`）不 import `functions/_lib`（两个构建上下文）；前端需要的请求/响应类型在 `src/components/react/ai/types.ts` 重新声明。
+> `worker/_lib` 以下划线开头不会被 CF 当路由暴露。前端（`src/`）不 import `worker/_lib`（两个构建上下文）；前端需要的请求/响应类型在 `src/components/react/ai/types.ts` 重新声明。
+
+### 6.1.1 wrangler.jsonc 配置
+
+`wrangler.jsonc` 需添加 Workers + Static Assets 模式配置：
+
+```jsonc
+{
+  "main": "./worker/index.ts",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  }
+}
+```
+
+- `main`：指定 Worker 入口文件
+- `assets.directory`：指向 Astro 构建输出目录（静态资源）
+- `assets.binding`：ASSETS binding 用于 `env.ASSETS.fetch(request)`
+- `assets.run_worker_first`：先执行 Worker 路由，非 /api/* 请求才走静态资源
 
 ### 6.2 endpoint 契约
 
@@ -134,6 +155,13 @@ functions/_lib/
 | `POST /api/image` | `{style, extra?, size:'1K'\|'2K', ratio}` | `{url}` |
 | `POST /api/video` | `{action, extra?, duration:3\|5}` | `{video_id}` |
 | `GET /api/video/status?id=` | — | `{status, progress, url?}` |
+
+> 实现时 handler 使用普通函数签名（非 PagesFunction）：
+> ```ts
+> export async function xxxHandler(request: Request, env: Env): Promise<Response> {
+>   // ...
+> }
+> ```
 
 ### 6.3 模板拼装（`prompts.ts`）
 
@@ -154,9 +182,9 @@ functions/_lib/
 
 ### 6.5 Key 管理
 
-- 生产：`AGNES_API_KEY` 仅在 Cloudflare Pages Dashboard → Settings → Environment Variables 配置
-- 本地：`.dev.vars`（CF Pages Functions 本地开发约定），加入 `.gitignore`
-- 代码：`request.env.AGNES_API_KEY` 读取，不落仓库、不进前端
+- 生产：`AGNES_API_KEY` 在 Cloudflare Dashboard → Workers → YOUR_WORKER → Settings → Variables and Secrets 配置（选 Secret 类型、加密、Production）；或用 `bunx wrangler secret put AGNES_API_KEY`
+- 本地：`.dev.vars`（Workers 本地开发约定），加入 `.gitignore`
+- 代码：`env.AGNES_API_KEY` 读取，不落仓库、不进前端 bundle
 
 ### 6.6 限流
 
@@ -219,32 +247,33 @@ functions/_lib/
 
 ## 10. 工程复杂度与风险
 
-- **新 dev 依赖 `wrangler`**：本地开发 AI 功能需 `wrangler pages dev` 包裹（astro dev 不跑 `functions/`）。`package.json` 加 `dev:pages` 脚本。e2e 不依赖它。
+- **新 dev 依赖 `wrangler`**：本地开发 AI 功能需 `wrangler dev` 起 Workers + assets（astro dev 不跑 `worker/`）。`package.json` 加 `dev:wrangler` 脚本。e2e 不依赖它。
 - **结果 URL 时效**：agnes 返回的图/视频 URL 可能过期，不持久化下靠「及时下载」提示兜底。
 - **OOC 风险**：靠 system prompt 红线 + 模板化输入 + 免责声明三层缓解，无法完全消除。
 - **成本**：agnes 当前 $0，但需限流防滥用；未来若计费需复查阈值。
-- **CF Pages Functions 运行时**：Workers runtime 无 Node API，agnes 全是 HTTP `fetch`，无障碍；需 `--compatibility-flag=nodejs_compat` 视实际依赖而定。
+- **Workers runtime**：Workers runtime 无 Node API，agnes 全是 HTTP `fetch`，无障碍；需 `--compatibility-flag=nodejs_compat` 视实际依赖而定。
 
 ## 11. 文件清单（实现时新增/修改）
 
 **新增**：
-- `functions/api/chat.ts`、`image.ts`、`video/index.ts`、`video/status.ts`
-- `functions/_lib/{agnes,prompts,ratelimit,config,types}.ts`
+- `worker/api/chat.ts`、`image.ts`、`video/index.ts`、`video/status.ts`
+- `worker/_lib/{agnes,prompts,ratelimit,config,types}.ts`
 - `src/pages/ai/index.astro`、`src/pages/ai/chat.astro`、`src/pages/ai/image.astro`、`src/pages/ai/video.astro`
 - `src/components/react/ai/{AiHub,ChatStudio,ImageStudio,VideoStudio}.tsx` + `types.ts`
 - `public/images/character-1.png`（从 src/images 复制）
 - `.dev.vars.example`
-- 单元测试 `__tests__/unit/functions/...`
+- 单元测试 `__tests__/unit/worker/...`
 
 **修改**：
 - `src/layouts/BaseLayout.astro`（导航加「AI 实验室」入口）
 - `.gitignore`（加 `.dev.vars`）
-- `package.json`（加 `wrangler` dev 依赖、`dev:pages` 脚本）
+- `package.json`（加 `wrangler` dev 依赖、`dev:wrangler` 脚本）
+- `wrangler.jsonc`（加 `main: "./worker/index.ts"` + assets binding + `run_worker_first: true`）
 - `public/_headers` 或 CF Dashboard（如需安全头）
 
 ## 12. 未决 / 后续
 
 - 歌单智能问答（基于 songs.json）作为对话工具的后续扩展
-- `wrangler pages dev` 的确切调用参数在实现时确认
+- `wrangler dev` 的确切调用参数在实现时确认
 - 敏感词词表来源、限流确切阈值在实现时定（已有建议值）
 - 若 OOC/滥用超预期，考虑加 Cloudflare Turnstile 或 KV 配额

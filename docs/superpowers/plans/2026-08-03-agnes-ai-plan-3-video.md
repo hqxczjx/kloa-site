@@ -4,7 +4,7 @@
 
 **Goal:** 新增「让克罗雅动起来」——前端 `/ai/video` 选动作模板（＋可选追加）→ `POST /api/video` 创建任务 → 前端每 5s `GET /api/video/status?id=` 轮询 → 完成后展示视频＋下载，最长 ~3 分钟超时，离开页面即放弃（不持久化）。
 
-**Architecture:** 复用 Plan 1/2 地基。视频是 agnes 的**异步任务**：创建端点 `POST /v1/videos` 返 `video_id`，轮询端点 `GET /agnesapi?video_id=`（注意：agnesapi 在 root，非 `/v1`）。前端用递归 `setTimeout` ＋ `AbortController` 实现可中止的状态机。`num_frames` 按 `8n+1` 取 81（3s）/121（5s）。
+**Architecture:** 部署为 **Workers + Static Assets**（非 Pages Functions）。后端在 `worker/`，由 `worker/index.ts` fetch handler 路由。复用 Plan 1/2 地基。视频是 agnes 的**异步任务**：创建端点 `POST /v1/videos` 返 `video_id`，轮询端点 `GET /agnesapi?video_id=`（注意：agnesapi 在 root，非 `/v1`）。前端用递归 `setTimeout` ＋ `AbortController` 实现可中止的状态机。`num_frames` 按 `8n+1` 取 81（3s）/121（5s）。
 
 **Tech Stack:** 同前。
 
@@ -25,10 +25,11 @@
 **新建/修改（后端）:**
 | 文件 | 改动 |
 |---|---|
-| `functions/_lib/config.ts` | 加 `VIDEO_MODEL`、`AGNES_API_ROOT`、`VIDEO_DURATION_PRESETS` |
-| `functions/_lib/prompts.ts` | 加 `ACTION_PROMPTS` ＋ `buildVideoPrompt` |
-| `functions/api/video/index.ts` | 新建 `POST /api/video`（创建任务） |
-| `functions/api/video/status.ts` | 新建 `GET /api/video/status`（轮询） |
+| `worker/_lib/config.ts` | 加 `VIDEO_MODEL`、`AGNES_API_ROOT`、`VIDEO_DURATION_PRESETS` |
+| `worker/_lib/prompts.ts` | 加 `ACTION_PROMPTS` ＋ `buildVideoPrompt` |
+| `worker/api/video.ts` | 新建 `createVideoHandler`（创建任务） |
+| `worker/api/video-status.ts` | 新建 `videoStatusHandler`（轮询） |
+| `worker/index.ts` | 添加路由：`POST /api/video` → `createVideoHandler`；`GET /api/video/status` → `videoStatusHandler` |
 
 **新建（前端）:**
 | 文件 | 职责 |
@@ -45,9 +46,9 @@
 **测试:**
 | 文件 | 覆盖 |
 |---|---|
-| `__tests__/unit/functions/video-prompts.test.ts` | `buildVideoPrompt`、`ACTION_PROMPTS`、`VIDEO_DURATION_PRESETS` 帧数合法性 |
-| `__tests__/unit/functions/video-create.test.ts` | 创建端点：动作校验、duration 映射、image 在顶层、返 video_id、错误归一 |
-| `__tests__/unit/functions/video-status.test.ts` | 轮询端点：缺 id、status 归一、completed 返 url、agnesapi URL 正确 |
+| `__tests__/unit/worker/video-prompts.test.ts` | `buildVideoPrompt`、`ACTION_PROMPTS`、`VIDEO_DURATION_PRESETS` 帧数合法性 |
+| `__tests__/unit/worker/video-create.test.ts` | 创建端点：动作校验、duration 映射、image 在顶层、返 video_id、错误归一 |
+| `__tests__/unit/worker/video-status.test.ts` | 轮询端点：缺 id、status 归一、completed 返 url、agnesapi URL 正确 |
 | `__tests__/unit/components/ai/video-api.test.ts` | `createVideo`/`getVideoStatus` |
 | `__tests__/unit/components/ai/VideoStudio.test.tsx` | 状态机：提交→轮询→completed 显示 video；离开页面 abort |
 | `__tests__/e2e/ai-video.spec.ts` | mock `/api/video` + `/api/video/status` |
@@ -57,10 +58,10 @@
 ## Task 1: config 扩展 + 视频动作模板
 
 **Files:**
-- Modify: `functions/_lib/config.ts`
-- Modify: `functions/_lib/prompts.ts`
+- Modify: `worker/_lib/config.ts`
+- Modify: `worker/_lib/prompts.ts`
 - Create（若 Plan 2 未跑）: `public/images/character-1.png`
-- Test: `__tests__/unit/functions/video-prompts.test.ts`
+- Test: `__tests__/unit/worker/video-prompts.test.ts`
 
 - [ ] **Step 1: 确保立绘公开副本存在（若 Plan 2 已做可跳过）**
 
@@ -68,7 +69,7 @@
 mkdir -p public/images && [ -f public/images/character-1.png ] || cp src/images/character-1.png public/images/character-1.png
 ```
 
-- [ ] **Step 2: 在 `functions/_lib/config.ts` 末尾追加**
+- [ ] **Step 2: 在 `worker/_lib/config.ts` 末尾追加**
 
 ```ts
 export const VIDEO_MODEL = 'agnes-video-v2.0';
@@ -81,7 +82,7 @@ export const VIDEO_DURATION_PRESETS: Record<3 | 5, { num_frames: number; frame_r
 };
 ```
 
-- [ ] **Step 3: 在 `functions/_lib/prompts.ts` 末尾追加**
+- [ ] **Step 3: 在 `worker/_lib/prompts.ts` 末尾追加**
 
 ```ts
 export const ACTION_PROMPTS: Record<string, string> = {
@@ -100,12 +101,12 @@ export function buildVideoPrompt(action: string, extra?: string): string {
 }
 ```
 
-- [ ] **Step 4: 写失败测试 `__tests__/unit/functions/video-prompts.test.ts`**
+- [ ] **Step 4: 写失败测试 `__tests__/unit/worker/video-prompts.test.ts`**
 
 ```ts
 import { describe, it, expect } from 'vitest';
-import { ACTION_PROMPTS, buildVideoPrompt } from '../../../functions/_lib/prompts';
-import { VIDEO_DURATION_PRESETS } from '../../../functions/_lib/config';
+import { ACTION_PROMPTS, buildVideoPrompt } from '../../../worker/_lib/prompts';
+import { VIDEO_DURATION_PRESETS } from '../../../worker/_lib/config';
 
 describe('video prompts', () => {
   it('ACTION_PROMPTS 含五个动作', () => {
@@ -128,14 +129,14 @@ describe('video prompts', () => {
 - [ ] **Step 5: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/video-prompts.test.ts
+bunx vitest run __tests__/unit/worker/video-prompts.test.ts
 ```
 Expected: PASS（3 tests）。
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add functions/_lib/config.ts functions/_lib/prompts.ts public/images/character-1.png __tests__/unit/functions/video-prompts.test.ts
+git add worker/_lib/config.ts worker/_lib/prompts.ts public/images/character-1.png __tests__/unit/worker/video-prompts.test.ts
 git commit -m "feat(ai): 视频配置（时长帧数预设）与动作模板"
 ```
 
@@ -144,10 +145,11 @@ git commit -m "feat(ai): 视频配置（时长帧数预设）与动作模板"
 ## Task 2: `POST /api/video` 创建任务端点
 
 **Files:**
-- Create: `functions/api/video/index.ts`
-- Test: `__tests__/unit/functions/video-create.test.ts`
+- Create: `worker/api/video.ts`
+- Modify: `worker/index.ts`（添加路由）
+- Test: `__tests__/unit/worker/video-create.test.ts`
 
-- [ ] **Step 1: 写失败测试 `__tests__/unit/functions/video-create.test.ts`**
+- [ ] **Step 1: 写失败测试 `__tests__/unit/worker/video-create.test.ts`**
 
 ```ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -161,17 +163,15 @@ function makeCache() {
 }
 
 async function call(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
-  const mod = await import('../../../functions/api/video/index');
+  const mod = await import('../../../worker/api/video');
   globalThis.fetch = fetchMock as typeof fetch;
   globalThis.caches = { default: makeCache() } as unknown as typeof caches;
-  return mod.onRequestPost({
-    request: new Request('https://kloa.fans/api/video', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '3.3.3.3' },
-      body: JSON.stringify(body),
-    }),
-    env, waitUntil: async () => {}, params: {},
-  } as any);
+  const request = new Request('https://kloa.fans/api/video', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '3.3.3.3' },
+    body: JSON.stringify(body),
+  });
+  return mod.createVideoHandler(request, env);
 }
 
 describe('video create endpoint', () => {
@@ -209,23 +209,22 @@ describe('video create endpoint', () => {
 - [ ] **Step 2: 跑测试，确认失败**
 
 ```bash
-bunx vitest run __tests__/unit/functions/video-create.test.ts
+bunx vitest run __tests__/unit/worker/video-create.test.ts
 ```
 Expected: FAIL。
 
-- [ ] **Step 3: 写 `functions/api/video/index.ts`**
+- [ ] **Step 3: 写 `worker/api/video.ts`**
 
 ```ts
-import { buildVideoPrompt, ACTION_PROMPTS } from '../../_lib/prompts';
-import { agnesHeaders, normalizeAgnesError } from '../../_lib/agnes';
-import { checkRateLimit, clientIP } from '../../_lib/ratelimit';
-import { AGNES_BASE_URL, VIDEO_MODEL, VIDEO_DURATION_PRESETS, DEFAULT_CHARACTER_IMAGE_URL } from '../../_lib/config';
-import type { Env } from '../../_lib/types';
+import { buildVideoPrompt, ACTION_PROMPTS } from '../_lib/prompts';
+import { agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
+import { checkRateLimit, clientIP } from '../_lib/ratelimit';
+import { AGNES_BASE_URL, VIDEO_MODEL, VIDEO_DURATION_PRESETS, DEFAULT_CHARACTER_IMAGE_URL } from '../_lib/config';
+import type { Env } from '../_lib/types';
 
 interface VideoRequest { action: string; extra?: string; duration: 3 | 5; }
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
+export async function createVideoHandler(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
   if (!(await checkRateLimit(clientIP(request), caches.default)).allowed) {
     return json({ error: '操作太频繁，请稍后再试' }, 429);
@@ -261,7 +260,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const video_id = data.video_id ?? data.id;
   if (!video_id) return json({ error: '创建任务失败，请重试' }, 502);
   return json({ video_id }, 200);
-};
+}
 
 function json(data: unknown, status: number): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8' } });
@@ -271,14 +270,25 @@ function json(data: unknown, status: number): Response {
 - [ ] **Step 4: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/video-create.test.ts
+bunx vitest run __tests__/unit/worker/video-create.test.ts
 ```
 Expected: PASS（4 tests）。
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: 在 `worker/index.ts` 的 fetch handler 添加路由**
+
+在 `worker/index.ts` 的 fetch handler 中， pathname 匹配部分加入：
+
+```ts
+if (url.pathname === '/api/video' && request.method === 'POST') {
+  const { createVideoHandler } = await import('./api/video');
+  return createVideoHandler(request, env);
+}
+```
+
+- [ ] **Step 6: Commit**
 
 ```bash
-git add functions/api/video/index.ts __tests__/unit/functions/video-create.test.ts
+git add worker/api/video.ts worker/index.ts __tests__/unit/worker/video-create.test.ts
 git commit -m "feat(ai): /api/video 创建任务端点（图生视频，image 在顶层）"
 ```
 
@@ -287,21 +297,20 @@ git commit -m "feat(ai): /api/video 创建任务端点（图生视频，image �
 ## Task 3: `GET /api/video/status` 轮询端点
 
 **Files:**
-- Create: `functions/api/video/status.ts`
-- Test: `__tests__/unit/functions/video-status.test.ts`
+- Create: `worker/api/video-status.ts`
+- Modify: `worker/index.ts`（添加路由）
+- Test: `__tests__/unit/worker/video-status.test.ts`
 
-- [ ] **Step 1: 写失败测试 `__tests__/unit/functions/video-status.test.ts`**
+- [ ] **Step 1: 写失败测试 `__tests__/unit/worker/video-status.test.ts`**
 
 ```ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 async function call(query: string, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
-  const mod = await import('../../../functions/api/video/status');
+  const mod = await import('../../../worker/api/video-status');
   globalThis.fetch = fetchMock as typeof fetch;
-  return mod.onRequestGet({
-    request: new Request(`https://kloa.fans/api/video/status${query}`),
-    env, waitUntil: async () => {}, params: {},
-  } as any);
+  const request = new Request(`https://kloa.fans/api/video/status${query}`);
+  return mod.videoStatusHandler(request, env);
 }
 
 describe('video status endpoint', () => {
@@ -347,16 +356,16 @@ describe('video status endpoint', () => {
 - [ ] **Step 2: 跑测试，确认失败**
 
 ```bash
-bunx vitest run __tests__/unit/functions/video-status.test.ts
+bunx vitest run __tests__/unit/worker/video-status.test.ts
 ```
 Expected: FAIL。
 
-- [ ] **Step 3: 写 `functions/api/video/status.ts`**
+- [ ] **Step 3: 写 `worker/api/video-status.ts`**
 
 ```ts
-import { AGNES_API_ROOT } from '../../_lib/config';
-import { agnesHeaders, normalizeAgnesError } from '../../_lib/agnes';
-import type { Env } from '../../_lib/types';
+import { AGNES_API_ROOT } from '../_lib/config';
+import { agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
+import type { Env } from '../_lib/types';
 
 type NormStatus = 'queued' | 'in_progress' | 'completed' | 'failed';
 function normalizeStatus(s?: string): NormStatus {
@@ -364,8 +373,7 @@ function normalizeStatus(s?: string): NormStatus {
   return 'queued';
 }
 
-export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
+export async function videoStatusHandler(request: Request, env: Env): Promise<Response> {
   const id = new URL(request.url).searchParams.get('id');
   if (!id) return json({ error: '缺少 id' }, 400);
   if (!env.AGNES_API_KEY) return json({ error: '服务未配置' }, 503);
@@ -381,7 +389,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   const status = normalizeStatus(data.status);
   const url = status === 'completed' ? data.metadata?.url : undefined;
   return json({ status, progress: typeof data.progress === 'number' ? data.progress : 0, url }, 200);
-};
+}
 
 function json(data: unknown, status: number): Response {
   return new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json; charset=utf-8' } });
@@ -391,14 +399,25 @@ function json(data: unknown, status: number): Response {
 - [ ] **Step 4: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/video-status.test.ts
+bunx vitest run __tests__/unit/worker/video-status.test.ts
 ```
 Expected: PASS（4 tests）。
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: 在 `worker/index.ts` 的 fetch handler 添加路由**
+
+在 `worker/index.ts` 的 fetch handler 中， pathname 匹配部分加入：
+
+```ts
+if (url.pathname === '/api/video/status') {
+  const { videoStatusHandler } = await import('./api/video-status');
+  return videoStatusHandler(request, env);
+}
+```
+
+- [ ] **Step 6: Commit**
 
 ```bash
-git add functions/api/video/status.ts __tests__/unit/functions/video-status.test.ts
+git add worker/api/video-status.ts worker/index.ts __tests__/unit/worker/video-status.test.ts
 git commit -m "feat(ai): /api/video/status 轮询端点（agnesapi root，状态归一）"
 ```
 
@@ -745,8 +764,8 @@ git commit -m "feat(ai): /ai/video 视频页路由与 e2e"
 
 ## 部署与冒烟
 
-1. push → CF Pages 部署。
-2. 本地：`.dev.vars` 填 key → `bun run dev:pages` → `/ai/video/` 选动作生成（agnes 拉生产立绘 URL，需已部署；视频生成耗时 1-3 分钟）。
+1. push → Wrangler 部署为 Worker（`wrangler.jsonc` 配置 `main` + `ASSETS`）。
+2. 本地：`.dev.vars` 填 key → `wrangler dev` → `/ai/video/` 选动作生成（agnes 拉生产立绘 URL，需已部署；视频生成耗时 1-3 分钟）。
 3. 生产冒烟：`https://kloa.fans/ai/video/`，确认排队→进度→播放/下载；验证离开页面后任务被放弃（不持久化）。
 
 ## Self-Review

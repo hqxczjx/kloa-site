@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "dev:pages": "wrangler pages dev -- bun run dev",
+    "dev:wrangler": "wrangler dev",
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",

@@ -2,37 +2,38 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: 用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现本计划。步骤用 checkbox（`- [ ]`）语法跟踪。
 
-**Goal:** 打通「和克罗雅聊天」端到端——前端 `/ai/chat` 页面 → `POST /api/chat`（Cloudflare Pages Function）→ agnes `agnes-2.5-flash` 流式 SSE 透传，含后端地基（key/限流/错误归一/prompt 模板）与导航入口，部署后即可用真 key 聊天。
+**Goal:** 打通「和克罗雅聊天」端到端——前端 `/ai/chat` 页面 → `POST /api/chat`（Cloudflare Worker）→ agnes `agnes-2.5-flash` 流式 SSE 透传，含后端地基（key/限流/错误归一/prompt 模板）与导航入口，部署后即可用真 key 聊天。
 
-**Architecture:** 在仓库根新建 `functions/`（CF Pages 自动部署为边缘函数，保持 SSG、不动 `astro.config`）。前端 React island 通过 `fetch` + ReadableStream 手动消费 OpenAI 兼容 SSE。`AGNES_API_KEY` 仅存于 CF Pages 环境变量 / 本地 `.dev.vars`，前端永不接触。
+**Architecture:** 在仓库根新建 `worker/`（通过 `wrangler.jsonc` 的 `main` + ASSETS binding 部署为 Cloudflare Worker，保持 SSG、不动 `astro.config`）。前端 React island 通过 `fetch` + ReadableStream 手动消费 OpenAI 兼容 SSE。`AGNES_API_KEY` 仅存于 Workers 环境变量 / 本地 `.dev.vars`，前端永不接触。
 
-**Tech Stack:** Astro 7.1（SSG）、React 19 island、Tailwind v4、Cloudflare Pages Functions（Workers runtime，Web `fetch`/`Response`/`Cache` API）、agnes OpenAI 兼容接口、Vitest ＋ Playwright。
+**Tech Stack:** Astro 7.1（SSG）、React 19 island、Tailwind v4、Cloudflare Workers + Static Assets（Web `fetch`/`Response`/`Cache` API）、agnes OpenAI 兼容接口、Vitest ＋ Playwright。
 
 **关联 spec:** `docs/superpowers/specs/2026-08-03-agnes-ai-integration-design.md`
 
 **范围说明:** 本计划只做对话能力 ＋ 后端地基 ＋ 导航。绘图/视频/入口聚合页在后续 Plan 2/3/4。立绘 `public/images/character-1.png` 复制留给 Plan 2（绘图需要），本计划不涉及。
 
 **关键工程约束（执行者必读）:**
-- `astro check` 只检查 `src/`，**不检查 `functions/`**。`functions/` 由 wrangler 在部署时用 esbuild 转译（不做类型检查）。因此 `functions/` 下的 TS 类型错误不影响 `bun run build`；以运行时正确为准。
-- `functions/` 内可用的全局：`fetch`、`Request`、`Response`、`ReadableStream`、`TextEncoder`、`caches`（CF Cache API，`caches.default`）、`PagesFunction<T>` 类型。装 `@cloudflare/workers-types`（Task 1）后 IDE 能识别这些类型。
+- `astro check` 只检查 `src/`，**不检查 `worker/`**。`worker/` 由 wrangler 在部署时用 esbuild 转译（不做类型检查）。因此 `worker/` 下的 TS 类型错误不影响 `bun run build`；以运行时正确为准。
+- `worker/` 内可用的全局：`fetch`、`Request`、`Response`、`ReadableStream`、`TextEncoder`、`caches`（CF Cache API，`caches.default`）。Worker fetch handler 签名 `(request, env) => Response`；`@cloudflare/workers-types` 提供 `Fetcher`/`Cache` 等类型。
 - 项目 pre-commit hook 会跑 `vitest run`（266 现有用例）。每个任务结束的 commit 必须保证单测全过。
-- 本地开发 AI 功能需用 `wrangler pages dev`（astro dev 不跑 `functions/`）；e2e 全程 mock `/api/`，不依赖 wrangler。
+- 本地开发 AI 功能需用 `wrangler dev`（astro dev 不跑 `worker/`）；e2e 全程 mock `/api/`，不依赖 wrangler。
 
 ---
 
 ## 文件结构
 
-**新建（后端，`functions/`，CF Pages 部署）:**
+**新建（后端，`worker/`，Cloudflare Workers + Static Assets 部署）:**
 | 文件 | 职责 |
 |---|---|
-| `functions/_lib/types.ts` | 共享类型：`ChatForm`/`ChatMessage`/`ChatRequest`/`Env` |
-| `functions/_lib/config.ts` | 常量：模型名、Base URL、限流阈值、字数/轮数上限 |
-| `functions/_lib/prompts.ts` | system prompt（天使/恶魔）+ 话题模板 + 组装 agnes messages（纯函数） |
-| `functions/_lib/agnes.ts` | fetch 封装：URL/headers/错误归一 |
-| `functions/_lib/ratelimit.ts` | 基于 CF Cache API 的 IP 限流（best-effort） |
-| `functions/api/chat.ts` | `POST` endpoint：校验→限流→组装→透传 agnes SSE |
+| `worker/index.ts` | Worker fetch handler：路由 `/api/*` 到各 handler，非 API 请求走 ASSETS（静态资源） |
+| `worker/_lib/types.ts` | 共享类型：`ChatForm`/`ChatMessage`/`ChatRequest`/`Env`（含 `ASSETS: Fetcher`） |
+| `worker/_lib/config.ts` | 常量：模型名、Base URL、限流阈值、字数/轮数上限 |
+| `worker/_lib/prompts.ts` | system prompt（天使/恶魔）+ 话题模板 + 组装 agnes messages（纯函数） |
+| `worker/_lib/agnes.ts` | fetch 封装：URL/headers/错误归一 |
+| `worker/_lib/ratelimit.ts` | 基于 CF Cache API 的 IP 限流（best-effort） |
+| `worker/api/chat.ts` | `chatHandler`：校验→限流→组装→透传 agnes SSE |
 
-> `functions/_lib` 以下划线开头，CF Pages 不会当路由暴露。
+> `worker/_lib` 以下划线开头，不会被 Worker fetch handler 当作路由暴露。
 
 **新建（前端，`src/`）:**
 | 文件 | 职责 |
@@ -45,26 +46,28 @@
 **新建测试:**
 | 文件 | 覆盖 |
 |---|---|
-| `__tests__/unit/functions/prompts.test.ts` | system prompt 形态切换、messages 组装（含 topic 注入、history 截断） |
-| `__tests__/unit/functions/agnes.test.ts` | 错误归一、headers、URL |
-| `__tests__/unit/functions/ratelimit.test.ts` | 计数、窗口重置 |
-| `__tests__/unit/functions/chat.test.ts` | endpoint：透传/限流/校验/无 key/上游错误（mock fetch+caches+env） |
+| `__tests__/unit/worker/prompts.test.ts` | system prompt 形态切换、messages 组装（含 topic 注入、history 截断） |
+| `__tests__/unit/worker/agnes.test.ts` | 错误归一、headers、URL |
+| `__tests__/unit/worker/ratelimit.test.ts` | 计数、窗口重置 |
+| `__tests__/unit/worker/chat.test.ts` | endpoint：透传/限流/校验/无 key/上游错误（mock fetch+caches+env） |
 | `__tests__/unit/components/ai/ChatStudio.test.tsx` | 形态切换、话题填入、发送触发流式、错误 toast |
 | `__tests__/e2e/ai-chat.spec.ts` | mock `/api/chat`，端到端对话流程 |
 
 **修改:**
 | 文件 | 改动 |
 |---|---|
-| `package.json` | 加 devDep `wrangler`、`@cloudflare/workers-types`；加脚本 `dev:pages` |
+| `package.json` | 加 devDep `wrangler`、`@cloudflare/workers-types`；加脚本 `dev:wrangler` |
 | `.gitignore` | 加 `.dev.vars` |
 | `src/layouts/BaseLayout.astro` | 导航加「AI」入口（桌面顶栏 + 移动底栏） |
+| `wrangler.jsonc` | 配置 `main: "./worker/index.ts"`、`assets`（directory/binding/run_worker_first） |
 
 **新建配置:**
-- `.dev.vars.example`（CF Pages Functions 本地环境变量模板）
+- `.dev.vars.example`（Workers 本地环境变量模板）
+- `wrangler.jsonc`（Worker 部署配置：main + assets）
 
 ---
 
-## Task 1: 项目配置（wrangler + workers-types + dev:pages + .dev.vars）
+## Task 1: 项目配置（wrangler + workers-types + dev:wrangler + .dev.vars）
 
 **Files:**
 - Modify: `package.json`
@@ -77,20 +80,20 @@
 bun add -d wrangler @cloudflare/workers-types
 ```
 
-- [ ] **Step 2: 在 `package.json` 的 `scripts` 加 `dev:pages`**
+- [ ] **Step 2: 在 `package.json` 的 `scripts` 加 `dev:wrangler`**
 
 在 `"dev": "astro dev",` 之后加一行：
 
 ```json
-"dev:pages": "wrangler pages dev -- bun run dev",
+"dev:wrangler": "wrangler dev",
 ```
 
-> 说明：`wrangler pages dev -- <cmd>` 会在后台起 `bun run dev`（astro dev，默认 :4321），wrangler 自己起一个代理端口（通常 :8788）并挂载 `functions/`。访问 wrangler 提示的 URL 即可同时用页面与 `/api/*`。
+> 说明：`wrangler dev` 会根据 `wrangler.jsonc` 启动 Worker（含 main 指向的 fetch handler），并通过 ASSETS binding 代理静态资源（`./dist` 目录）。访问 wrangler 提示的 URL（通常 :8788）即可同时用页面与 `/api/*`。
 
 - [ ] **Step 3: 创建 `.dev.vars.example`**（仓库根）
 
 ```
-# Cloudflare Pages Functions 本地开发环境变量
+# Cloudflare Workers 本地开发环境变量
 # 复制为 .dev.vars（已 gitignore）并填入真 key
 AGNES_API_KEY=your_agnes_api_key_here
 ```
@@ -114,7 +117,7 @@ Expected: 打印 `wrangler x.x.x` 版本号。
 
 ```bash
 git add package.json .gitignore .dev.vars.example
-git commit -m "chore(ai): 引入 wrangler + workers-types 与本地 functions 开发配置"
+git commit -m "chore(ai): 引入 wrangler + workers-types 与本地 worker 开发配置"
 ```
 
 ---
@@ -122,11 +125,11 @@ git commit -m "chore(ai): 引入 wrangler + workers-types 与本地 functions �
 ## Task 2: 后端共享类型与配置
 
 **Files:**
-- Create: `functions/_lib/types.ts`
-- Create: `functions/_lib/config.ts`
-- Test: `__tests__/unit/functions/config.test.ts`
+- Create: `worker/_lib/types.ts`
+- Create: `worker/_lib/config.ts`
+- Test: `__tests__/unit/worker/config.test.ts`
 
-- [ ] **Step 1: 写 `functions/_lib/types.ts`**
+- [ ] **Step 1: 写 `worker/_lib/types.ts`**
 
 ```ts
 export type ChatForm = 'angel' | 'demon';
@@ -143,13 +146,14 @@ export interface ChatRequest {
   history: ChatMessage[];
 }
 
-// Pages Function 环境变量绑定
+// Worker 环境绑定
 export interface Env {
   AGNES_API_KEY: string;
+  ASSETS: Fetcher;
 }
 ```
 
-- [ ] **Step 2: 写 `functions/_lib/config.ts`**
+- [ ] **Step 2: 写 `worker/_lib/config.ts`**
 
 ```ts
 export const AGNES_BASE_URL = 'https://api.agnes-ai.cn/v1';
@@ -163,11 +167,11 @@ export const MAX_HISTORY_TURNS = 6;        // 保留最近 N 条历史消息
 export const CHAT_MAX_TOKENS = 512;        // 单次回复 token 上限
 ```
 
-- [ ] **Step 3: 写失败测试 `__tests__/unit/functions/config.test.ts`**
+- [ ] **Step 3: 写失败测试 `__tests__/unit/worker/config.test.ts`**
 
 ```ts
 import { describe, it, expect } from 'vitest';
-import { AGNES_BASE_URL, CHAT_MODEL, RATE_LIMIT_MAX, MAX_INPUT_CHARS } from '../../../functions/_lib/config';
+import { AGNES_BASE_URL, CHAT_MODEL, RATE_LIMIT_MAX, MAX_INPUT_CHARS } from '../../../worker/_lib/config';
 
 describe('config', () => {
   it('指向 agnes v1 base url', () => {
@@ -186,14 +190,14 @@ describe('config', () => {
 - [ ] **Step 4: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/config.test.ts
+bunx vitest run __tests__/unit/worker/config.test.ts
 ```
 Expected: PASS（3 tests）。
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add functions/_lib/types.ts functions/_lib/config.ts __tests__/unit/functions/config.test.ts
+git add worker/_lib/types.ts worker/_lib/config.ts __tests__/unit/worker/config.test.ts
 git commit -m "feat(ai): 后端共享类型与配置常量"
 ```
 
@@ -202,14 +206,14 @@ git commit -m "feat(ai): 后端共享类型与配置常量"
 ## Task 3: 对话 prompt 模板（纯函数）
 
 **Files:**
-- Create: `functions/_lib/prompts.ts`
-- Test: `__tests__/unit/functions/prompts.test.ts`
+- Create: `worker/_lib/prompts.ts`
+- Test: `__tests__/unit/worker/prompts.test.ts`
 
-- [ ] **Step 1: 写失败测试 `__tests__/unit/functions/prompts.test.ts`**
+- [ ] **Step 1: 写失败测试 `__tests__/unit/worker/prompts.test.ts`**
 
 ```ts
 import { describe, it, expect } from 'vitest';
-import { systemPrompt, buildAgnesMessages, TOPIC_HINTS } from '../../../functions/_lib/prompts';
+import { systemPrompt, buildAgnesMessages, TOPIC_HINTS } from '../../../worker/_lib/prompts';
 
 describe('prompts', () => {
   it('systemPrompt 包含身份约束并随形态切换语气', () => {
@@ -248,11 +252,11 @@ describe('prompts', () => {
 - [ ] **Step 2: 跑测试，确认失败**
 
 ```bash
-bunx vitest run __tests__/unit/functions/prompts.test.ts
+bunx vitest run __tests__/unit/worker/prompts.test.ts
 ```
 Expected: FAIL（模块不存在）。
 
-- [ ] **Step 3: 写 `functions/_lib/prompts.ts`**
+- [ ] **Step 3: 写 `worker/_lib/prompts.ts`**
 
 ```ts
 import type { ChatForm, ChatMessage } from './types';
@@ -302,14 +306,14 @@ export function buildAgnesMessages(opts: {
 - [ ] **Step 4: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/prompts.test.ts
+bunx vitest run __tests__/unit/worker/prompts.test.ts
 ```
 Expected: PASS（5 tests）。
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add functions/_lib/prompts.ts __tests__/unit/functions/prompts.test.ts
+git add worker/_lib/prompts.ts __tests__/unit/worker/prompts.test.ts
 git commit -m "feat(ai): 对话 system prompt 与话题模板组装"
 ```
 
@@ -318,14 +322,14 @@ git commit -m "feat(ai): 对话 system prompt 与话题模板组装"
 ## Task 4: agnes fetch 封装与错误归一
 
 **Files:**
-- Create: `functions/_lib/agnes.ts`
-- Test: `__tests__/unit/functions/agnes.test.ts`
+- Create: `worker/_lib/agnes.ts`
+- Test: `__tests__/unit/worker/agnes.test.ts`
 
-- [ ] **Step 1: 写失败测试 `__tests__/unit/functions/agnes.test.ts`**
+- [ ] **Step 1: 写失败测试 `__tests__/unit/worker/agnes.test.ts`**
 
 ```ts
 import { describe, it, expect } from 'vitest';
-import { normalizeAgnesError, agnesHeaders, agnesChatUrl } from '../../../functions/_lib/agnes';
+import { normalizeAgnesError, agnesHeaders, agnesChatUrl } from '../../../worker/_lib/agnes';
 
 describe('agnes', () => {
   it('401 归一为配置问题（不泄露 key）', () => {
@@ -356,11 +360,11 @@ describe('agnes', () => {
 - [ ] **Step 2: 跑测试，确认失败**
 
 ```bash
-bunx vitest run __tests__/unit/functions/agnes.test.ts
+bunx vitest run __tests__/unit/worker/agnes.test.ts
 ```
 Expected: FAIL（模块不存在）。
 
-- [ ] **Step 3: 写 `functions/_lib/agnes.ts`**
+- [ ] **Step 3: 写 `worker/_lib/agnes.ts`**
 
 ```ts
 import { AGNES_BASE_URL } from './config';
@@ -387,14 +391,14 @@ export function agnesChatUrl(): string {
 - [ ] **Step 4: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/agnes.test.ts
+bunx vitest run __tests__/unit/worker/agnes.test.ts
 ```
 Expected: PASS（6 tests）。
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add functions/_lib/agnes.ts __tests__/unit/functions/agnes.test.ts
+git add worker/_lib/agnes.ts __tests__/unit/worker/agnes.test.ts
 git commit -m "feat(ai): agnes fetch 封装与上游错误归一"
 ```
 
@@ -403,16 +407,16 @@ git commit -m "feat(ai): agnes fetch 封装与上游错误归一"
 ## Task 5: IP 限流（CF Cache API，best-effort）
 
 **Files:**
-- Create: `functions/_lib/ratelimit.ts`
-- Test: `__tests__/unit/functions/ratelimit.test.ts`
+- Create: `worker/_lib/ratelimit.ts`
+- Test: `__tests__/unit/worker/ratelimit.test.ts`
 
 > 说明：CF Cache API 在边缘多实例间是最终一致的，因此该限流是近似的——对轻量实验性功能足够。
 
-- [ ] **Step 1: 写失败测试 `__tests__/unit/functions/ratelimit.test.ts`**
+- [ ] **Step 1: 写失败测试 `__tests__/unit/worker/ratelimit.test.ts`**
 
 ```ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { checkRateLimit, clientIP } from '../../../functions/_lib/ratelimit';
+import { checkRateLimit, clientIP } from '../../../worker/_lib/ratelimit';
 
 // 构造一个内存版 Cache，模拟 caches.default
 function makeCache() {
@@ -472,11 +476,11 @@ describe('ratelimit', () => {
 - [ ] **Step 2: 跑测试，确认失败**
 
 ```bash
-bunx vitest run __tests__/unit/functions/ratelimit.test.ts
+bunx vitest run __tests__/unit/worker/ratelimit.test.ts
 ```
 Expected: FAIL（模块不存在）。
 
-- [ ] **Step 3: 写 `functions/_lib/ratelimit.ts`**
+- [ ] **Step 3: 写 `worker/_lib/ratelimit.ts`**
 
 ```ts
 import { RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_SEC } from './config';
@@ -528,14 +532,14 @@ export function clientIP(request: Request): string {
 - [ ] **Step 4: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/ratelimit.test.ts
+bunx vitest run __tests__/unit/worker/ratelimit.test.ts
 ```
 Expected: PASS（5 tests）。
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add functions/_lib/ratelimit.ts __tests__/unit/functions/ratelimit.test.ts
+git add worker/_lib/ratelimit.ts __tests__/unit/worker/ratelimit.test.ts
 git commit -m "feat(ai): 基于 Cache API 的 IP 限流"
 ```
 
@@ -544,14 +548,71 @@ git commit -m "feat(ai): 基于 Cache API 的 IP 限流"
 ## Task 6: 对话 endpoint（`POST /api/chat`，SSE 透传）
 
 **Files:**
-- Create: `functions/api/chat.ts`
-- Test: `__tests__/unit/functions/chat.test.ts`
+- Create: `worker/index.ts`（Worker fetch handler 路由）
+- Create: `wrangler.jsonc`（Worker 部署配置：main + assets）
+- Create: `worker/api/chat.ts`
+- Test: `__tests__/unit/worker/chat.test.ts`
 
-- [ ] **Step 1: 写失败测试 `__tests__/unit/functions/chat.test.ts`**
+> **部署架构说明**：`wrangler.jsonc` 的 `main` 字段指向 `worker/index.ts`（导出 fetch handler），`assets.directory` 指向 `./dist`（静态资源），`assets.binding` 为 `ASSETS`，`assets.run_worker_first` 为 `true`。Worker 收到请求后，若 pathname 匹配 `/api/*` 则路由到对应 handler，否则走 `env.ASSETS.fetch(request)` 返回静态资源。
+
+- [ ] **Step 1: 写 `wrangler.jsonc`**（仓库根）
+
+```jsonc
+{
+  "name": "kloa-site",
+  "compatibility_date": "2026-01-29",
+  "main": "./worker/index.ts",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "build": {
+    "command": "bun run build"
+  }
+}
+```
+
+- [ ] **Step 2: 写 `worker/index.ts`**（Worker fetch handler 路由）
+
+```ts
+import { chatHandler } from './api/chat';
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+
+    // API 路由
+    if (url.pathname === '/api/chat') {
+      return chatHandler(request, env);
+    }
+
+    // 其他 /api/* 返回 404
+    if (url.pathname.startsWith('/api/')) {
+      return new Response('Not Found', { status: 404 });
+    }
+
+    // 静态资源走 ASSETS
+    return env.ASSETS.fetch(request);
+  },
+};
+```
+
+- [ ] **Step 3: 验证 wrangler 配置**
+
+```bash
+bunx wrangler dev --version
+bun run dev:wrangler
+```
+Expected: wrangler 启动成功，显示本地 URL（通常 :8788），访问 `/` 能看到静态页面。
+
+- [ ] **Step 4: 写失败测试 `__tests__/unit/worker/chat.test.ts`**
+
+- [ ] **Step 1: 写失败测试 `__tests__/unit/worker/chat.test.ts`**
 
 ```ts
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { ChatRequest } from '../../../functions/_lib/types';
+import type { ChatRequest } from '../../../worker/_lib/types';
 
 // 把全局 caches / fetch 替换成可控 mock
 function makeCache() {
@@ -563,7 +624,7 @@ function makeCache() {
 }
 
 async function callEndpoint(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
-  const mod = await import('../../../functions/api/chat');
+  const mod = await import('../../../worker/api/chat');
   globalThis.fetch = fetchMock as typeof fetch;
   globalThis.caches = { default: makeCache() } as unknown as typeof caches;
   const request = new Request('https://kloa.fans/api/chat', {
@@ -571,7 +632,7 @@ async function callEndpoint(body: unknown, env: { AGNES_API_KEY: string }, fetch
     headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '1.1.1.1' },
     body: JSON.stringify(body),
   });
-  return mod.onRequestPost({ request, env, waitUntil: async () => {}, params: {} } as any);
+  return mod.chatHandler(request, env);
 }
 
 describe('chat endpoint', () => {
@@ -621,14 +682,14 @@ describe('chat endpoint', () => {
 
 > 注意：测试用 `vi.resetModules()` + 动态 `import`，且每次 `callEndpoint` 重建独立 cache，确保限流测试隔离。`history: []` 满足 `ChatRequest` 必填。
 
-- [ ] **Step 2: 跑测试，确认失败**
+- [ ] **Step 5: 跑测试，确认失败**
 
 ```bash
-bunx vitest run __tests__/unit/functions/chat.test.ts
+bunx vitest run __tests__/unit/worker/chat.test.ts
 ```
 Expected: FAIL（模块不存在）。
 
-- [ ] **Step 3: 写 `functions/api/chat.ts`**
+- [ ] **Step 6: 写 `worker/api/chat.ts`**
 
 ```ts
 import { buildAgnesMessages } from '../_lib/prompts';
@@ -637,9 +698,7 @@ import { checkRateLimit, clientIP } from '../_lib/ratelimit';
 import { CHAT_MODEL, CHAT_MAX_TOKENS, MAX_INPUT_CHARS, MAX_HISTORY_TURNS } from '../_lib/config';
 import type { ChatRequest, Env } from '../_lib/types';
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
-
+export async function chatHandler(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') {
     return json({ error: 'Method Not Allowed' }, 405);
   }
@@ -697,7 +756,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       'connection': 'keep-alive',
     },
   });
-};
+}
 
 function json(data: unknown, status: number): Response {
   return new Response(JSON.stringify(data), {
@@ -707,24 +766,24 @@ function json(data: unknown, status: number): Response {
 }
 ```
 
-- [ ] **Step 4: 跑测试，确认通过**
+- [ ] **Step 7: 跑测试，确认通过**
 
 ```bash
-bunx vitest run __tests__/unit/functions/chat.test.ts
+bunx vitest run __tests__/unit/worker/chat.test.ts
 ```
 Expected: PASS（6 tests）。
 
-- [ ] **Step 5: 跑全部单测确认无回归**
+- [ ] **Step 8: 跑全部单测确认无回归**
 
 ```bash
 bun run test
 ```
 Expected: 全部 PASS（含原有 266 + 新增）。
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 9: Commit**
 
 ```bash
-git add functions/api/chat.ts __tests__/unit/functions/chat.test.ts
+git add worker/index.ts wrangler.jsonc worker/api/chat.ts __tests__/unit/worker/chat.test.ts
 git commit -m "feat(ai): /api/chat 对话 endpoint（SSE 透传 + 限流 + 校验）"
 ```
 
@@ -1260,9 +1319,9 @@ git commit -m "test(ai): 对话页 e2e（mock /api/chat 流式与错误态）"
 
 ## 部署与手动冒烟（实现完成后执行，不进 commit）
 
-1. **配生产 key**：Cloudflare Pages → 你的项目 → Settings → Environment Variables（Production）→ 新增 `AGNES_API_KEY` = 你的 agnes key。
-2. **push 到 main**：CF Pages 自动构建部署（`functions/` 会被识别为 Pages Functions）。
-3. **本地联调**（可选）：`cp .dev.vars.example .dev.vars` 填真 key → `bun run dev:pages` → 打开 wrangler 提示的 URL → `/ai/chat/` 实测一轮对话。
+1. **配生产 key**：`wrangler secret put AGNES_API_KEY`（输入你的 agnes key）或在 Cloudflare Dashboard → Workers → 你的 worker → Settings → Variables and Secrets → 添加 `AGNES_API_KEY`（Secret，Production）。
+2. **push 到 main**：Cloudflare 会根据 `wrangler.jsonc` 部署 Worker + Static Assets（`main` 指向 Worker fetch handler，`assets` 指向 `./dist`）。
+3. **本地联调**（可选）：`cp .dev.vars.example .dev.vars` 填真 key → `bun run dev:wrangler` → 打开 wrangler 提示的 URL → `/ai/chat/` 实测一轮对话。
 4. **生产冒烟**：访问 `https://kloa.fans/ai/chat/`，选话题/输入，确认流式回复、天使恶魔语气切换、AI 标记显示。若 401/503 检查环境变量是否生效。
 
 ---
@@ -1270,9 +1329,9 @@ git commit -m "test(ai): 对话页 e2e（mock /api/chat 流式与错误态）"
 ## Self-Review（写计划后自检结果）
 
 - **Spec 覆盖**：Plan 1 覆盖 spec 中「后端地基（key/限流/错误归一/prompt 模板/4 endpoint 中的 chat）」「对话能力（5.2）」「导航入口」「安全/OOC（7.1 system prompt 草案、7.4 AI 标记、7.3 子页免责）」「错误处理（8 的对话相关行）」「测试策略（9 的 unit + e2e mock）」。绘图/视频/入口聚合页/立绘复制明确留给 Plan 2/3/4。✅
-- **占位符扫描**：无 TBD/TODO；每步含可执行代码或命令；wrangler `dev:pages` 命令含备选验证。✅
-- **类型一致性**：`ChatForm`/`ChatMessage`/`ChatRequest` 在前后端镜像一致；`streamChat` 签名前后端一致；`buildAgnesMessages`/`systemPrompt`/`TOPIC_HINTS` 定义与测试一致；endpoint 用 `PagesFunction<Env>`。✅
+- **占位符扫描**：无 TBD/TODO；每步含可执行代码或命令；wrangler `dev:wrangler` 命令含备选验证。✅
+- **类型一致性**：`ChatForm`/`ChatMessage`/`ChatRequest` 在前后端镜像一致；`streamChat` 签名前后端一致；`buildAgnesMessages`/`systemPrompt`/`TOPIC_HINTS` 定义与测试一致；endpoint 用 Worker fetch handler 签名 `(request, env) => Response`。✅
 - **已知执行注意点**（非占位符，是需执行者现场确认的真实变体）：
-  - `wrangler pages dev -- bun run dev` 在不同 wrangler 版本行为略有差异，Task 1 Step 5 已要求验证；若失败用 `wrangler pages dev ./dist`（先 `bun run build`）。
+  - `wrangler dev` 会根据 `wrangler.jsonc` 自动代理静态资源（`./dist`）与 Worker，Task 1 Step 5 已要求验证；若失败检查 `wrangler.jsonc` 配置。
   - 导航 5 项可能略挤，Task 9 注明可调 `gap`。
   - e2e 的 webServer 约定需参照既有 `music.spec.ts`，Task 10 Step 1 已要求核对。

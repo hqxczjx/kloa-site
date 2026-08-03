@@ -366,7 +366,7 @@ git commit -m "test(ai): 入口聚合页导航 e2e 与 sitemap 确认"
 
 ## 整体冒烟 Checklist（部署后手动执行）
 
-部署到生产后，逐项验证（需 `AGNES_API_KEY` 已在 CF Pages 环境变量配置）：
+部署到生产后，逐项验证（需 `AGNES_API_KEY` 已在 Cloudflare Workers 的 Variables and Secrets 配置为 Secret/Production）：
 
 - [ ] `https://kloa.fans/ai/` 打开，三张卡可见，免责声明可见。
 - [ ] 导航栏「AI 实验室」→ `/ai/`。
