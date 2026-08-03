@@ -5,9 +5,6 @@ import userEvent from '@testing-library/user-event';
 import SongList from '../../../src/components/react/SongList';
 import { toast } from 'sonner';
 
-vi.mock('pinyin-pro', () => ({
-  pinyin: vi.fn((text: string) => text.toLowerCase().split('')),
-}));
 vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
@@ -22,9 +19,9 @@ vi.mock('../../../src/components/react/VirtualList', () => ({
 }));
 
 const songs = [
-  { title: '大鱼', artist: 'Vsinger', languages: ['国语'], genres: ['治愈'], gifts: [] },
-  { title: 'Bad apple', artist: 'Vsinger', languages: ['日语'], genres: ['东方'], gifts: [] },
-  { title: '付费歌', artist: 'A', languages: ['国语'], genres: ['流行'], gifts: ['100 SC'] },
+  { title: '大鱼', artist: 'Vsinger', titlePinyin: 'dayu', artistPinyin: 'vsinger', languages: ['国语'], genres: ['治愈'], gifts: [] },
+  { title: 'Bad apple', artist: 'Vsinger', titlePinyin: 'badapple', artistPinyin: 'vsinger', languages: ['日语'], genres: ['东方'], gifts: [] },
+  { title: '付费歌', artist: 'A', titlePinyin: 'feifeige', artistPinyin: 'a', languages: ['国语'], genres: ['流行'], gifts: ['100 SC'] },
 ];
 
 describe('SongList (重设计)', () => {
@@ -73,23 +70,23 @@ describe('SongList (重设计)', () => {
     expect(screen.queryByText('大鱼')).not.toBeInTheDocument();
   });
 
-  it('点击列头按歌名排序（Latin 排在 CJK 之后）', async () => {
+  it('点击列头按歌名（预计算拼音）排序', async () => {
     const user = userEvent.setup();
     render(<SongList songs={songs} />);
     await user.click(screen.getByRole('button', { name: /歌名/ }));
     const rows = screen.getAllByTestId('song-row');
-    // zh-Hans-CN 升序：大鱼 < 付费歌 < bad apple → Bad apple 移到末尾
-    expect(rows[rows.length - 1]).toHaveTextContent('Bad apple');
+    // 按 titlePinyin 升序：badapple < dayu < feifeige → Bad apple 在首位
+    expect(rows[0]).toHaveTextContent('Bad apple');
   });
 
   it('再次点击同一列头翻转为降序', async () => {
     const user = userEvent.setup();
     render(<SongList songs={songs} />);
     const head = screen.getByRole('button', { name: /歌名/ });
-    await user.click(head); // 升序：Bad apple 在末尾
-    await user.click(head); // 降序：Bad apple 移到首位
+    await user.click(head); // 升序：Bad apple 在首位
+    await user.click(head); // 降序：Bad apple 移到末尾
     const rows = screen.getAllByTestId('song-row');
-    expect(rows[0]).toHaveTextContent('Bad apple');
+    expect(rows[rows.length - 1]).toHaveTextContent('Bad apple');
   });
 
   it('第三次点击同一列头回到默认排序', async () => {

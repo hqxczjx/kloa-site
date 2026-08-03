@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { pinyinKey } from '../../../src/components/react/songlist/utils';
+import { pinyinKey } from '../../../src/components/react/songlist/pinyin.server';
 
 // 不 mock pinyin-pro，验证真实集成（type:'array' 配置 + 拼接）
 describe('pinyinKey 真实集成', () => {

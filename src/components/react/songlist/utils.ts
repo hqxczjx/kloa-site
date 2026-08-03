@@ -1,4 +1,3 @@
-import { pinyin } from 'pinyin-pro';
 import type { Song, FilterState, SortState, SortKey, LanguageFacet } from './types';
 import { LANGUAGE_ORDER } from './types';
 
@@ -6,18 +5,6 @@ export const songKey = (song: Song): string => `${song.title}-${song.artist}`;
 
 export function getTags(song: Song): string[] {
   return [...song.languages, ...song.genres, ...song.gifts];
-}
-
-const PINYIN_OPTS = { toneType: 'none', type: 'array' } as const;
-
-const pinyinCache = new Map<string, string>();
-
-export function pinyinKey(text: string): string {
-  const cached = pinyinCache.get(text);
-  if (cached !== undefined) return cached;
-  const result = pinyin(text, PINYIN_OPTS).join('').toLowerCase();
-  pinyinCache.set(text, result);
-  return result;
 }
 
 /** SC 金额：取 gifts 中数字最大值；无数字则回退首个原始字符串；无礼物返回 null */
@@ -49,7 +36,7 @@ export function matchesFilters(song: Song, f: FilterState): boolean {
   const q = f.query.trim().toLowerCase();
   if (!q) return true;
   if (song.title.toLowerCase().includes(q) || song.artist.toLowerCase().includes(q)) return true;
-  return pinyinKey(song.title).includes(q) || pinyinKey(song.artist).includes(q);
+  return song.titlePinyin.includes(q) || song.artistPinyin.includes(q);
 }
 
 export function filterSongs(songs: Song[], f: FilterState): Song[] {
@@ -58,8 +45,8 @@ export function filterSongs(songs: Song[], f: FilterState): Song[] {
 
 function sortKeyValue(song: Song, key: SortKey): string {
   switch (key) {
-    case 'title': return pinyinKey(song.title);
-    case 'artist': return pinyinKey(song.artist);
+    case 'title': return song.titlePinyin;
+    case 'artist': return song.artistPinyin;
     case 'language': return song.languages[0] ?? '';
     case 'genre': return song.genres[0] ?? '';
     default: return '';

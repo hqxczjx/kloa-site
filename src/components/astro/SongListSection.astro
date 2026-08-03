@@ -2,7 +2,15 @@
 import SongList from '../react/SongList';
 import PersistentPlayer from '../react/PersistentPlayer';
 import songs from '../../data/songs.json';
+import { pinyinKey } from '../react/songlist/pinyin.server';
 import { ArrowLeft, Music as MusicIcon } from 'lucide-react';
+
+// 服务端预生成拼音字段，避免浏览器端打包 pinyin-pro（SongList.js 290KB→~150KB）
+const songsWithPinyin = songs.map((s) => ({
+  ...s,
+  titlePinyin: pinyinKey(s.title),
+  artistPinyin: pinyinKey(s.artist),
+}));
 
 interface Props {
   /** 是否显示「返回首页」链接：/music 用 true，首页内嵌用 false */
@@ -47,7 +55,7 @@ const Title = showBackLink ? 'h1' : 'h2';
   </div>
 
   {/* Song List — client:visible：首页不拖累首屏；/music 视口内立即水合 */}
-  <SongList client:visible songs={songs} />
+  <SongList client:visible songs={songsWithPinyin} />
 
   {/* Global Player — client:idle：空闲加载，不阻塞首屏 */}
   <PersistentPlayer client:idle />

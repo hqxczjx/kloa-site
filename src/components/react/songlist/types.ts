@@ -1,6 +1,9 @@
 export interface Song {
   title: string;
   artist: string;
+  /** 服务端预生成的标题拼音（无声调小写），供搜索/排序，避免浏览器端 pinyin-pro */
+  titlePinyin: string;
+  artistPinyin: string;
   languages: string[];
   genres: string[];
   gifts: string[];

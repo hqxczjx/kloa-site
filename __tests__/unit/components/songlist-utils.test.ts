@@ -1,24 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { pinyin } from 'pinyin-pro';
+import { describe, it, expect } from 'vitest';
 import {
-  songKey, getTags, pinyinKey, scAmount, hasGift, langColor,
+  songKey, getTags, scAmount, hasGift, langColor,
   matchesFilters, filterSongs, sortSongs, highlightSegments, deriveFacets,
 } from '../../../src/components/react/songlist/utils';
 import type { Song } from '../../../src/components/react/songlist/types';
 
-vi.mock('pinyin-pro', () => ({
-  pinyin: vi.fn((text: string) => text.toLowerCase().split('')),
-}));
-
 const s = (over: Partial<Song>): Song => ({
-  title: 'T', artist: 'A', languages: [], genres: [], gifts: [], ...over,
+  title: 'T', artist: 'A', titlePinyin: 'tp', artistPinyin: 'ap',
+  languages: [], genres: [], gifts: [], ...over,
 });
 
 describe('songlist utils', () => {
-  beforeEach(() => {
-    (pinyin as any).mockImplementation((text: string) => text.toLowerCase().split(''));
-  });
-
   describe('songKey / getTags', () => {
     it('songKey 用 标题-歌手', () => {
       expect(songKey(s({ title: '大鱼', artist: '周' }))).toBe('大鱼-周');
@@ -26,13 +18,6 @@ describe('songlist utils', () => {
     it('getTags 合并三源', () => {
       expect(getTags(s({ languages: ['国语'], genres: ['流行'], gifts: ['30 SC'] })))
         .toEqual(['国语', '流行', '30 SC']);
-    });
-  });
-
-  describe('pinyinKey', () => {
-    it('调用 pinyin 并拼接小写', () => {
-      expect(pinyinKey('AB')).toBe('ab');
-      expect(pinyin).toHaveBeenCalledWith('AB', expect.anything());
     });
   });
 
@@ -85,9 +70,8 @@ describe('songlist utils', () => {
     it('搜索：歌手直匹配（大小写不敏感）', () => {
       expect(matchesFilters(s({ artist: 'LiSA' }), { query: 'lis', languages: [], genres: [], scOnly: false })).toBe(true);
     });
-    it('搜索：拼音匹配', () => {
-      (pinyin as any).mockImplementation(() => 'dayu'.split(''));
-      expect(matchesFilters(s({ title: '大鱼' }), { query: 'dayu', languages: [], genres: [], scOnly: false })).toBe(true);
+    it('搜索：拼音匹配（用预计算 titlePinyin）', () => {
+      expect(matchesFilters(s({ title: '大鱼', titlePinyin: 'dayu' }), { query: 'dayu', languages: [], genres: [], scOnly: false })).toBe(true);
     });
     it('纯空白 query 视为无搜索', () => {
       expect(matchesFilters(s({ title: '大鱼' }), { query: '   ', languages: [], genres: [], scOnly: false })).toBe(true);
@@ -102,15 +86,14 @@ describe('songlist utils', () => {
 
   it('filterSongs 与 sortSongs 组合', () => {
     const songs = [
-      s({ title: '晴天', artist: '周杰伦', languages: ['国语'] }),
-      s({ title: '阿城', artist: '阿妹', languages: ['国语'] }),
-      s({ title: 'Bad', artist: 'B', languages: ['英语'] }),
+      s({ title: '晴天', artist: '周杰伦', titlePinyin: 'qingtian', languages: ['国语'] }),
+      s({ title: '阿城', artist: '阿妹', titlePinyin: 'acheng', languages: ['国语'] }),
+      s({ title: 'Bad', artist: 'B', titlePinyin: 'bad', languages: ['英语'] }),
     ];
     const filtered = filterSongs(songs, { query: '', languages: ['国语'], genres: [], scOnly: false });
     expect(filtered).toHaveLength(2);
     const sorted = sortSongs(filtered, { key: 'title', dir: 'asc' });
-    // pinyin 被 mock 为逐字符小写数组再 join：'阿城'->'阿城'（非中文不改），'晴天'->'晴天'
-    // localeCompare('阿城','晴天','zh-Hans-CN') 按 Unicode/拼音序，阿 < 晴 成立
+    // 按预计算 titlePinyin 排序：'acheng' < 'qingtian'，故 阿城 < 晴天
     expect(sorted.map(x => x.title)).toEqual(['阿城', '晴天']);
   });
 
