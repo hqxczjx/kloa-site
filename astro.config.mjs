@@ -11,8 +11,8 @@ export default defineConfig({
   // Prefetch: links entering the viewport are fetched ahead of time so page
   // navigation is near-instant on this fully static site.
   prefetch: {
-    prefetchAll: true,
-    defaultStrategy: 'viewport',
+    prefetchAll: false,
+    defaultStrategy: 'hover',
   },
   // Tailwind v4 via its official Vite plugin (replaces @tailwindcss/postcss,
   // which clashed with Vite 8's postcss-import). v4 ships its own prefixing,
