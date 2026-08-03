@@ -4,11 +4,17 @@
  */
 
 import { execSync } from 'child_process';
-import { existsSync } from 'fs';
+import { readdirSync } from 'fs';
 
 function checkPlaywright() {
-  const chromiumPath = process.env.HOME + '/.cache/ms-playwright/chromium_headless_shell-1208';
-  return existsSync(chromiumPath);
+  // 不硬编码 build 号（如 chromium_headless_shell-1208）：Playwright 升级后 build 号会变，
+  // 硬编码会导致本地误判浏览器未装、触发重复下载。缓存目录下存在任意 chromium* 目录即视为已安装。
+  const cacheDir = process.env.HOME + '/.cache/ms-playwright';
+  try {
+    return readdirSync(cacheDir).some((name) => name.startsWith('chromium'));
+  } catch {
+    return false;
+  }
 }
 
 function main() {
