@@ -4,108 +4,51 @@ test.describe('Responsive Design', () => {
   test.describe('Desktop Viewport (1280x720)', () => {
     test.use({ viewport: { width: 1280, height: 720 } });
 
-    test('should display desktop navigation', async ({ page }) => {
+    test('should render desktop layout correctly', async ({ page }) => {
       await page.goto('/');
 
       const desktopNav = page.locator('nav').filter({ has: page.getByRole('link', { name: '首页' }) });
       await expect(desktopNav).toBeVisible();
-    });
-
-    test('should display all navigation links', async ({ page }) => {
-      await page.goto('/');
-
       await expect(page.getByRole('link', { name: '首页', exact: true })).toBeVisible();
       await expect(page.getByRole('link', { name: '歌单', exact: true })).toBeVisible();
       await expect(page.getByRole('link', { name: '关于', exact: true })).toBeVisible();
-    });
-
-    test('should display footer', async ({ page }) => {
-      await page.goto('/');
-
-      const footer = page.locator('footer');
-      await expect(footer).toBeVisible();
-    });
-
-    test('should not display mobile navigation', async ({ page }) => {
-      await page.goto('/');
-
-      // Mobile bottom nav should be hidden on desktop
-      const mobileNav = page.locator('nav.fixed.bottom-0');
-      await expect(mobileNav).not.toBeVisible();
+      await expect(page.locator('footer')).toBeVisible();
+      // 移动端底部导航在桌面隐藏
+      await expect(page.locator('nav.fixed.bottom-0')).not.toBeVisible();
     });
   });
 
   test.describe('Tablet Viewport (768x1024)', () => {
     test.use({ viewport: { width: 768, height: 1024 } });
 
-    test('should display content properly', async ({ page }) => {
+    test('should render tablet layout correctly', async ({ page }) => {
       await page.goto('/');
 
-      const mainContent = page.locator('main');
-      await expect(mainContent).toBeVisible();
-    });
-
-    test('should display navigation', async ({ page }) => {
-      await page.goto('/');
-
+      await expect(page.locator('main')).toBeVisible();
       await expect(page.getByRole('link', { name: '首页' })).toBeVisible();
-    });
-
-    test('should display footer', async ({ page }) => {
-      await page.goto('/');
-
-      const footer = page.locator('footer');
-      await expect(footer).toBeVisible();
+      await expect(page.locator('footer')).toBeVisible();
     });
   });
 
   test.describe('Mobile Viewport (375x667)', () => {
     test.use({ viewport: { width: 375, height: 667 } });
 
-    test('should display mobile bottom navigation', async ({ page }) => {
+    test('should render mobile layout correctly', async ({ page }) => {
       await page.goto('/');
 
-      const mobileNav = page.locator('nav.fixed.bottom-0');
-      await expect(mobileNav).toBeVisible();
-    });
-
-    test('should display mobile navigation icons', async ({ page }) => {
-      await page.goto('/');
-
+      // 移动端底部导航可见
+      await expect(page.locator('nav.fixed.bottom-0')).toBeVisible();
+      // 导航图标可见
       await expect(page.getByRole('link', { name: '首页', exact: true })).toBeVisible();
       await expect(page.getByRole('link', { name: '歌单', exact: true })).toBeVisible();
       await expect(page.getByRole('link', { name: '关于', exact: true })).toBeVisible();
-    });
-
-    test('should not display desktop navigation', async ({ page }) => {
-      await page.goto('/');
-
-      // Desktop nav should be hidden on mobile
-      const desktopNav = page.locator('nav.hidden.md\\:flex');
-      await expect(desktopNav).not.toBeVisible();
-    });
-
-    test('should not display footer on mobile', async ({ page }) => {
-      await page.goto('/');
-
-      const footer = page.locator('footer');
-      await expect(footer).not.toBeVisible();
-    });
-
-    test('should display theme toggle on mobile', async ({ page }) => {
-      await page.goto('/');
-
+      // 桌面导航在移动端隐藏
+      await expect(page.locator('nav.hidden.md\\:flex')).not.toBeVisible();
+      // 页脚在移动端隐藏
+      await expect(page.locator('footer')).not.toBeVisible();
+      // 主题切换按钮可见，且位于右上角
       const themeToggle = page.locator('[data-testid="mobile-theme-toggle"] button').first();
       await expect(themeToggle).toBeVisible();
-    });
-
-    test('should display mobile theme toggle in top right', async ({ page }) => {
-      await page.goto('/');
-      await page.waitForTimeout(500); // Wait for element to be fully loaded
-
-      const themeToggle = page.locator('[data-testid="mobile-theme-toggle"] button').first();
-      await expect(themeToggle).toBeVisible();
-
       const box = await themeToggle.boundingBox();
       expect(box).toBeTruthy();
       if (box) {
@@ -118,23 +61,12 @@ test.describe('Responsive Design', () => {
   test.describe('Music Page on Mobile', () => {
     test.use({ viewport: { width: 375, height: 667 } });
 
-    test('should display search bar', async ({ page }) => {
-      await page.goto('/music');
-
-      const searchInput = page.getByPlaceholder('搜索歌名 / 歌手 / 拼音…');
-      await expect(searchInput).toBeVisible();
-    });
-
-    test('should display filter bar', async ({ page }) => {
+    test('should render music page elements', async ({ page }) => {
       await page.goto('/music', { waitUntil: 'domcontentloaded' });
 
+      await expect(page.getByPlaceholder('搜索歌名 / 歌手 / 拼音…')).toBeVisible();
       await expect(page.getByTestId('filter-bar')).toBeVisible();
       await expect(page.getByLabel('筛选语言: 国语')).toBeVisible();
-    });
-
-    test('should display song list', async ({ page }) => {
-      await page.goto('/music', { waitUntil: 'domcontentloaded' });
-
       const songItems = page.locator('[data-testid="virtual-list"]').locator('[data-testid="song-row"]');
       await expect(songItems.first()).toBeVisible();
     });
@@ -168,43 +100,28 @@ test.describe('Responsive Design', () => {
   test.describe('About Page on Mobile', () => {
     test.use({ viewport: { width: 375, height: 667 } });
 
-    test('should display page title', async ({ page }) => {
+    test('should render about page and be scrollable', async ({ page }) => {
       await page.goto('/about');
 
       await expect(page.getByText('关于本站')).toBeVisible();
-    });
-
-    test('should display disclaimer', async ({ page }) => {
-      await page.goto('/about');
-
       await expect(page.getByRole('heading', { name: '本站声明' }).first()).toBeVisible();
-    });
-
-    test('should be scrollable', async ({ page }) => {
-      await page.goto('/about');
 
       const bodyHeight = await page.evaluate(() => document.body.scrollHeight);
       const viewportHeight = await page.evaluate(() => window.innerHeight);
-
       expect(bodyHeight).toBeGreaterThan(viewportHeight);
     });
   });
 
   test.describe('Orientation Changes', () => {
-    test('should handle landscape orientation', async ({ page }) => {
+    test('should handle landscape and portrait orientation', async ({ page }) => {
+      // 横屏
       await page.setViewportSize({ width: 667, height: 375 });
       await page.goto('/');
+      await expect(page.locator('main')).toBeVisible();
 
-      const mainContent = page.locator('main');
-      await expect(mainContent).toBeVisible();
-    });
-
-    test('should handle portrait orientation', async ({ page }) => {
+      // 切到竖屏，同一页面重排后 main 仍应可见
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto('/');
-
-      const mainContent = page.locator('main');
-      await expect(mainContent).toBeVisible();
+      await expect(page.locator('main')).toBeVisible();
     });
   });
 
@@ -216,8 +133,6 @@ test.describe('Responsive Design', () => {
 
       const musicLink = page.getByRole('link', { name: '歌单', exact: true });
       await expect(musicLink).toBeVisible();
-      await page.waitForTimeout(500);
-
       await musicLink.tap();
 
       await expect(page).toHaveURL(/\/music/);
@@ -228,8 +143,6 @@ test.describe('Responsive Design', () => {
 
       const themeToggle = page.locator('[data-testid="mobile-theme-toggle"] button').first();
       await expect(themeToggle).toBeVisible();
-      await page.waitForTimeout(500);
-
       await themeToggle.tap();
 
       await expect(page.locator('html')).toHaveClass(/dark/);
