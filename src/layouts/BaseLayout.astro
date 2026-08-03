@@ -2,7 +2,7 @@
 import '../styles/global.css';
 import ThemeToggle from '../components/ui/ThemeToggle.tsx';
 import ToasterWrapper from '../components/ui/ToasterWrapper.tsx';
-import { Heart, Music as MusicIcon, User, Volume2 } from 'lucide-react';
+import { Heart, Music as MusicIcon, User, Volume2, Sparkles } from 'lucide-react';
 
 // Canonical URL for SEO / Open Graph (requires `site` in astro.config)
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -62,6 +62,7 @@ const yearDisplay = currentYear === startYear
         <a href="/" class="nav-link">首页</a>
         <a href="/music/" class="nav-link">歌单</a>
         <a href="/soundboard/" class="nav-link">Button</a>
+        <a href="/ai/chat/" class="nav-link">AI</a>
         <a href="/about/" class="nav-link">关于</a>
       </div>
 
@@ -86,6 +87,10 @@ const yearDisplay = currentYear === startYear
       <a href="/soundboard/" class="mobile-nav-link">
         <Volume2 className="w-6 h-6" />
         <span class="text-xs mt-1">Button</span>
+      </a>
+      <a href="/ai/chat/" class="mobile-nav-link">
+        <Sparkles className="w-6 h-6" />
+        <span class="text-xs mt-1">AI</span>
       </a>
       <a href="/about/" class="mobile-nav-link">
         <User className="w-6 h-6" />
