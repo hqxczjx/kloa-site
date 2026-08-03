@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { systemPrompt, buildAgnesMessages, TOPIC_HINTS } from '../../../functions/_lib/prompts';
+import { systemPrompt, buildAgnesMessages, TOPIC_HINTS } from '../../../worker/_lib/prompts';
 
 describe('prompts', () => {
   it('systemPrompt 包含身份约束并随形态切换语气', () => {

@@ -1,10 +1,13 @@
 {
   "name": "kloa-site",
   "compatibility_date": "2026-01-29",
+  "main": "./worker/index.ts",
   "assets": {
-    "directory": "./dist" // 这就是你要找的“输出目录”
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": true
   },
   "build": {
-    "command": "bun run build" // 这就是你要找的“构建命令”
+    "command": "bun run build"
   }
 }

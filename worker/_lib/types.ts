@@ -12,7 +12,8 @@ export interface ChatRequest {
   history: ChatMessage[];
 }
 
-// Pages Function 环境变量绑定
+// Worker 环境绑定（Workers + Static Assets）
 export interface Env {
   AGNES_API_KEY: string;
+  ASSETS: Fetcher;
 }

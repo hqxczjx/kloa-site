@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { normalizeAgnesError, agnesHeaders, agnesChatUrl } from '../../../functions/_lib/agnes';
+import { normalizeAgnesError, agnesHeaders, agnesChatUrl } from '../../../worker/_lib/agnes';
 
 describe('agnes', () => {
   it('401 归一为配置问题（不泄露 key）', () => {

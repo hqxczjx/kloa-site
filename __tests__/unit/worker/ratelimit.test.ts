@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { checkRateLimit, clientIP } from '../../../functions/_lib/ratelimit';
+import { checkRateLimit, clientIP } from '../../../worker/_lib/ratelimit';
 
 // 构造一个内存版 Cache，模拟 caches.default
 function makeCache() {

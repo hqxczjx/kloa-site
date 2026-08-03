@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { streamChat, TOPICS } from '../../../../src/components/react/ai/api';
-import { TOPIC_HINTS } from '../../../../functions/_lib/prompts';
+import { TOPIC_HINTS } from '../../../../worker/_lib/prompts';
 
 function sseResponse(chunks: string[]): Response {
   const enc = new TextEncoder();

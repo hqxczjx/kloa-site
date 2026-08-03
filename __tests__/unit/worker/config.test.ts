@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AGNES_BASE_URL, CHAT_MODEL, RATE_LIMIT_MAX, MAX_INPUT_CHARS } from '../../../functions/_lib/config';
+import { AGNES_BASE_URL, CHAT_MODEL, RATE_LIMIT_MAX, MAX_INPUT_CHARS } from '../../../worker/_lib/config';
 
 describe('config', () => {
   it('指向 agnes v1 base url', () => {

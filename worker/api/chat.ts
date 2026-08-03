@@ -4,9 +4,7 @@ import { checkRateLimit, clientIP } from '../_lib/ratelimit';
 import { CHAT_MODEL, CHAT_MAX_TOKENS, MAX_INPUT_CHARS, MAX_HISTORY_TURNS } from '../_lib/config';
 import type { ChatRequest, Env } from '../_lib/types';
 
-export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
-
+export async function chatHandler(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') {
     return json({ error: 'Method Not Allowed' }, 405);
   }

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import type { ChatRequest } from '../../../functions/_lib/types';
+import type { ChatRequest } from '../../../worker/_lib/types';
 
 // 把全局 caches / fetch 替换成可控 mock
 function makeCache() {
@@ -12,7 +12,7 @@ function makeCache() {
 
 let sharedCache: Cache;
 async function callEndpoint(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
-  const mod = await import('../../../functions/api/chat');
+  const mod = await import('../../../worker/api/chat');
   globalThis.fetch = fetchMock as typeof fetch;
   if (!sharedCache) sharedCache = makeCache();
   globalThis.caches = { default: sharedCache } as unknown as typeof caches;
@@ -21,7 +21,7 @@ async function callEndpoint(body: unknown, env: { AGNES_API_KEY: string }, fetch
     headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '1.1.1.1' },
     body: JSON.stringify(body),
   });
-  return mod.onRequestPost({ request, env, waitUntil: async () => {}, params: {} } as any);
+  return mod.chatHandler(request, env);
 }
 
 describe('chat endpoint', () => {
