@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
 
 interface AnniversaryCardProps {
@@ -9,25 +9,24 @@ interface AnniversaryCardProps {
 }
 
 export default function AnniversaryCard({ date, label, icon, className = '' }: AnniversaryCardProps) {
-  const nextOccurrence = useMemo(() => {
+  // 天数依赖「今天」，渲染期算会导致 SSR/客户端不一致 → 移入 useEffect，初始占位。
+  const [days, setDays] = useState<number | null>(null);
+
+  // formatDate 只依赖固定 date prop（不取「今天」），SSR/客户端一致，可保留渲染期计算。
+  const formatDate = useMemo(() => {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }, [date]);
+
+  useEffect(() => {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const nextDate = new Date(date);
     nextDate.setFullYear(today.getFullYear());
     if (nextDate < today) {
       nextDate.setFullYear(today.getFullYear() + 1);
     }
-    return nextDate;
-  }, [date]);
-
-  const daysUntilNext = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return Math.floor((nextOccurrence.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-  }, [nextOccurrence]);
-
-  const formatDate = useMemo(() => {
-    const d = new Date(date);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    setDays(Math.floor((nextDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
   }, [date]);
 
   return (
@@ -50,7 +49,7 @@ export default function AnniversaryCard({ date, label, icon, className = '' }: A
       <div>
         <div className="text-xs opacity-75">距离{label}纪念日</div>
         <div className="text-2xl font-bold font-serif" style={{ color: 'var(--text-primary)' }}>
-          {daysUntilNext} 天
+          {days === null ? '—' : `${days} 天`}
         </div>
       </div>
     </div>

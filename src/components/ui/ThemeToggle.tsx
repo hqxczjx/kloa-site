@@ -2,19 +2,8 @@ import { useState, useEffect } from 'react';
 import { Sun, Moon } from 'lucide-react';
 
 export default function ThemeToggle() {
-  const [isAngelMode, setIsAngelMode] = useState(() => {
-    if (typeof window === 'undefined') {
-      return true;
-    }
-    try {
-      const saved = localStorage.getItem('theme');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const isDark = saved === 'dark' || (!saved && prefersDark);
-      return !isDark;
-    } catch (e) {
-      return true;
-    }
-  });
+  // 初始恒为天使态（与 SSR 输出一致），真实主题由下方 useEffect 同步，消除水合不一致。
+  const [isAngelMode, setIsAngelMode] = useState(true);
 
   useEffect(() => {
     const syncTheme = () => {
@@ -93,6 +82,7 @@ export default function ThemeToggle() {
 
   return (
     <button
+      suppressHydrationWarning
       onClick={toggleTheme}
       onKeyDown={handleKeyDown}
       className="relative w-16 h-8 rounded-full p-1 transition-all duration-300"
