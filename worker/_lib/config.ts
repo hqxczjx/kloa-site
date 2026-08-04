@@ -12,3 +12,12 @@ export const IMAGE_MODEL = 'agnes-image-2.1-flash';
 // agnes 需公开可拉取的立绘 URL。可用环境变量 AGNES_CHARACTER_URL 覆盖（本地联调用临时公开图）。
 export const DEFAULT_CHARACTER_IMAGE_URL = 'https://kloa.fans/images/character-1.png';
 export const MAX_IMAGE_EXTRA_CHARS = 50;
+
+export const VIDEO_MODEL = 'agnes-video-v2.0';
+// agnesapi 轮询端点在 root（非 /v1）
+export const AGNES_API_ROOT = 'https://api.agnes-ai.cn';
+// duration(秒) → 帧数/帧率；num_frames 满足 8n+1
+export const VIDEO_DURATION_PRESETS: Record<3 | 5, { num_frames: number; frame_rate: number }> = {
+  3: { num_frames: 81, frame_rate: 24 },   // 81 = 8*10+1, ≈3.4s
+  5: { num_frames: 121, frame_rate: 24 },  // 121 = 8*15+1, ≈5.0s
+};

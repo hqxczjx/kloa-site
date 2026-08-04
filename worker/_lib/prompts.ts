@@ -56,3 +56,18 @@ export function buildImagePrompt(style: string, extra?: string): string {
   parts.push(base, 'preserve original composition and character identity, keep the same character');
   return parts.join(', ');
 }
+
+export const ACTION_PROMPTS: Record<string, string> = {
+  '微微笑': 'the character smiles gently, subtle natural facial expression',
+  '回头看镜头': 'the character slowly turns head to look at the camera',
+  '风吹动发丝': 'gentle wind blowing the hair softly, natural movement',
+  '自然眨眼呼吸': 'natural blinking and subtle breathing motion',
+  '缓缓走近': 'the character slowly walks toward the camera',
+};
+
+export function buildVideoPrompt(action: string, extra?: string): string {
+  const base = ACTION_PROMPTS[action] ?? action;
+  const parts: string[] = [base];
+  if (extra && extra.trim()) parts.push(extra.trim());
+  return parts.join(', ');
+}
