@@ -22,3 +22,17 @@ export interface ImageRequest {
 export interface ImageResponse {
   url: string;
 }
+
+export interface VideoRequest {
+  action: string;
+  extra?: string;
+  duration: 3 | 5;
+}
+
+export type VideoStatus = 'queued' | 'in_progress' | 'completed' | 'failed' | 'timeout';
+
+export interface VideoStatusResponse {
+  status: VideoStatus;
+  progress: number;
+  url?: string;
+}

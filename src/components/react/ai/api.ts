@@ -1,4 +1,4 @@
-import type { ChatRequest, ImageRequest } from './types';
+import type { ChatRequest, ImageRequest, VideoRequest, VideoStatusResponse } from './types';
 
 export interface StreamCallbacks {
   onDelta: (text: string) => void;
@@ -78,4 +78,27 @@ export async function generateImage(req: ImageRequest, signal?: AbortSignal): Pr
     throw new Error(m);
   }
   return ((await res.json()) as { url: string }).url;
+}
+
+export const ACTIONS = ['微微笑', '回头看镜头', '风吹动发丝', '自然眨眼呼吸', '缓缓走近'] as const;
+
+export async function createVideo(req: VideoRequest, signal?: AbortSignal): Promise<string> {
+  const res = await fetch('/api/video', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(req),
+    signal,
+  });
+  if (!res.ok) {
+    let m = '创建任务失败，请重试';
+    try { m = ((await res.json()) as { error?: string }).error ?? m; } catch { /* 默认 */ }
+    throw new Error(m);
+  }
+  return ((await res.json()) as { video_id: string }).video_id;
+}
+
+export async function getVideoStatus(id: string, signal?: AbortSignal): Promise<VideoStatusResponse> {
+  const res = await fetch(`/api/video/status?id=${encodeURIComponent(id)}`, { signal });
+  if (!res.ok) throw new Error('查询失败');
+  return (await res.json()) as VideoStatusResponse;
 }
