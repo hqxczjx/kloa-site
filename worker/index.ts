@@ -1,4 +1,5 @@
 import { chatHandler } from './api/chat';
+import { imageHandler } from './api/image';
 import type { Env } from './_lib/types';
 
 export default {
@@ -8,6 +9,9 @@ export default {
     // /api/* 走 Worker 业务逻辑
     if (url.pathname === '/api/chat') {
       return chatHandler(request, env);
+    }
+    if (url.pathname === '/api/image') {
+      return imageHandler(request, env);
     }
     if (url.pathname.startsWith('/api/')) {
       return new Response('Not Found', { status: 404 });
