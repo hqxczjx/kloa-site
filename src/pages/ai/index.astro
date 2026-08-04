@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AiDisclaimer from '../../components/astro/AiDisclaimer.astro';
+---
+<BaseLayout>
+  <section class="w-full max-w-5xl mx-auto px-4 py-12 pb-32">
+    <div class="text-center mb-10">
+      <div class="text-xs tracking-[0.3em] opacity-60 mb-2">EXPERIMENTAL · 非官方二创</div>
+      <h1 class="font-serif text-4xl md:text-5xl font-bold mb-2"
+          style="background: linear-gradient(120deg, var(--accent-primary), var(--accent-secondary)); -webkit-background-clip: text; background-clip: text; color: transparent;">
+        AI 实验室
+      </h1>
+      <p class="text-sm" style="color: var(--text-secondary);">
+        和克罗雅一起玩的实验性 AI 小工具 · 可能随时爆炸 💣
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 max-w-3xl mx-auto">
+      <a href="/ai/chat/" class="glass rounded-2xl p-6 text-center hover:scale-[1.02] transition-transform duration-300 block">
+        <div class="text-4xl mb-3">💬</div>
+        <div class="font-serif text-xl font-bold mb-1" style="color: oklch(0.78 0.10 15);">和克罗雅聊天</div>
+        <div class="text-sm" style="color: var(--text-secondary);">天使或恶魔的方式回应你</div>
+        <div class="text-xs mt-4 opacity-70" style="color: var(--accent-primary);">进入 →</div>
+      </a>
+      <a href="/ai/image/" class="glass rounded-2xl p-6 text-center hover:scale-[1.02] transition-transform duration-300 block">
+        <div class="text-4xl mb-3">🎨</div>
+        <div class="font-serif text-xl font-bold mb-1" style="color: oklch(0.72 0.12 15);">给克罗雅换装</div>
+        <div class="text-sm" style="color: var(--text-secondary);">立绘变赛博朋克/水彩/像素</div>
+        <div class="text-xs mt-4 opacity-70" style="color: var(--accent-primary);">进入 →</div>
+      </a>
+    </div>
+
+    <div class="text-center text-sm mb-12 opacity-50" style="color: var(--text-secondary);">
+      🎬 让克罗雅动起来（视频）· 即将上线
+    </div>
+
+    <AiDisclaimer />
+  </section>
+</BaseLayout>
