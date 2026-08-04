@@ -40,3 +40,19 @@ export function buildAgnesMessages(opts: {
   messages.push({ role: 'user', content: userContent });
   return messages;
 }
+
+export const STYLE_PROMPTS: Record<string, string> = {
+  '赛博朋克霓虹': 'cyberpunk neon style, glowing neon lights, futuristic night, vibrant pink and cyan, high detail',
+  '水彩手绘': 'watercolor painting style, soft brush strokes, pastel colors, hand-drawn, artistic',
+  '复古像素': 'retro pixel art style, 16-bit, pixelated, nostalgic game aesthetic',
+  '油画质感': 'oil painting style, rich textures, classical lighting, fine art',
+  '节日主题': 'festive holiday theme, warm lights, celebration atmosphere, seasonal decorations',
+};
+
+export function buildImagePrompt(style: string, extra?: string): string {
+  const base = STYLE_PROMPTS[style] ?? style;
+  const parts: string[] = [];
+  if (extra && extra.trim()) parts.push(extra.trim());
+  parts.push(base, 'preserve original composition and character identity, keep the same character');
+  return parts.join(', ');
+}
