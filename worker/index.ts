@@ -1,6 +1,7 @@
 import { chatHandler } from './api/chat';
 import { imageHandler } from './api/image';
 import { createVideoHandler } from './api/video';
+import { videoStatusHandler } from './api/video-status';
 import type { Env } from './_lib/types';
 
 export default {
@@ -16,6 +17,9 @@ export default {
     }
     if (url.pathname === '/api/video' && request.method === 'POST') {
       return createVideoHandler(request, env);
+    }
+    if (url.pathname === '/api/video/status') {
+      return videoStatusHandler(request, env);
     }
     if (url.pathname.startsWith('/api/')) {
       return new Response('Not Found', { status: 404 });
