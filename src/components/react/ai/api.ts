@@ -1,4 +1,4 @@
-import type { ChatRequest } from './types';
+import type { ChatRequest, ImageRequest } from './types';
 
 export interface StreamCallbacks {
   onDelta: (text: string) => void;
@@ -62,3 +62,20 @@ export async function streamChat(req: ChatRequest, cb: StreamCallbacks, signal?:
 }
 
 export const TOPICS = ['今天开心的事', '推荐一首歌', '天使和恶魔哪个是真的', '说句鼓励我的话'] as const;
+
+export const STYLES = ['赛博朋克霓虹', '水彩手绘', '复古像素', '油画质感', '节日主题'] as const;
+
+export async function generateImage(req: ImageRequest, signal?: AbortSignal): Promise<string> {
+  const res = await fetch('/api/image', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(req),
+    signal,
+  });
+  if (!res.ok) {
+    let m = '生成失败，请重试';
+    try { m = ((await res.json()) as { error?: string }).error ?? m; } catch { /* 默认 */ }
+    throw new Error(m);
+  }
+  return ((await res.json()) as { url: string }).url;
+}
