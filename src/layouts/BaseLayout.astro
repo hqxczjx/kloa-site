@@ -4,6 +4,9 @@ import ThemeToggle from '../components/ui/ThemeToggle.tsx';
 import ToasterWrapper from '../components/ui/ToasterWrapper.tsx';
 import { Heart, Music as MusicIcon, User, Volume2, Sparkles } from 'lucide-react';
 
+// per-page title（默认兼容现有页面）
+const { title = '克罗雅的小网站' } = Astro.props;
+
 // Canonical URL for SEO / Open Graph (requires `site` in astro.config)
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
@@ -24,10 +27,10 @@ const yearDisplay = currentYear === startYear
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>克罗雅的小网站</title>
+    <title>{title}</title>
     <link rel="canonical" href={canonicalURL} />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="克罗雅的小网站" />
+    <meta property="og:title" content={title} />
     <meta property="og:description" content="克罗雅 - 从远古时期的天堂而来的恶魔&天使" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:locale" content="zh_CN" />

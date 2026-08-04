@@ -1,7 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AiDisclaimer from '../../components/astro/AiDisclaimer.astro';
 import ChatStudio from '../../components/react/ai/ChatStudio';
 ---
-<BaseLayout>
+<BaseLayout title="和克罗雅聊天 · AI 实验室">
+  <div class="max-w-3xl mx-auto px-4 pt-4">
+    <a href="/ai/" class="text-sm underline" style="color: var(--text-secondary);">← 返回 AI 实验室</a>
+  </div>
   <ChatStudio client:idle />
+  <div class="px-4 pb-16">
+    <AiDisclaimer />
+  </div>
 </BaseLayout>

@@ -1,7 +1,14 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AiDisclaimer from '../../components/astro/AiDisclaimer.astro';
 import VideoStudio from '../../components/react/ai/VideoStudio';
 ---
-<BaseLayout>
+<BaseLayout title="让克罗雅动起来 · AI 实验室">
+  <div class="max-w-3xl mx-auto px-4 pt-4">
+    <a href="/ai/" class="text-sm underline" style="color: var(--text-secondary);">← 返回 AI 实验室</a>
+  </div>
   <VideoStudio client:idle />
+  <div class="px-4 pb-16">
+    <AiDisclaimer />
+  </div>
 </BaseLayout>
