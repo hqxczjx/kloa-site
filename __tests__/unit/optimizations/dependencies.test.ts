@@ -26,7 +26,6 @@ describe('依赖优化：移除 framer-motion（省 ~116K JS）', () => {
       'src/components/react/AboutPage.tsx',
       'src/components/react/SongList.tsx',
       'src/components/react/PersistentPlayer.tsx',
-      'src/components/react/Soundboard.tsx',
       'src/components/react/VirtualList.tsx',
     ];
     for (const f of files) {
