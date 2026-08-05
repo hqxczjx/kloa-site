@@ -3,7 +3,7 @@ import { GithubIcon } from '../ui/BrandIcons';
 
 export default function AboutPage() {
   return (
-    <div className="relative min-h-screen px-4 py-8 md:px-8 lg:px-16 overflow-hidden">
+    <div className="relative px-4 py-8 md:px-8 lg:px-16 overflow-hidden">
       {/* Background Effects */}
       <div className="fixed inset-0 pointer-events-none">
         {/* Angel Mode: Floating Light Particles */}
