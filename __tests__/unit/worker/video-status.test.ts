@@ -29,12 +29,20 @@ describe('video status endpoint', () => {
     expect(calledUrl).not.toContain('/v1/agnesapi');
   });
 
-  it('completed 时返 metadata.url', async () => {
+  it('completed 时返顶层 url（agnes 实测结构）', async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(
-      JSON.stringify({ status: 'completed', progress: 100, metadata: { url: 'https://cdn/v.mp4' } }), { status: 200 }
+      JSON.stringify({ status: 'completed', progress: 100, url: 'https://cdn/v.mp4' }), { status: 200 }
     ));
     const res = await call('?id=vid_2', { AGNES_API_KEY: 'k' }, fetchMock);
     expect((await res.json()).url).toBe('https://cdn/v.mp4');
+  });
+
+  it('completed 时顶层 url 缺失则回退 metadata.url', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ status: 'completed', progress: 100, metadata: { url: 'https://cdn/fallback.mp4' } }), { status: 200 }
+    ));
+    const res = await call('?id=vid_2b', { AGNES_API_KEY: 'k' }, fetchMock);
+    expect((await res.json()).url).toBe('https://cdn/fallback.mp4');
   });
 
   it('未知 status 归一为 queued', async () => {

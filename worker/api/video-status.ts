@@ -22,12 +22,9 @@ export async function videoStatusHandler(request: Request, env: Env): Promise<Re
   }
   const data = await upstream.json() as any;
   const status = normalizeStatus(data.status);
-  // agnes 完成时 video URL 的实际位置待确认（文档说 metadata.url，但实测 status 返 completed 却无 url）。
-  // 先鲁棒尝试几个常见位置；同时透出 _raw 供前端/日志诊断真实结构。确认后移除 _raw。
-  const rawUrl = data?.metadata?.url || data?.url || data?.video_url || data?.output?.url || data?.result?.url;
-  const url = status === 'completed' ? rawUrl : undefined;
-  console.log('[video-status] agnes raw:', JSON.stringify(data));
-  return json({ status, progress: typeof data.progress === 'number' ? data.progress : 0, url, _raw: data }, 200);
+  // agnes 实测：completed 时视频 URL 在顶层 data.url（非文档所述的 metadata.url），保留 metadata.url 兜底
+  const url = status === 'completed' ? (data?.url || data?.metadata?.url) : undefined;
+  return json({ status, progress: typeof data.progress === 'number' ? data.progress : 0, url }, 200);
 }
 
 function json(data: unknown, status: number): Response {
