@@ -111,9 +111,22 @@ async function copyText(text: string) {
 
 - `src/pages/soundboard.astro`
 - `src/components/react/Soundboard.tsx`
-- `src/data/voices.ts`
-- `src/layouts/BaseLayout.astro` 中 soundboard 专属样式（`.VoicePad` 等，若仅此处引用则一并清理）
-- `public/` 下相关音频文件：**本次先不动**，列出待用户确认是否清理，避免误删
+- `src/data/voices.ts`（含 6 个悬空音频路径 `/audio/angel|demon/*.mp3`）
+- `src/layouts/BaseLayout.astro` 中 soundboard 专属样式（`.VoicePad` 等，随页面移除）
+- 音频实体文件：经核查 `public/audio/` 目录**不存在**，6 个 mp3 从未入库——无需删实体，删 `voices.ts` 即清除引用
+
+## 修改清单（导航 / 入口 / 测试迁移）
+
+- `src/layouts/BaseLayout.astro`：桌面顶栏 + 移动底栏第 3 项，`Button` → `独轮车`、`/soundboard/` → `/danmaku/`、图标 `Volume2` → `MessageCircle`
+- `src/components/astro/Hero.astro`：首页「克罗雅Button」入口卡片（约 178–191 行）改为指向 `/danmaku/`、文案改「独轮车」、图标换 `MessageCircle`
+- `__tests__/unit/optimizations/dependencies.test.ts:29`：删除 `'src/components/react/Soundboard.tsx'`（或替换为 `'src/components/react/DanmakuBoard.tsx'`），否则文件不存在会致测试失败
+
+## 相关测试用例核查
+
+经核查**没有专门的 Soundboard 测试文件**，相关引用仅：
+- `dependencies.test.ts` 第 29 行（见修改清单）
+- `__tests__/unit/layouts/BaseLayout.test.tsx`：纯 placeholder，不断言 soundboard，无需改
+- e2e 套件：无 `/soundboard` 路由断言，无需改
 
 ## 验收标准
 
@@ -128,5 +141,4 @@ async function copyText(text: string) {
 
 ## 风险 / 待确认
 
-- `public/` 音频文件是否清理：等用户确认后再处理
 - 旧路由 `/soundboard/` 是否需要重定向：当前判断不需要（个人小站，直接移除）
