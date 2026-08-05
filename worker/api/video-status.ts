@@ -20,10 +20,14 @@ export async function videoStatusHandler(request: Request, env: Env): Promise<Re
     const { status, message } = normalizeAgnesError(upstream.status);
     return json({ error: message }, status);
   }
-  const data = await upstream.json() as { status?: string; progress?: number; metadata?: { url?: string } };
+  const data = await upstream.json() as any;
   const status = normalizeStatus(data.status);
-  const url = status === 'completed' ? data.metadata?.url : undefined;
-  return json({ status, progress: typeof data.progress === 'number' ? data.progress : 0, url }, 200);
+  // agnes 完成时 video URL 的实际位置待确认（文档说 metadata.url，但实测 status 返 completed 却无 url）。
+  // 先鲁棒尝试几个常见位置；同时透出 _raw 供前端/日志诊断真实结构。确认后移除 _raw。
+  const rawUrl = data?.metadata?.url || data?.url || data?.video_url || data?.output?.url || data?.result?.url;
+  const url = status === 'completed' ? rawUrl : undefined;
+  console.log('[video-status] agnes raw:', JSON.stringify(data));
+  return json({ status, progress: typeof data.progress === 'number' ? data.progress : 0, url, _raw: data }, 200);
 }
 
 function json(data: unknown, status: number): Response {
