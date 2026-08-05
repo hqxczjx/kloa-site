@@ -117,7 +117,7 @@ export default function ChatStudio() {
                   ? { background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', color: '#fff' }
                   : { background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
               >
-                {m.content || (m.role === 'assistant' && streaming ? '…' : '')}
+                {(m.role === 'assistant' ? m.content.trim() : m.content) || (m.role === 'assistant' && streaming ? '…' : '')}
               </div>
             </div>
           </div>
