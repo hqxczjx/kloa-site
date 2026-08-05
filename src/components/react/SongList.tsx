@@ -58,7 +58,7 @@ export default function SongList({ songs }: SongListProps) {
     });
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 pb-8">
+    <div className="w-full max-w-4xl mx-auto px-4 pb-4">
       <div className="flex items-center gap-3 mb-4 flex-wrap">
         <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
           共 {songs.length} 首 · 结果 {visible.length} 首
