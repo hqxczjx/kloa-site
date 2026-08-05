@@ -7,6 +7,27 @@ type Filter = 'all' | DanmakuCategory;
 
 const LIMIT = 20;
 
+const cardTheme: Record<DanmakuCategory, { badge: string; border: string }> = {
+  cheer: {
+    badge: 'bg-pink-100 text-pink-700 dark:bg-pink-900/40 dark:text-pink-200',
+    border: 'border-pink-200 dark:border-pink-500/30',
+  },
+  meme: {
+    badge: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200',
+    border: 'border-blue-200 dark:border-blue-500/30',
+  },
+  memorial: {
+    badge: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-200',
+    border: 'border-purple-200 dark:border-purple-500/30',
+  },
+};
+
+const categoryLabel: Record<DanmakuCategory, string> = {
+  cheer: '应援',
+  meme: '整活',
+  memorial: '纪念',
+};
+
 const filters: { value: Filter; label: string; icon: typeof Heart }[] = [
   { value: 'all', label: '全部', icon: Sparkles },
   { value: 'cheer', label: '应援', icon: Heart },
@@ -70,9 +91,12 @@ export default function DanmakuBoard() {
             <button
               key={d.id}
               onClick={() => copyText(d.text)}
-              className="glass rounded-2xl p-5 text-left transition-all duration-200 hover:scale-[1.02] active:scale-95 flex flex-col gap-2"
+              className={`glass border-2 ${cardTheme[d.category].border} rounded-2xl p-5 text-left transition-all duration-200 hover:scale-[1.02] active:scale-95 flex flex-col gap-2`}
               aria-label={`复制 ${d.text}`}
             >
+              <span className={`self-start text-xs px-2 py-0.5 rounded-full ${cardTheme[d.category].badge}`}>
+                {categoryLabel[d.category]}
+              </span>
               <span className="text-base break-all" style={{ color: 'var(--text-primary)' }}>{d.text}</span>
               {d.note && (
                 <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{d.note}</span>

@@ -56,4 +56,12 @@ describe('DanmakuBoard', () => {
     await waitFor(() => expect(toast.success).toHaveBeenCalledWith('已复制'));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expected);
   });
+
+  it('剪贴板写入失败时提示错误且不提示成功', async () => {
+    (navigator.clipboard.writeText as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('denied'));
+    render(<DanmakuBoard />);
+    fireEvent.click(screen.getByRole('button', { name: `复制 ${danmaku[0].text}` }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('复制失败，请手动选择'));
+    expect(toast.success).not.toHaveBeenCalled();
+  });
 });
