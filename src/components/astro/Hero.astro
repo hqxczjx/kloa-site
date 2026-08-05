@@ -1,6 +1,6 @@
 ---
 import { Picture } from 'astro:assets';
-import { ArrowDown, Tv, Volume2 } from 'lucide-react';
+import { ArrowDown, Tv, MessageCircle } from 'lucide-react';
 import { BilibiliIcon } from '../ui/BrandIcons';
 import AnniversaryCards from '../react/AnniversaryCards';
 import characterImg from '../../images/character-1.png';
@@ -175,18 +175,18 @@ import characterImg from '../../images/character-1.png';
         </span>
       </a>
 
-      <!-- Soundboard Button -->
+      <!-- 独轮车弹幕复制 -->
       <a
-        href="/soundboard/"
+        href="/danmaku/"
         class="group relative px-5 py-3 rounded-xl glass flex items-center gap-2 transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
       >
         <!-- Button Glow Effect -->
         <div class="absolute inset-0 bg-linear-to-r from-pink-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
         <!-- Button Content -->
-        <Volume2 className="relative z-10 w-5 h-5 transition-colors duration-300 group-hover:from-pink-500/20 group-hover:to-blue-500/20" style={{ color: 'var(--accent-primary)' }} />
+        <MessageCircle className="relative z-10 w-5 h-5 transition-colors duration-300 group-hover:from-pink-500/20 group-hover:to-blue-500/20" style={{ color: 'var(--accent-primary)' }} />
         <span class="relative z-10 text-base font-medium" style={{ color: 'var(--accent-primary)' }}>
-          克罗雅Button
+          独轮车
         </span>
       </a>
     </div>
