@@ -6,7 +6,7 @@ import ContributeDialog from './ContributeDialog';
 
 type Filter = 'all' | DanmakuCategory;
 
-const LIMIT = 20;
+const LIMIT = 40;
 
 const cardTheme: Record<DanmakuCategory, { badge: string; border: string }> = {
   cheer: {

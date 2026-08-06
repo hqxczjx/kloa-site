@@ -25,7 +25,7 @@ describe('danmaku 数据', () => {
     }
   });
 
-  it('至少一条超过 20 字（覆盖超限提示分支）', () => {
-    expect(danmaku.some(d => d.text.length > 20)).toBe(true);
+  it('至少一条超过 40 字（覆盖超限提示分支）', () => {
+    expect(danmaku.some(d => d.text.length > 40)).toBe(true);
   });
 });

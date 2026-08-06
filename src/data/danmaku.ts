@@ -7,7 +7,7 @@ export interface DanmakuItem {
   note?: string;
 }
 
-// 示例文案，后续替换为真实应援弹幕。普通弹幕上限 20 字，超长条用 note 标注。
+// 示例文案，后续替换为真实应援弹幕。普通弹幕上限 40 字，超长条用 note 标注。
 export const danmaku: DanmakuItem[] = [
   // 应援
   { id: 'cheer-01', text: '克罗雅最可爱！', category: 'cheer' },
@@ -26,5 +26,5 @@ export const danmaku: DanmakuItem[] = [
   { id: 'memorial-01', text: '克罗雅生日快乐', category: 'memorial' },
   { id: 'memorial-02', text: '与克罗雅相遇的第一天', category: 'memorial' },
   { id: 'memorial-03', text: '克罗雅感谢有你陪伴', category: 'memorial' },
-  { id: 'memorial-04', text: '祝我们最爱的克罗雅生日快乐，永远幸福开心每一天！', category: 'memorial', note: '超过20字，需彩色/高级弹幕权限' },
+  { id: 'memorial-04', text: '祝我们最爱的克罗雅生日快乐，愿你在天堂与恶魔的世界都永远幸福快乐，我们永远陪伴你！', category: 'memorial', note: '超过40字，需彩色/高级弹幕权限' },
 ];

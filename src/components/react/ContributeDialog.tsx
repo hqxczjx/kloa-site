@@ -63,7 +63,7 @@ export default function ContributeDialog() {
             </div>
             <div className="px-4 pb-4 overflow-auto">
               <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
-                想加什么应援 / 整活 / 纪念弹幕？填表提交，审核后加入文案库（普通弹幕 ≤20 字）。
+                想加什么应援 / 整活 / 纪念弹幕？填表提交，审核后加入文案库（普通弹幕 ≤40 字）。
               </p>
               <iframe
                 src={CONTRIBUTE_FORM_URL}

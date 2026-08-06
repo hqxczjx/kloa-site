@@ -44,7 +44,7 @@ describe('DanmakuBoard', () => {
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(first.text);
   });
 
-  it('超过 20 字的文案标注超限', () => {
+  it('超过 40 字的文案标注超限', () => {
     render(<DanmakuBoard />);
     expect(document.querySelector('[data-over-limit="true"]')).toBeInTheDocument();
   });
