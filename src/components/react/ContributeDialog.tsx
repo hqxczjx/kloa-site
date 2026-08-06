@@ -46,7 +46,7 @@ export default function ContributeDialog() {
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
-          <div className="relative glass rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+          <div className="relative glass rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
             <div className="flex items-center justify-between p-4">
               <h2 className="text-lg font-serif font-bold" style={{ color: 'var(--text-primary)' }}>
                 投稿新弹幕
@@ -68,8 +68,8 @@ export default function ContributeDialog() {
               <iframe
                 src={CONTRIBUTE_FORM_URL}
                 title="弹幕投稿表单"
-                className="w-full rounded-xl bg-white"
-                style={{ height: '640px', border: 0 }}
+                className="mx-auto rounded-xl bg-white"
+                style={{ width: '800px', height: '918px', border: 0 }}
               />
             </div>
           </div>
