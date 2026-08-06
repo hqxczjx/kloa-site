@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { PenLine, X } from 'lucide-react';
 
 // 腾讯问卷公开填写链接：建好问卷后在「发布」处复制，替换下面的占位 URL。
-const CONTRIBUTE_FORM_URL = 'https://wj.qq.com/s2/REPLACE_WITH_YOUR_SURVEY_ID';
+const CONTRIBUTE_FORM_URL = 'https://wj.qq.com/s2/27522632/db0v/';
 
 export default function ContributeDialog() {
   const [open, setOpen] = useState(false);
