@@ -49,14 +49,6 @@ describe('DanmakuBoard', () => {
     expect(document.querySelector('[data-over-limit="true"]')).toBeInTheDocument();
   });
 
-  it('「复制全部」合并当前筛选文案（换行分隔）', async () => {
-    render(<DanmakuBoard />);
-    fireEvent.click(screen.getByRole('button', { name: '复制全部' }));
-    const expected = danmaku.map(d => d.text).join('\n');
-    await waitFor(() => expect(toast.success).toHaveBeenCalledWith('已复制'));
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(expected);
-  });
-
   it('剪贴板写入失败时提示错误且不提示成功', async () => {
     (navigator.clipboard.writeText as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('denied'));
     render(<DanmakuBoard />);

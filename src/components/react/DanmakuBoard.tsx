@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Copy, Sparkles, Heart, Ghost, Cake } from 'lucide-react';
 import { toast } from 'sonner';
 import { danmaku, type DanmakuCategory } from '../../data/danmaku';
+import ContributeDialog from './ContributeDialog';
 
 type Filter = 'all' | DanmakuCategory;
 
@@ -73,14 +74,7 @@ export default function DanmakuBoard() {
         </div>
 
         <div className="flex flex-wrap justify-center gap-4">
-          <button
-            onClick={() => copyText(filtered.map(d => d.text).join('\n'))}
-            className="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200 hover:scale-105 active:scale-95 bg-gradient-to-r from-pink-500 to-blue-500 hover:from-pink-600 hover:to-blue-600 shadow-lg"
-            aria-label="复制全部"
-          >
-            <Copy className="w-5 h-5" />
-            复制全部
-          </button>
+          <ContributeDialog />
         </div>
       </div>
 
