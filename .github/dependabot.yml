@@ -14,6 +14,11 @@ updates:
     open-pull-requests-limit: 10
     commit-message:
       prefix: chore(deps)
+    ignore:
+      # typescript 版本受 astro check 兼容性约束(7.x 会移除 astro check 依赖的 API),
+      # 手动控制,不让 Dependabot 自动升级
+      - dependency-name: typescript
+
     # minor + patch 合并到同一个 PR,减少 PR 数量;
     # major 各自独立 PR(便于单独回退)
     groups:

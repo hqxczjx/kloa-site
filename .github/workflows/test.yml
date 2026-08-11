@@ -51,7 +51,9 @@ jobs:
           restore-keys: ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        # 不用 --frozen-lockfile:Dependabot 更新 package.json 时不会同步 bun.lock,
+        # frozen 模式下其 PR 会在 install 步骤直接失败
+        run: bun install
 
       - name: Run Astro check
         run: bun run astro-check
