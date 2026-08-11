@@ -57,4 +57,12 @@ beforeEach(() => {
   // Mock HTMLMediaElement (audio/video)
   HTMLMediaElement.prototype.play = vi.fn(() => Promise.resolve());
   HTMLMediaElement.prototype.pause = vi.fn();
+
+  // happy-dom 的 iframe 挂载时会真实请求 src（测试环境无网络 → 刷出大量 NetworkError/AbortError 噪音）；
+  // 覆盖其内部 connectedToDocument 钩子跳过 loadPage，测试只校验 iframe 属性、不依赖实际加载。
+  const iframeConnectedSym = Object.getOwnPropertySymbols(HTMLIFrameElement.prototype)
+    .find((s) => s.description === 'connectedToDocument');
+  if (iframeConnectedSym) {
+    (HTMLIFrameElement.prototype as unknown as Record<symbol, () => void>)[iframeConnectedSym] = function () {};
+  }
 });
