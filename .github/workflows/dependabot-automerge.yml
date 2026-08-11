@@ -1,0 +1,31 @@
+name: Dependabot Auto-merge
+
+# 当 Dependabot 开/更新 PR 时,为其启用 auto-merge。
+# PR 在分支保护要求的 status checks(Unit Tests、E2E Tests)全部通过后,
+# 由 GitHub 自动 squash 合并并删除分支。
+#
+# 用 pull_request_target(而非 pull_request):workflow 以基分支权限运行,
+# 且不会执行 PR 引入的代码,对第三方依赖更新更安全。
+on: pull_request_target
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge (含 major)
+        # 不限制 update-type → 所有更新(patch / minor / major)都启用 auto-merge
+        run: gh pr merge --auto --squash --delete-branch "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
