@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           # 只扫业务源码，跳过测试/脚本/数据/文档，减少非源码目录的噪音告警；
@@ -64,9 +64,9 @@ jobs:
 
       # JS/TS 无需编译，CodeQL 直接抽取源码，autobuild 为 no-op
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@v4
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: '/language:${{ matrix.language }}'
