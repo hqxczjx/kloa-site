@@ -25,6 +25,6 @@ jobs:
           fetch-depth: 0 # 扫描全历史，而不只是最近一次 commit
 
       - name: Gitleaks
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
