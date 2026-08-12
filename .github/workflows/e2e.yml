@@ -83,9 +83,20 @@ jobs:
       # e2e 不校验字体外观（且已 abort 字体 CDN），省 ~15s apt 安装
 
       - name: Run E2E tests
+        id: e2e
         run: bun run test:e2e:raw
         env:
           CI: true
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🎭 E2E 测试" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.e2e.outcome }}" = "success" ]; then
+            echo "✅ 全部通过" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ 有用例失败，报告 / 截图 / trace 见 artifact" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Upload test results
         if: failure()

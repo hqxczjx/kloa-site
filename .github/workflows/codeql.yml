@@ -67,6 +67,21 @@ jobs:
         uses: github/codeql-action/autobuild@v4
 
       - name: Perform CodeQL Analysis
+        id: analyze
         uses: github/codeql-action/analyze@v4
         with:
           category: '/language:${{ matrix.language }}'
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🔍 CodeQL 安全扫描" >> $GITHUB_STEP_SUMMARY
+          echo '- 语言：`javascript-typescript`' >> $GITHUB_STEP_SUMMARY
+          echo '- 查询套件：默认 security（stable）' >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.analyze.outcome }}" = "success" ]; then
+            echo '- 状态：✅ 分析完成' >> $GITHUB_STEP_SUMMARY
+          else
+            echo '- 状态：❌ 分析失败，详见日志' >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "告警详情见 [Security tab](https://github.com/${{ github.repository }}/security/code-scanning)" >> $GITHUB_STEP_SUMMARY

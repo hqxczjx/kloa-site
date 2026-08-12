@@ -25,6 +25,17 @@ jobs:
           fetch-depth: 0 # 扫描全历史，而不只是最近一次 commit
 
       - name: Gitleaks
+        id: gitleaks
         uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🔑 密钥扫描" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.gitleaks.outcome }}" = "success" ]; then
+            echo "✅ 未发现硬编码凭证 / API key" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ 发现泄漏，详见上方日志" >> $GITHUB_STEP_SUMMARY
+          fi
