@@ -1,0 +1,30 @@
+name: Gitleaks
+
+# 密钥泄露扫描 —— 本地 .githooks/pre-commit gitleaks 的 CI 兜底。
+# 扫描 commit 历史，拦截硬编码凭证 / API key（对应 CodeQL 的 hardcoded-credentials，
+# 但 gitleaks 规则更全、误报更低）。防有人 git commit --no-verify 跳过本地 hook。
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gitleaks:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # 扫描全历史，而不只是最近一次 commit
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

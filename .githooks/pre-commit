@@ -1,0 +1,40 @@
+#!/bin/bash
+set -e
+
+echo "🧪 Running pre-commit checks..."
+
+# 1. 单元测试
+echo "▶️ Running unit tests..."
+if bun run test:run; then
+  echo "✅ Unit tests passed"
+else
+  echo "❌ Unit tests failed. Commit aborted."
+  exit 1
+fi
+
+# 2. 安全 lint —— 提前拦截 CodeQL 同类问题（eval / DOM XSS / ReDoS / 弱随机）
+echo "▶️ Running security lint (eslint)..."
+if bun run lint:security; then
+  echo "✅ Security lint passed"
+else
+  echo "❌ Security lint found issues. Commit aborted."
+  exit 1
+fi
+
+# 3. 密钥扫描 —— 只扫本次暂存内容（对应 CodeQL hardcoded-credentials）
+echo "▶️ Running secret scan (gitleaks)..."
+if command -v gitleaks >/dev/null 2>&1; then
+  if gitleaks protect --staged --source . --redact --no-banner; then
+    echo "✅ Secret scan passed"
+  else
+    echo "❌ Secret scan found leaks. Commit aborted."
+    exit 1
+  fi
+else
+  echo "⚠️  gitleaks 未安装，跳过本地密钥扫描（CI 会兜底扫描全历史）。"
+  echo "    安装：https://github.com/gitleaks/gitleaks/releases"
+fi
+
+# E2E 不在 pre-commit 跑（耗时长），由 CI 跑
+echo "✅ All checks passed. Proceeding with commit..."
+exit 0

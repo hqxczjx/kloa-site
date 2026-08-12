@@ -21,6 +21,8 @@
     "test:all": "bun run test:run && bun run test:e2e",
     "type-check": "tsc --noEmit",
     "astro-check": "astro check",
+    "lint:security": "eslint .",
+    "lint:secrets": "gitleaks detect --source . --no-banner --redact --verbose",
     "gen:fonts": "node scripts/generate-font-subset.mjs",
     "setup:e2e": "playwright install --with-deps chromium"
   },
@@ -35,12 +37,16 @@
     "@vitejs/plugin-react": "^6.0.5",
     "@vitest/coverage-v8": "^4.1.10",
     "@vitest/ui": "^4.1.10",
+    "eslint": "^10.8.1",
+    "eslint-plugin-no-unsanitized": "^4.1.5",
+    "eslint-plugin-security": "^4.0.1",
     "happy-dom": "^20.11.2",
     "jsdom": "30.0.1",
     "subset-font": "^2.5.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.67.0",
     "vitest": "^4.1.10",
-    "wrangler": "^4.120.1",
-    "typescript": "^6.0.3"
+    "wrangler": "^4.120.1"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
