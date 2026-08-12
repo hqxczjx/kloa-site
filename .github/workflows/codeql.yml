@@ -50,6 +50,17 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
+          # 只扫业务源码，跳过测试/脚本/数据/文档，减少非源码目录的噪音告警；
+          # query suite 用默认的 stable security 集（不含实验性 / 代码质量类查询）
+          config: |
+            paths-ignore:
+              - '__tests__'
+              - '**/*.test.*'
+              - '**/*.spec.*'
+              - 'scripts'
+              - 'docs'
+              - 'src/data'
+              - 'test-e2e.ts'
 
       # JS/TS 无需编译，CodeQL 直接抽取源码，autobuild 为 no-op
       - name: Autobuild

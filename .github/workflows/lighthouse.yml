@@ -1,29 +1,10 @@
 name: Lighthouse CI
 
-# 性能 / 可访问性 / SEO 回归守护。对 build 产物跑 Lighthouse，
-# 预算暂全设为 warn（仅报告、不阻塞 PR），观察基线后再逐步收紧为 error。
+# 性能 / 可访问性 / SEO 自检。手动触发（改完性能/样式后按需跑），
+# 不在每次 push/PR 跑，避免分数波动与执行耗时成为 CI 噪音。
+# 预算暂全设为 warn（仅报告，手动 run 不阻塞任何流程）。
 on:
-  push:
-    branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'src/data/**'
-      - '.vscode/**'
-      - 'LICENSE'
-  pull_request:
-    branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - 'src/data/**'
-      - '.vscode/**'
-      - 'LICENSE'
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
 
 jobs:
   lighthouse:
