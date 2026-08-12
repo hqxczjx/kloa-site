@@ -1,0 +1,61 @@
+name: CodeQL
+
+# 安全扫描：对 worker（AI API key / 限流 / 用户输入处理）与前端源码做静态安全分析。
+# 公开仓库免费（GitHub Advanced Security 赠送）。
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'src/data/**'
+      - '.vscode/**'
+      - 'LICENSE'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'src/data/**'
+      - '.vscode/**'
+      - 'LICENSE'
+  schedule:
+    # 每周一 UTC 03:17 扫描（避开整点高峰）
+    - cron: '17 3 * * 1'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [javascript-typescript]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+
+      # JS/TS 无需编译，CodeQL 直接抽取源码，autobuild 为 no-op
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:${{ matrix.language }}'
