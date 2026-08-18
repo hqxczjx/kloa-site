@@ -19,6 +19,10 @@ on:
       - 'LICENSE'
   workflow_dispatch: # paths-ignore 跳过时，可在此手动触发
 
+permissions:
+  contents: read
+  pull-requests: write # 覆盖率 PR 评论（vitest-coverage-report-action）
+
 concurrency:
   # 加 github.workflow 前缀，避免 Unit Tests 与 E2E Tests 互相取消；
   # 同一 workflow 连续 push 仍会取消旧的（省资源）
@@ -60,6 +64,11 @@ jobs:
         # 本地 lint:security 的 CI 门禁版；CodeQL（每周 + PR）做更深的污点分析兜底
         run: bun run lint:security
 
+      - name: Check font subset coverage
+        # serif 标题字体是手动子集（源 OTF 不入库）；源码新增中文字符而未
+        # 重新生成子集时，这里会失败并提示跑 bun run gen:fonts（详见脚本头部注释）
+        run: node scripts/check-font-coverage.mjs
+
       - name: Run Astro check
         run: bun run astro-check
 
@@ -78,6 +87,11 @@ jobs:
         # 兜底：确保静态产物可正常生成（astro check + astro build），
         # 防止类型/编译问题漏过 check 却在部署构建时才暴露
         run: bun run build
+
+      - name: Coverage report
+        # PR 评论 + step summary 展示覆盖率（读 coverage/ 下的 json-summary）
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2
 
       - name: Upload coverage artifacts
         if: github.event_name == 'pull_request'

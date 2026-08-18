@@ -19,7 +19,8 @@ export default defineConfig({
     ],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov'],
+      // json-summary 供 CI 的 vitest-coverage-report-action 读摘要
+      reporter: ['text', 'json', 'json-summary', 'html', 'lcov'],
       exclude: [
         'node_modules/',
         '__tests__',

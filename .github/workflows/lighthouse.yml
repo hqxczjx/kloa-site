@@ -1,13 +1,26 @@
 name: Lighthouse CI
 
-# 性能 / 可访问性 / SEO 自检。手动触发（改完性能/样式后按需跑），
-# 不在每次 push/PR 跑，避免分数波动与执行耗时成为 CI 噪音。
-# 预算暂全设为 warn（仅报告，手动 run 不阻塞任何流程）。
+# 性能 / 可访问性 / SEO 自检，两条线：
+#   - local（手动触发）：对本地 build 产物跑，改完性能/样式后按需验证；
+#   - prod（每周定时 + 手动）：对生产站点 kloa.fans 跑，盯真实 CDN/边缘网络表现，
+#     分数退化能及时发现。预算全设为 warn（仅报告，不阻塞任何流程）。
 on:
   workflow_dispatch:
+  schedule:
+    # 每周一 UTC 04:23（避开整点高峰；北京时间 12:23）
+    - cron: '23 4 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lighthouse-${{ github.event_name }}
+  cancel-in-progress: false
 
 jobs:
-  lighthouse:
+  local:
+    # 本地 dist 模式仅手动触发（schedule 只关心生产）
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -38,9 +51,32 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Run Lighthouse CI
+      - name: Run Lighthouse CI (local dist)
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: ./.github/lighthouserc.json
           uploadArtifacts: true
           temporaryPublicStorageOutput: true
+
+  prod:
+    # 生产站点：每周定时盯真实网络表现；手动触发时也一并跑
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Run Lighthouse CI (kloa.fans)
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./.github/lighthouserc.prod.json
+          uploadArtifacts: true
+          temporaryPublicStorageOutput: true
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🚦 Lighthouse（生产）" >> $GITHUB_STEP_SUMMARY
+          echo '- 目标：https://kloa.fans/ ×3 次取均值' >> $GITHUB_STEP_SUMMARY
+          echo "分数与趋势报告见 run 日志中的 temporary public storage 链接" >> $GITHUB_STEP_SUMMARY

@@ -47,4 +47,6 @@ test-results/
 .superpowers/
 
 # Font subset source fonts (downloaded by scripts/generate-font-subset.mjs, ~50MB)
-scripts/fonts/
+scripts/fonts/*
+# 子集字符清单快照入库（check-font-coverage.mjs 的审计基准）
+!scripts/fonts/subset-chars.json

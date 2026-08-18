@@ -1,0 +1,35 @@
+name: Smoke Test
+
+# 生产站点冒烟 —— 每日 sync-songs（UTC 20:00）触发 CF Pages 部署后验证：
+#   首页渲染 / 字体子集可加载 / sitemap / 投稿问卷存活（内容特征判断）。
+# 防的是「部署成功但内容/资源坏了」这类静默失败（workflow 失败会发邮件通知）。
+on:
+  schedule:
+    # UTC 21:23 = 北京 05:23，给 sync 后的 Pages 构建部署留 ~1 小时
+    - cron: '23 21 * * *'
+  workflow_dispatch: # 支持手动触发；本地调试可跑 scripts/smoke.mjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smoke
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Run smoke checks
+        run: node scripts/smoke.mjs
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 🚭 生产冒烟（kloa.fans）" >> $GITHUB_STEP_SUMMARY
+          echo '- 检查项：首页渲染 / 字体子集 / sitemap / 投稿问卷存活' >> $GITHUB_STEP_SUMMARY
+          echo "详情见 [job 日志](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
