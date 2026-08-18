@@ -50,3 +50,6 @@ test-results/
 scripts/fonts/*
 # 子集字符清单快照入库（check-font-coverage.mjs 的审计基准）
 !scripts/fonts/subset-chars.json
+
+# 本地参考资料（agnes-ai 模型文档快照，开发 AI 功能用，不入库）
+docs/ignore/
