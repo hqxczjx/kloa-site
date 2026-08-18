@@ -55,6 +55,11 @@ jobs:
         # frozen 模式下其 PR 会在 install 步骤直接失败
         run: bun install
 
+      - name: Run security lint
+        # oxlint + eslint-plugin-security / no-unsanitized（jsPlugins 兼容层加载），
+        # 本地 lint:security 的 CI 门禁版；CodeQL（每周 + PR）做更深的污点分析兜底
+        run: bun run lint:security
+
       - name: Run Astro check
         run: bun run astro-check
 

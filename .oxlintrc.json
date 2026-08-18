@@ -1,0 +1,59 @@
+// oxlint 安全自查配置（从 eslint.config.js 1:1 迁移，ESLint v10 → oxlint 1.x）。
+//
+// 目的：提交前本地 + CI 各跑一次，提前拦截 CodeQL 会报的同类 JS/TS 安全问题，
+// 让代码到 CI CodeQL 时已能通过。只启用「安全」相关规则，不做通用代码风格 lint
+// （correctness 类默认规则除外）。聚焦四类：
+//   1. 动态代码执行（eval / new Function）   → CodeQL: code-injection
+//   2. DOM XSS（innerHTML / outerHTML / document.write / insertAdjacentHTML）→ CodeQL: dom-based-xss
+//   3. ReDoS（灾难性回溯正则 / 非字面量正则）→ CodeQL: js/redos
+//   4. 弱随机 / 子进程注入 / 密钥时序比较     → CodeQL: insecure-randomness / command-injection
+//
+// eslint-plugin-security / eslint-plugin-no-unsanitized 通过 jsPlugins 兼容层
+// 直接加载原 ESLint 插件（oxlint 未内置这些规则，实测 12/12 违规全检出）。
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": [
+    "./node_modules/eslint-plugin-security/index.js",
+    "./node_modules/eslint-plugin-no-unsanitized/index.js"
+  ],
+  // 关闭 oxlint 默认的 correctness 组（no-unused-vars 等会在 __tests__ 产生
+  // 与安全无关的 warning 噪音）—— 对齐原 ESLint 配置「只做安全 lint」的语义。
+  // 想白赚通用检查时删掉这段即可。
+  "categories": {
+    "correctness": "off"
+  },
+  "ignorePatterns": [
+    "dist/**",
+    ".astro/**",
+    "coverage/**",
+    "node_modules/**",
+    "src/data/**", // 静态数据，非业务源码
+    "scripts/**", // 构建脚本
+    "**/*.config.*",
+    "test-e2e.ts"
+  ],
+  "rules": {
+    // 1. 动态代码执行
+    "no-eval": "error",
+    "no-new-func": "error",
+    "security/detect-eval-with-expression": "error",
+
+    // 2. DOM XSS —— 未消毒直接写入 HTML sink
+    "no-unsanitized/method": "error", // document.write / insertAdjacentHTML(... , <untrusted>)
+    "no-unsanitized/property": "error", // el.innerHTML = <untrusted> / outerHTML
+
+    // 3. ReDoS
+    "security/detect-unsafe-regex": "error", // 已知的灾难性回溯正则
+    "security/detect-non-literal-regexp": "warn", // 用变量构造 RegExp（可能用户输入注入模式）
+
+    // 4. 其他高危（低误报精选）
+    "security/detect-child-process": "error", // 子进程命令注入
+    "security/detect-pseudoRandomBytes": "error", // 弱随机（应取 Math.random → crypto）
+    "security/detect-possible-timing-attacks": "warn" // 密钥/密码的不等比较
+
+    // 故意不开的高误报 / 不适用规则（同原 ESLint 配置）：
+    //   security/detect-object-injection      —— 误报王：几乎所有 a[b] 访问都报
+    //   security/detect-non-literal-fs-filename —— Worker 环境无 fs
+    //   security/detect-non-literal-require   —— 项目用 ESM，无 require 注入面
+  }
+}
