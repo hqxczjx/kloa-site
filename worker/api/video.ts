@@ -32,6 +32,7 @@ export async function createVideoHandler(request: Request, env: Env): Promise<Re
 
   let body: VideoRequest;
   try { body = (await request.json()) as VideoRequest; } catch { return json({ error: '请求格式有误' }, 400); }
+  if (!body || typeof body !== 'object') return json({ error: '请求格式有误' }, 400);
   if (!env.AGNES_API_KEY) return json({ error: '服务未配置' }, 503);
 
   const duration: 3 | 5 = body.duration === 5 ? 5 : 3;
@@ -42,7 +43,7 @@ export async function createVideoHandler(request: Request, env: Env): Promise<Re
     if (!isHttpUrl(body.first_frame) || !isHttpUrl(body.last_frame)) {
       return json({ error: '关键帧 URL 有误' }, 400);
     }
-    const kfPrompt = (body.prompt ?? '').trim();
+    const kfPrompt = typeof body.prompt === 'string' ? body.prompt.trim() : '';
     if (!kfPrompt || kfPrompt.length > 200) return json({ error: '请输入动作描述' }, 400);
 
     const upstream = await fetch(`${AGNES_BASE_URL}/videos`, {

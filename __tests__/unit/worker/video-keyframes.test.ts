@@ -70,6 +70,21 @@ describe('video create endpoint — keyframes 分支', () => {
     expect(res.status).toBe(400);
   });
 
+  it('关键帧模式：非字符串 prompt 返回 400', async () => {
+    const res = await call({ prompt: 5, first_frame: 'https://a/1.png', last_frame: 'https://a/2.png' }, { AGNES_API_KEY: 'k' }, vi.fn());
+    expect(res.status).toBe(400);
+  });
+
+  it('body 为 null 返回 400', async () => {
+    const res = await call(null, { AGNES_API_KEY: 'k' }, vi.fn());
+    expect(res.status).toBe(400);
+  });
+
+  it('关键帧模式：javascript: 协议 URL 返回 400（协议白名单）', async () => {
+    const res = await call({ ...KF_REQ, first_frame: 'javascript:alert(1)' }, { AGNES_API_KEY: 'k' }, vi.fn());
+    expect(res.status).toBe(400);
+  });
+
   it('动作模式回归：仍走顶层 image 且不受影响', async () => {
     const fetchMock = vi.fn().mockImplementation(OK_UPSTREAM);
     const res = await call({ action: '微微笑', duration: 5 }, { AGNES_API_KEY: 'k' }, fetchMock);
