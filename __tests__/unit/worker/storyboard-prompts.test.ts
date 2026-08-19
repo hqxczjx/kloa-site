@@ -23,8 +23,8 @@ describe('storyboard prompts', () => {
 
   it('parseStoryboard：数量不符返回 null', () => {
     expect(parseStoryboard('{"frames":["a","b"],"motions":["m1"]}', 3)).toBeNull();
-    expect(parseStoryboard('{"frames":["a","b","c","d"],"motions":["m1","m2"]}', 3)).toBeNull(); // frames-only mismatch
-    expect(parseStoryboard('{"frames":["a","b"],"motions":["m1","m2","m3"]}', 3)).toBeNull(); // motions-only mismatch
+    expect(parseStoryboard('{"frames":["a","b","c","d"],"motions":["m1","m2"]}', 3)).toBeNull(); // motions-only mismatch
+    expect(parseStoryboard('{"frames":["a","b"],"motions":["m1","m2","m3"]}', 3)).toBeNull(); // frames-only mismatch
   });
 
   it('parseStoryboard：非 JSON / 空串 / 空白项返回 null', () => {
