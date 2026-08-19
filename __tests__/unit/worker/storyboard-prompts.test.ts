@@ -18,16 +18,22 @@ describe('storyboard prompts', () => {
 
   it('parseStoryboard：容忍 markdown 围栏与前后噪声', () => {
     const noisy = '好的，如下：\n```json\n{"frames":["a","b","c","d"],"motions":["m1","m2","m3"]}\n```\n希望有帮助';
-    expect(parseStoryboard(noisy, 3)).not.toBeNull();
+    expect(parseStoryboard(noisy, 3)).toEqual({ frames: ['a', 'b', 'c', 'd'], motions: ['m1', 'm2', 'm3'] });
   });
 
   it('parseStoryboard：数量不符返回 null', () => {
     expect(parseStoryboard('{"frames":["a","b"],"motions":["m1"]}', 3)).toBeNull();
+    expect(parseStoryboard('{"frames":["a","b","c","d"],"motions":["m1","m2"]}', 3)).toBeNull(); // frames-only mismatch
+    expect(parseStoryboard('{"frames":["a","b"],"motions":["m1","m2","m3"]}', 3)).toBeNull(); // motions-only mismatch
   });
 
   it('parseStoryboard：非 JSON / 空串 / 空白项返回 null', () => {
     expect(parseStoryboard('直接聊天不输出 JSON', 3)).toBeNull();
     expect(parseStoryboard('', 3)).toBeNull();
     expect(parseStoryboard('{"frames":["a","","c","d"],"motions":["m1","m2","m3"]}', 3)).toBeNull();
+  });
+
+  it('parseStoryboard：非字符串项返回 null', () => {
+    expect(parseStoryboard('{"frames":["a",null,"c","d"],"motions":["m1","m2","m3"]}', 3)).toBeNull();
   });
 });

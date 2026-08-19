@@ -101,8 +101,9 @@ export function parseStoryboard(content: string, scenes: number): Storyboard | n
     const parsed = JSON.parse(content.slice(start, end + 1)) as { frames?: unknown; motions?: unknown };
     if (!Array.isArray(parsed.frames) || !Array.isArray(parsed.motions)) return null;
     if (parsed.frames.length !== scenes + 1 || parsed.motions.length !== scenes) return null;
-    const frames = parsed.frames.map((f) => String(f).trim());
-    const motions = parsed.motions.map((m) => String(m).trim());
+    if (!parsed.frames.every((f) => typeof f === 'string') || !parsed.motions.every((m) => typeof m === 'string')) return null;
+    const frames = parsed.frames.map((f) => f.trim());
+    const motions = parsed.motions.map((m) => m.trim());
     if (frames.some((f) => !f) || motions.some((m) => !m)) return null;
     return { frames, motions };
   } catch {
