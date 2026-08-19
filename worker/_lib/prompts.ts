@@ -71,3 +71,41 @@ export function buildVideoPrompt(action: string, extra?: string): string {
   if (extra && extra.trim()) parts.push(extra.trim());
   return parts.join(', ');
 }
+
+export interface Storyboard {
+  frames: string[];   // 关键帧画面描述（英文），长度 = 段数 + 1
+  motions: string[];  // 段内动作描述（英文），长度 = 段数
+}
+
+export function buildStoryboardMessages(idea: string, scenes: number): AgnesChatMessage[] {
+  const system = [
+    `You are a storyboard artist for short anime videos.`,
+    `Split the user's idea into exactly ${scenes} consecutive scenes featuring the same anime girl character (Kloa).`,
+    `Reply with ONLY a JSON object, no markdown fences, no extra text, exactly in this shape:`,
+    `{"frames":["...","..."],"motions":["...","..."]}`,
+    `"frames" must contain exactly ${scenes + 1} English image prompts: the opening frame, then one ending frame per scene.`,
+    `Each frame prompt describes the character, setting, composition and lighting in one sentence, keeping her appearance and art style consistent.`,
+    `"motions" must contain exactly ${scenes} English motion prompts: how the character and camera move from frames[i] to frames[i+1] within about 5 seconds, one sentence each.`,
+  ].join(' ');
+  return [
+    { role: 'system', content: system },
+    { role: 'user', content: idea },
+  ];
+}
+
+export function parseStoryboard(content: string, scenes: number): Storyboard | null {
+  const start = content.indexOf('{');
+  const end = content.lastIndexOf('}');
+  if (start === -1 || end <= start) return null;
+  try {
+    const parsed = JSON.parse(content.slice(start, end + 1)) as { frames?: unknown; motions?: unknown };
+    if (!Array.isArray(parsed.frames) || !Array.isArray(parsed.motions)) return null;
+    if (parsed.frames.length !== scenes + 1 || parsed.motions.length !== scenes) return null;
+    const frames = parsed.frames.map((f) => String(f).trim());
+    const motions = parsed.motions.map((m) => String(m).trim());
+    if (frames.some((f) => !f) || motions.some((m) => !m)) return null;
+    return { frames, motions };
+  } catch {
+    return null;
+  }
+}

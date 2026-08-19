@@ -21,3 +21,8 @@ export const VIDEO_DURATION_PRESETS: Record<3 | 5, { num_frames: number; frame_r
   3: { num_frames: 81, frame_rate: 24 },   // 81 = 8*10+1, ≈3.4s
   5: { num_frames: 121, frame_rate: 24 },  // 121 = 8*15+1, ≈5.0s
 };
+
+// 小剧场（关键帧链长视频）
+export const STORY_SCENE_COUNT = 3;        // 段数（MVP 固定 3，关键帧 = 段数+1）
+export const STORY_IDEA_MAX_CHARS = 200;   // 故事创意字数上限
+export const STORYBOARD_MAX_TOKENS = 1024; // 分镜 JSON 输出 token 上限（4 帧+3 动作英文描述）
