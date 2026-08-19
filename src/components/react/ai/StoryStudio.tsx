@@ -91,6 +91,9 @@ export default function StoryStudio() {
     }
   }
 
+  // 终态解锁。不变量:本谓词与 pollSeg 的续轮条件(L50-51)严格对称(completed 需有 url),
+  // 且段级 catch 保证 Promise.all 不 reject——三者协同确保「按钮可点 ⟺ 无存活轮询」;
+  // run() 开头的 abort+clear 是该不变量被破坏时的纵深防御,勿单独"简化"任何一处。
   useEffect(() => {
     if (phase === 'videos' && segs.length > 0 && segs.every(s =>
       (s.status === 'completed' && s.url) || s.status === 'failed' || s.status === 'timeout'
