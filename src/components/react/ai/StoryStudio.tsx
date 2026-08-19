@@ -81,7 +81,8 @@ export default function StoryStudio() {
         createKeyframeVideo(
           { prompt: motion, first_frame: urls[i], last_frame: urls[i + 1], duration: 5 },
           signal,
-        ).then(id => { pollSeg(i, id, 1, signal); }),
+        ).then(id => { pollSeg(i, id, 1, signal); })
+          .catch(() => { updateSeg(i, { status: 'failed' }); }),
       ));
     } catch (e) {
       if (signal.aborted) return;
