@@ -14,7 +14,7 @@ export async function storyboardHandler(request: Request, env: Env): Promise<Res
 
   let body: StoryboardRequest;
   try { body = (await request.json()) as StoryboardRequest; } catch { return json({ error: '请求格式有误' }, 400); }
-  const idea = body?.idea?.trim() ?? '';
+  const idea = typeof body?.idea === 'string' ? body.idea.trim() : '';
   if (!idea) return json({ error: '请输入故事创意' }, 400);
   if (idea.length > STORY_IDEA_MAX_CHARS) return json({ error: `创意过长（限 ${STORY_IDEA_MAX_CHARS} 字）` }, 400);
   if (!env.AGNES_API_KEY) return json({ error: '服务未配置' }, 503);

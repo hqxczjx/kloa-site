@@ -34,6 +34,11 @@ describe('storyboard endpoint', () => {
     expect(res.status).toBe(400);
   });
 
+  it('非字符串 idea 返回 400', async () => {
+    const res = await call({ idea: 5 }, { AGNES_API_KEY: 'k' }, vi.fn());
+    expect(res.status).toBe(400);
+  });
+
   it('超长 idea 返回 400', async () => {
     const res = await call({ idea: '长'.repeat(201) }, { AGNES_API_KEY: 'k' }, vi.fn());
     expect(res.status).toBe(400);
