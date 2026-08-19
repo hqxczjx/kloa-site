@@ -8,14 +8,29 @@ vi.mock('../../../../src/components/react/ai/api', () => ({
     frames: ['f0', 'f1', 'f2', 'f3'],
     motions: ['m0', 'm1', 'm2'],
   }),
-  generateImage: vi.fn().mockResolvedValue('https://cdn/frame.png'),
-  createKeyframeVideo: vi.fn().mockResolvedValue('vid_x'),
+  generateImage: vi.fn()
+    .mockResolvedValueOnce('https://cdn/k0.png')
+    .mockResolvedValueOnce('https://cdn/k1.png')
+    .mockResolvedValueOnce('https://cdn/k2.png')
+    .mockResolvedValueOnce('https://cdn/k3.png'),
+  createKeyframeVideo: vi.fn()
+    .mockResolvedValueOnce('vid_0')
+    .mockResolvedValueOnce('vid_1')
+    .mockResolvedValueOnce('vid_2'),
   getVideoStatus: vi.fn().mockResolvedValue({ status: 'completed', progress: 100, url: 'https://cdn/seg.mp4' }),
 }));
 
 describe('StoryStudio', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
+    const { generateImage, createKeyframeVideo } = await import('../../../../src/components/react/ai/api');
+    vi.mocked(generateImage).mockResolvedValueOnce('https://cdn/k0.png')
+      .mockResolvedValueOnce('https://cdn/k1.png')
+      .mockResolvedValueOnce('https://cdn/k2.png')
+      .mockResolvedValueOnce('https://cdn/k3.png');
+    vi.mocked(createKeyframeVideo).mockResolvedValueOnce('vid_0')
+      .mockResolvedValueOnce('vid_1')
+      .mockResolvedValueOnce('vid_2');
   });
 
   it('全链路:提交创意 → 3 个连播视频 + 各段下载', async () => {
@@ -40,9 +55,9 @@ describe('StoryStudio', () => {
     const { createKeyframeVideo } = await import('../../../../src/components/react/ai/api');
     const calls = vi.mocked(createKeyframeVideo).mock.calls.map((c) => c[0]);
     expect(calls).toEqual([
-      { prompt: 'm0', first_frame: 'https://cdn/frame.png', last_frame: 'https://cdn/frame.png', duration: 5 },
-      { prompt: 'm1', first_frame: 'https://cdn/frame.png', last_frame: 'https://cdn/frame.png', duration: 5 },
-      { prompt: 'm2', first_frame: 'https://cdn/frame.png', last_frame: 'https://cdn/frame.png', duration: 5 },
+      { prompt: 'm0', first_frame: 'https://cdn/k0.png', last_frame: 'https://cdn/k1.png', duration: 5 },
+      { prompt: 'm1', first_frame: 'https://cdn/k1.png', last_frame: 'https://cdn/k2.png', duration: 5 },
+      { prompt: 'm2', first_frame: 'https://cdn/k2.png', last_frame: 'https://cdn/k3.png', duration: 5 },
     ]);
   });
 
