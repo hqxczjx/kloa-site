@@ -23,7 +23,7 @@ vi.mock('../../../../src/components/react/ai/api', () => ({
 describe('StoryStudio', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
-    const { generateImage, createKeyframeVideo } = await import('../../../../src/components/react/ai/api');
+    const { generateImage, createKeyframeVideo, getVideoStatus } = await import('../../../../src/components/react/ai/api');
     vi.mocked(generateImage).mockResolvedValueOnce('https://cdn/k0.png')
       .mockResolvedValueOnce('https://cdn/k1.png')
       .mockResolvedValueOnce('https://cdn/k2.png')
@@ -31,6 +31,7 @@ describe('StoryStudio', () => {
     vi.mocked(createKeyframeVideo).mockResolvedValueOnce('vid_0')
       .mockResolvedValueOnce('vid_1')
       .mockResolvedValueOnce('vid_2');
+    vi.mocked(getVideoStatus).mockResolvedValue({ status: 'completed', progress: 100, url: 'https://cdn/seg.mp4' });
   });
 
   it('全链路:提交创意 → 3 个连播视频 + 各段下载', async () => {
@@ -64,5 +65,48 @@ describe('StoryStudio', () => {
   it('展示离开即放弃提示', () => {
     render(<StoryStudio />);
     expect(screen.getByText(/离开即放弃/)).toBeInTheDocument();
+  });
+
+  it('失败后可 retry(按钮重新 enabled)', async () => {
+    const { getVideoStatus } = await import('../../../../src/components/react/ai/api');
+    vi.mocked(getVideoStatus).mockResolvedValue({ status: 'failed', progress: 0 });
+
+    const user = userEvent.setup();
+    render(<StoryStudio />);
+    await user.type(screen.getByPlaceholderText(/故事创意/), 'x');
+    await user.click(screen.getByRole('button', { name: /生成小剧场/ }));
+
+    // Wait for button to re-enable (phase returns to idle when all segments fail)
+    const button = await screen.findByRole('button', { name: /生成小剧场/ });
+    expect(button).toBeEnabled();
+  });
+
+  it('retry 后旧轮询不污染新 segs', async () => {
+    const { getVideoStatus, createKeyframeVideo } = await import('../../../../src/components/react/ai/api');
+
+    // First run: 3rd video creation fails, old polling completes (returns failed)
+    vi.mocked(createKeyframeVideo).mockImplementationOnce(() => Promise.resolve('vid_0'))
+      .mockImplementationOnce(() => Promise.resolve('vid_1'))
+      .mockImplementationOnce(() => Promise.reject(new Error('create failed')));
+    vi.mocked(getVideoStatus).mockResolvedValue({ status: 'failed', progress: 0 });
+
+    const user = userEvent.setup();
+    render(<StoryStudio />);
+    await user.type(screen.getByPlaceholderText(/故事创意/), 'first run');
+    await user.click(screen.getByRole('button', { name: /生成小剧场/ }));
+
+    // Wait for phase to return to idle (button re-enables when all segments reach terminal state)
+    await screen.findByRole('button', { name: /生成小剧场/ }, { state: 'enabled' });
+
+    // Second run: all succeed, polling returns new completed URL
+    vi.mocked(createKeyframeVideo).mockResolvedValue('vid_new');
+    vi.mocked(getVideoStatus).mockResolvedValue({ status: 'completed', progress: 100, url: 'https://cdn/new.mp4' });
+
+    await user.clear(screen.getByPlaceholderText(/故事创意/));
+    await user.type(screen.getByPlaceholderText(/故事创意/), 'second run');
+    await user.click(screen.getByRole('button', { name: /生成小剧场/ }));
+
+    const video = await screen.findByTestId('story-video-0');
+    expect(video).toHaveAttribute('src', 'https://cdn/new.mp4');
   });
 });

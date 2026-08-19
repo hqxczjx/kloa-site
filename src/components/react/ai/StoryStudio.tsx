@@ -42,21 +42,25 @@ export default function StoryStudio() {
     setSegs(prev => prev.map((s, j) => (j === i ? { ...s, ...patch } : s)));
   }
 
-  function pollSeg(i: number, id: string, attempt: number) {
+  function pollSeg(i: number, id: string, attempt: number, signal: AbortSignal) {
     if (attempt > MAX_ATTEMPTS) { updateSeg(i, { status: 'timeout' }); return; }
-    getVideoStatus(id, abortRef.current?.signal).then(s => {
+    getVideoStatus(id, signal).then(s => {
+      if (signal.aborted) return;
       updateSeg(i, { status: s.status, progress: s.progress, url: s.url ?? undefined });
       if (s.status === 'completed' && s.url) return;
       if (s.status === 'failed' || s.status === 'timeout') return;
-      const t = setTimeout(() => pollSeg(i, id, attempt + 1), POLL_INTERVAL_MS);
+      const t = setTimeout(() => pollSeg(i, id, attempt + 1, signal), POLL_INTERVAL_MS);
       timersRef.current.push(t);
-    }).catch(() => updateSeg(i, { status: 'failed' }));
+    }).catch(() => { if (!signal.aborted) updateSeg(i, { status: 'failed' }); });
   }
 
   async function run() {
     const text = idea.trim();
     if (!text || phase !== 'idle') return;
     setError(''); setFrameUrls([]); setSegs([]); setPlayIndex(0); setStepDetail('');
+    abortRef.current?.abort();
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
     abortRef.current = new AbortController();
     const signal = abortRef.current.signal;
     try {
@@ -77,7 +81,7 @@ export default function StoryStudio() {
         createKeyframeVideo(
           { prompt: motion, first_frame: urls[i], last_frame: urls[i + 1], duration: 5 },
           signal,
-        ).then(id => { pollSeg(i, id, 1); }),
+        ).then(id => { pollSeg(i, id, 1, signal); }),
       ));
     } catch (e) {
       if (signal.aborted) return;
@@ -85,6 +89,12 @@ export default function StoryStudio() {
       setError(e instanceof Error ? e.message : '生成失败,请重试');
     }
   }
+
+  useEffect(() => {
+    if (phase === 'videos' && segs.length > 0 && segs.every(s =>
+      (s.status === 'completed' && s.url) || s.status === 'failed' || s.status === 'timeout'
+    )) setPhase('idle');
+  }, [phase, segs]);
 
   const busy = phase !== 'idle';
   const segUrls = segs.map(s => s.url);
