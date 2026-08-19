@@ -2,6 +2,7 @@ import { chatHandler } from './api/chat';
 import { imageHandler } from './api/image';
 import { createVideoHandler } from './api/video';
 import { videoStatusHandler } from './api/video-status';
+import { storyboardHandler } from './api/storyboard';
 import type { Env } from './_lib/types';
 
 export default {
@@ -14,6 +15,9 @@ export default {
     }
     if (url.pathname === '/api/image') {
       return imageHandler(request, env);
+    }
+    if (url.pathname === '/api/storyboard' && request.method === 'POST') {
+      return storyboardHandler(request, env);
     }
     if (url.pathname === '/api/video' && request.method === 'POST') {
       return createVideoHandler(request, env);
