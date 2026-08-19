@@ -81,10 +81,56 @@ describe('StoryStudio', () => {
     expect(button).toBeEnabled();
   });
 
-  it('retry 后旧轮询不污染新 segs(旧 timer 被清理)', async () => {
-    // TODO: Complex race condition test - needs further debugging with fake timers
-    // Core fixes are in place (abort/clear logic, signal parameter in pollSeg)
-    // This test will be completed in a follow-up to properly construct surviving old polling
-    expect(true).toBe(true); // Placeholder
-  });
+  it('retry 后数据隔离:新 run 只显示自己的结果,旧 run 的轮询产物不残留', async () => {
+    const { getVideoStatus, createKeyframeVideo } = await import('../../../../src/components/react/ai/api');
+    // beforeEach 注入的 createKeyframeVideo once 队列与本测试两轮 run 的语义冲突,重置后按调用序分流:
+    // run#1:段 0/1 创建成功并进入轮询;段 2 创建失败(seg 级失败,不中止整轮)。
+    let createCount = 0;
+    vi.mocked(createKeyframeVideo).mockReset().mockImplementation(() => {
+      createCount += 1;
+      if (createCount === 1) return Promise.resolve('vid_0');
+      if (createCount === 2) return Promise.resolve('vid_1');
+      if (createCount === 3) return Promise.reject(new Error('第 3 段创建失败'));
+      return Promise.resolve('vid_new'); // run#2 的三段
+    });
+    // 轮询按 id 区分:旧 id 第 1 次 in_progress(排 5s 递归 timer;段 2 失败后旧轮询需自行终态,
+    // 全段终态触发 useEffect 解锁 busy,才可能 retry——这是组件的固有设计),第 2 次 completed
+    // 返回旧 URL(诱饵:证明旧轮询的产物只存在于 run#1 的 segs 里);新 id 直接 completed 返回新 URL。
+    const pollCount: Record<string, number> = {};
+    vi.mocked(getVideoStatus).mockReset().mockImplementation((id: string) => {
+      pollCount[id] = (pollCount[id] ?? 0) + 1;
+      if (id === 'vid_new') {
+        return Promise.resolve({ status: 'completed' as const, progress: 100, url: 'https://cdn/new.mp4' });
+      }
+      return pollCount[id] === 1
+        ? Promise.resolve({ status: 'in_progress' as const, progress: 10 })
+        : Promise.resolve({ status: 'completed' as const, progress: 100, url: 'https://cdn/old.mp4' });
+    });
+
+    const user = userEvent.setup();
+    render(<StoryStudio />);
+    await user.type(screen.getByPlaceholderText(/故事创意/), 'first');
+    await user.click(screen.getByRole('button', { name: /生成小剧场/ }));
+
+    // busy 期间按钮文案是阶段文本,轮询全部终态(phase 门控回 idle)后才恢复"生成小剧场"且 enabled → 可 retry
+    const button = await screen.findByRole('button', { name: '生成小剧场' }, { timeout: 8000 });
+    expect(button).toBeEnabled();
+    expect(pollCount['vid_0']).toBeGreaterThanOrEqual(1); // 旧轮询确实运行过
+
+    // run#2:三段创建全部 vid_new,轮询只应命中新 id
+    await user.clear(screen.getByPlaceholderText(/故事创意/));
+    await user.type(screen.getByPlaceholderText(/故事创意/), 'second');
+    await user.click(button);
+    const video = await screen.findByTestId('story-video-0');
+    expect(video).toHaveAttribute('src', 'https://cdn/new.mp4');
+
+    // 再等 > POLL_INTERVAL_MS(5s):确认没有迟到的旧轮询活动改写新 run 的展示。
+    // (run() 开头的 abort+clear 是纵深防御——当前 UI 设计下 retry 仅在旧轮询全部终态后可达,
+    //   此断言保证未来交互变化时旧 timer 复活也写不进来。)
+    await new Promise(r => setTimeout(r, 6000));
+    const links = screen.getAllByRole('link', { name: /下载/ });
+    expect(links.map(l => l.getAttribute('href')).join(',')).toBe(
+      'https://cdn/new.mp4,https://cdn/new.mp4,https://cdn/new.mp4');
+    expect(video).toHaveAttribute('src', 'https://cdn/new.mp4');
+  }, 15000);
 });
