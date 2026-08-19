@@ -1,0 +1,68 @@
+import { test, expect } from './test';
+
+const STORYBOARD = { frames: ['f0', 'f1', 'f2', 'f3'], motions: ['m0', 'm1', 'm2'] };
+
+test.describe('AI 小剧场页', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.route('**/api/storyboard', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify(STORYBOARD),
+      })
+    );
+    await page.route('**/api/image', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ url: 'https://cdn/kf.png' }),
+      })
+    );
+    await page.route('**/api/video', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ video_id: 'v1' }),
+      })
+    );
+    await page.route('**/api/video/status*', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ status: 'completed', progress: 100, url: 'https://cdn/seg.mp4' }),
+      })
+    );
+  });
+
+  test('全链路生成并连播', async ({ page }) => {
+    await page.goto('/ai/story/');
+    const textarea = page.getByPlaceholder(/故事创意/);
+    await textarea.click();
+    await textarea.type('克罗雅在花园里追蝴蝶');
+    const button = page.getByRole('button', { name: /生成小剧场/ });
+    await expect(button).toBeEnabled();
+    await button.click();
+    await expect(page.getByTestId('story-video-0')).toHaveAttribute('src', 'https://cdn/seg.mp4');
+    await expect(page.getByText('小剧场完成')).toBeVisible();
+    // 段切换
+    await page.getByRole('button', { name: '第 2 段' }).click();
+    await expect(page.getByTestId('story-video-1')).toHaveAttribute('src', 'https://cdn/seg.mp4');
+  });
+
+  test('分镜失败提示', async ({ page }) => {
+    await page.unroute('**/api/storyboard');
+    await page.route('**/api/storyboard', (route) =>
+      route.fulfill({
+        status: 502,
+        contentType: 'application/json',
+        body: JSON.stringify({ error: '分镜生成失败，请重试' }),
+      })
+    );
+    await page.goto('/ai/story/');
+    const textarea = page.getByPlaceholder(/故事创意/);
+    await textarea.click();
+    await textarea.type('x');
+    await page.getByRole('button', { name: /生成小剧场/ }).click();
+    await expect(page.getByText('分镜生成失败，请重试')).toBeVisible();
+  });
+});
