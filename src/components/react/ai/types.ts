@@ -36,3 +36,10 @@ export interface VideoStatusResponse {
   progress: number;
   url?: string;
 }
+
+export interface KeyframeVideoRequest {
+  prompt: string;
+  first_frame: string;
+  last_frame: string;
+  duration: 3 | 5;
+}

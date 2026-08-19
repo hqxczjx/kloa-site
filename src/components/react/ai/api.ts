@@ -1,4 +1,4 @@
-import type { ChatRequest, ImageRequest, VideoRequest, VideoStatusResponse } from './types';
+import type { ChatRequest, ImageRequest, VideoRequest, VideoStatusResponse, KeyframeVideoRequest } from './types';
 
 export interface StreamCallbacks {
   onDelta: (text: string) => void;
@@ -101,4 +101,39 @@ export async function getVideoStatus(id: string, signal?: AbortSignal): Promise<
   const res = await fetch(`/api/video/status?id=${encodeURIComponent(id)}`, { signal });
   if (!res.ok) throw new Error('查询失败');
   return (await res.json()) as VideoStatusResponse;
+}
+
+export interface StoryboardResponse {
+  frames: string[];
+  motions: string[];
+}
+
+export async function createStoryboard(idea: string, signal?: AbortSignal): Promise<StoryboardResponse> {
+  const res = await fetch('/api/storyboard', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ idea }),
+    signal,
+  });
+  if (!res.ok) {
+    let m = '分镜生成失败，请重试';
+    try { m = ((await res.json()) as { error?: string }).error ?? m; } catch { /* 默认 */ }
+    throw new Error(m);
+  }
+  return (await res.json()) as StoryboardResponse;
+}
+
+export async function createKeyframeVideo(req: KeyframeVideoRequest, signal?: AbortSignal): Promise<string> {
+  const res = await fetch('/api/video', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(req),
+    signal,
+  });
+  if (!res.ok) {
+    let m = '创建任务失败，请重试';
+    try { m = ((await res.json()) as { error?: string }).error ?? m; } catch { /* 默认 */ }
+    throw new Error(m);
+  }
+  return ((await res.json()) as { video_id: string }).video_id;
 }
