@@ -71,7 +71,7 @@ export default function StoryStudio() {
       const urls: string[] = [];
       for (let i = 0; i < sb.frames.length; i++) {
         setStepDetail(`关键帧 ${i + 1}/${sb.frames.length}`);
-        urls.push(await generateImage({ style: sb.frames[i], size: '1K', ratio: '16:9' }, signal));
+        urls.push(await generateImage({ style: sb.frames[i]!, size: '1K', ratio: '16:9' }, signal));
         setFrameUrls([...urls]);
       }
 
@@ -79,7 +79,7 @@ export default function StoryStudio() {
       setSegs(sb.motions.map(() => ({ status: 'creating' as const, progress: 0 })));
       await Promise.all(sb.motions.map((motion, i) =>
         createKeyframeVideo(
-          { prompt: motion, first_frame: urls[i], last_frame: urls[i + 1], duration: 5 },
+          { prompt: motion, first_frame: urls[i]!, last_frame: urls[i + 1]!, duration: 5 },
           signal,
         ).then(id => { pollSeg(i, id, 1, signal); })
           .catch(() => { updateSeg(i, { status: 'failed' }); }),
