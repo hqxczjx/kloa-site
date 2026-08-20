@@ -10,7 +10,8 @@ export const CHAT_MAX_TOKENS = 512;        // 单次回复 token 上限
 
 export const IMAGE_MODEL = 'agnes-image-2.1-flash';
 // agnes 需公开可拉取的立绘 URL。可用环境变量 AGNES_CHARACTER_URL 覆盖（本地联调用临时公开图）。
-export const DEFAULT_CHARACTER_IMAGE_URL = 'https://kloa.fans/images/character-1.png';
+// 与前端预览（ImageStudio/VideoStudio）共用 public/images/illustration.webp，避免界面与生图基准漂移。
+export const DEFAULT_CHARACTER_IMAGE_URL = 'https://kloa.fans/images/illustration.webp';
 export const MAX_IMAGE_EXTRA_CHARS = 50;
 
 export const VIDEO_MODEL = 'agnes-video-v2.0';

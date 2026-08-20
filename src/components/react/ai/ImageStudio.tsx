@@ -37,7 +37,7 @@ export default function ImageStudio() {
       <div className="grid md:grid-cols-2 gap-6">
         {/* 左：输入 */}
         <div className="glass rounded-2xl p-5">
-          <img src="/images/illustration.png" alt="立绘预览" className="w-full max-h-64 object-contain rounded-xl mb-4" />
+          <img src="/images/illustration.webp" alt="立绘预览" className="w-full max-h-64 object-contain rounded-xl mb-4" />
           <div className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>选风格</div>
           <div className="grid grid-cols-2 gap-2 mb-4">
             {STYLES.map((s) => (
