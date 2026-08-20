@@ -16,10 +16,10 @@ export default {
     if (url.pathname === '/api/image') {
       return imageHandler(request, env);
     }
-    if (url.pathname === '/api/storyboard' && request.method === 'POST') {
+    if (url.pathname === '/api/storyboard') {
       return storyboardHandler(request, env);
     }
-    if (url.pathname === '/api/video' && request.method === 'POST') {
+    if (url.pathname === '/api/video') {
       return createVideoHandler(request, env);
     }
     if (url.pathname === '/api/video/status') {

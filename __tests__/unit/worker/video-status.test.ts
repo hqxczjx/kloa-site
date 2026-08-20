@@ -52,4 +52,12 @@ describe('video status endpoint', () => {
     const res = await call('?id=vid_3', { AGNES_API_KEY: 'k' }, fetchMock);
     expect((await res.json()).status).toBe('queued');
   });
+
+  it('上游非 200(500)归一为 502 + 生成失败文案', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('', { status: 500 }));
+    const res = await call('?id=vid_4', { AGNES_API_KEY: 'k' }, fetchMock);
+    // normalizeAgnesError:非 401/503 的 status>=500 → { 502, '生成失败，请重试' }
+    expect(res.status).toBe(502);
+    expect((await res.json()).error).toBe('生成失败，请重试');
+  });
 });

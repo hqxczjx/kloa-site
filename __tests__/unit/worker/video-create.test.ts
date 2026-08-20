@@ -8,20 +8,31 @@ function makeCache() {
   } as unknown as Cache;
 }
 
-async function call(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
+async function call(
+  body: unknown,
+  env: { AGNES_API_KEY: string },
+  fetchMock: typeof fetch,
+  method: 'GET' | 'POST' = 'POST',
+) {
   const mod = await import('../../../worker/api/video');
   globalThis.fetch = fetchMock as typeof fetch;
   globalThis.caches = { default: makeCache() } as unknown as typeof caches;
   const request = new Request('https://kloa.fans/api/video', {
-    method: 'POST',
+    method,
     headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '3.3.3.3' },
-    body: JSON.stringify(body),
+    ...(method === 'POST' ? { body: JSON.stringify(body) } : {}), // GET 带 body 会抛错
   });
   return mod.createVideoHandler(request, env);
 }
 
 describe('video create endpoint', () => {
   beforeEach(() => vi.resetModules());
+
+  it('GET 请求返回 405', async () => {
+    const res = await call(undefined, { AGNES_API_KEY: 'k' }, vi.fn(), 'GET');
+    expect(res.status).toBe(405);
+    expect((await res.json()).error).toBe('Method Not Allowed');
+  });
 
   it('缺 action 返回 400', async () => {
     const res = await call({ duration: 3 }, { AGNES_API_KEY: 'k' }, vi.fn());

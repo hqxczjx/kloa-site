@@ -11,21 +11,32 @@ function makeCache() {
 }
 
 let sharedCache: Cache;
-async function callEndpoint(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
+async function callEndpoint(
+  body: unknown,
+  env: { AGNES_API_KEY: string },
+  fetchMock: typeof fetch,
+  method: 'GET' | 'POST' = 'POST',
+) {
   const mod = await import('../../../worker/api/chat');
   globalThis.fetch = fetchMock as typeof fetch;
   if (!sharedCache) sharedCache = makeCache();
   globalThis.caches = { default: sharedCache } as unknown as typeof caches;
   const request = new Request('https://kloa.fans/api/chat', {
-    method: 'POST',
+    method,
     headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '1.1.1.1' },
-    body: JSON.stringify(body),
+    ...(method === 'POST' ? { body: JSON.stringify(body) } : {}), // GET 带 body 会抛错
   });
   return mod.chatHandler(request, env);
 }
 
 describe('chat endpoint', () => {
   beforeEach(() => { vi.resetModules(); sharedCache = undefined as any; });
+
+  it('GET 请求返回 405', async () => {
+    const res = await callEndpoint(undefined, { AGNES_API_KEY: 'k' }, vi.fn(), 'GET');
+    expect(res.status).toBe(405);
+    expect((await res.json()).error).toBe('Method Not Allowed');
+  });
 
   it('缺 message 返回 400', async () => {
     const res = await callEndpoint({ form: 'angel', history: [] }, { AGNES_API_KEY: 'k' }, vi.fn());

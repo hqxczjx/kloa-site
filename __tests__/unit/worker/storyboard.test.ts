@@ -14,20 +14,31 @@ function chatContent(content: string): Response {
 
 const VALID = '{"frames":["f0","f1","f2","f3"],"motions":["m0","m1","m2"]}';
 
-async function call(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
+async function call(
+  body: unknown,
+  env: { AGNES_API_KEY: string },
+  fetchMock: typeof fetch,
+  method: 'GET' | 'POST' = 'POST',
+) {
   const mod = await import('../../../worker/api/storyboard');
   globalThis.fetch = fetchMock as typeof fetch;
   globalThis.caches = { default: makeCache() } as unknown as typeof caches;
   const request = new Request('https://kloa.fans/api/storyboard', {
-    method: 'POST',
+    method,
     headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '3.3.3.3' },
-    body: JSON.stringify(body),
+    ...(method === 'POST' ? { body: JSON.stringify(body) } : {}), // GET 带 body 会抛错
   });
   return mod.storyboardHandler(request, env);
 }
 
 describe('storyboard endpoint', () => {
   beforeEach(() => vi.resetModules());
+
+  it('GET 请求返回 405', async () => {
+    const res = await call(undefined, { AGNES_API_KEY: 'k' }, vi.fn(), 'GET');
+    expect(res.status).toBe(405);
+    expect((await res.json()).error).toBe('Method Not Allowed');
+  });
 
   it('空 idea 返回 400', async () => {
     const res = await call({ idea: '  ' }, { AGNES_API_KEY: 'k' }, vi.fn());
