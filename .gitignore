@@ -42,6 +42,7 @@ test-results/
 .astro/dev.json
 .astro/settings.json
 .astro/dev.log
+.astro/preview.json
 
 # Superpowers brainstorm mockups (visual companion)
 .superpowers/
