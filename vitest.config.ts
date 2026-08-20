@@ -29,14 +29,14 @@ export default defineConfig({
         '*.config.*',
         'public/',
       ],
-      // 补全 VideoStudio / ChatStudio / PersistentPlayer 交互测试后覆盖率显著提升；
-      // 当前实际：statements 95 / branches 86.7 / functions 96.8 / lines 96.8
-      // 门槛留约 4% 余量，避免小幅波动导致 PR 失败
+      // 2026-08 测试审计后（删 87 个零价值用例、补 26 个高价值用例）：
+      // 当前实际：statements 96.57 / branches 90.51 / functions 98.68 / lines 98.75
+      // 门槛留 1.5-2.5% 余量防回退（新文件不写测试即红），小幅波动不受影响
       thresholds: {
-        statements: 91,
-        branches: 82,
-        functions: 93,
-        lines: 94,
+        statements: 95,
+        branches: 88,
+        functions: 97,
+        lines: 98,
       },
     },
   },
