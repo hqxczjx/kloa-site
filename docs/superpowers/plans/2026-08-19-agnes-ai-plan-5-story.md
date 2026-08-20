@@ -1152,6 +1152,8 @@ git commit -m "feat(ai): /ai/story 小剧场页与 hub 入口 + e2e"
 
 ## 部署与冒烟
 
+> **执行注记(上线前真实验证,2026-08-20)**:用 `wrangler dev` + `.dev.vars` 实弹跑通全链路——storyboard 真实返回 4/3 结构 ✓、image 两张 1312×736 ✓、video keyframes 提交受理 ✓、status 出片 2.5MB MP4 ✓。过程中发现并修复一个 mock 测试无法抓到的缺陷:keyframes 分支 prompt 上限 200 是沿用户手输约束,而真实 LLM motion 实测 192-226 字符,3 段废 2 段(commit 2d8d793,上限放宽 500)。注意:astro dev/preview 不执行 worker(`/api/*` 404),本地真实验证必须走 `wrangler dev`。
+
 1. push → Wrangler 部署（同现有流程）。
 2. 本地：`.dev.vars` 已有 key → `wrangler dev` → `/ai/story/` 输入创意跑全链路（真实 agnes 调用，全程 3–8 分钟）。
 3. 生产冒烟：`https://kloa.fans/ai/story/`，检查：分镜 4 帧 → 3 段视频 → 连播衔接处画面一致（边界帧相同）→ 各段可下载。
