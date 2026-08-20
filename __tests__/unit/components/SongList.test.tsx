@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Fragment } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SongList from '../../../src/components/react/SongList';
 import { toast } from 'sonner';
@@ -118,6 +118,47 @@ describe('SongList (重设计)', () => {
     await waitFor(() => {
       expect(toast.success).toHaveBeenCalledWith('已复制: 大鱼', expect.any(Object));
     });
+  });
+
+  it('复制失败时提示错误且不提示成功（SongList.tsx L34-36 catch）', async () => {
+    (navigator.clipboard.writeText as unknown as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      new Error('denied'),
+    );
+    render(<SongList songs={songs} />);
+    fireEvent.click(screen.getByRole('button', { name: '点歌 大鱼' }));
+    await waitFor(() => expect(toast.error).toHaveBeenCalledWith('复制失败，请重试'));
+    expect(toast.success).not.toHaveBeenCalled();
+  });
+
+  it('快速连点两行：旧行 timer 到期不清掉新行的 copied 态（SongList.tsx L25）', () => {
+    vi.useFakeTimers();
+    try {
+      render(<SongList songs={songs} />);
+      const rowA = screen.getByRole('button', { name: '点歌 大鱼' });
+      const rowB = screen.getByRole('button', { name: '点歌 Bad apple' });
+
+      fireEvent.click(rowA);
+      expect(rowA).toHaveClass('is-copied');
+
+      act(() => {
+        vi.advanceTimersByTime(100); // 100ms 内连点第二行 → B 的 timer 排在 A 之后
+      });
+      fireEvent.click(rowB);
+      expect(rowB).toHaveClass('is-copied');
+
+      act(() => {
+        vi.advanceTimersByTime(200); // t=300：仅 A 的 timer 到期，cur=B-key ≠ A-key → 保持 B
+      });
+      expect(rowA).not.toHaveClass('is-copied');
+      expect(rowB).toHaveClass('is-copied');
+
+      act(() => {
+        vi.advanceTimersByTime(300); // t=600：B 的 timer 到期 → 清除
+      });
+      expect(rowB).not.toHaveClass('is-copied');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('随机按钮从结果中复制一首', async () => {

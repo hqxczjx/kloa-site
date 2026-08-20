@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import AnniversaryCard from '../../../src/components/react/AnniversaryCard';
 import { Cake } from 'lucide-react';
@@ -46,5 +46,42 @@ describe('AnniversaryCard组件', () => {
     );
 
     expect(screen.getByTestId('icon')).toBeInTheDocument();
+  });
+
+  describe('天数精确断言（rollover）', () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('今年纪念日已过则翻转到明年，显示到下一次的精确天数（AnniversaryCard.tsx L25-29）', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-06-15T00:00:00'));
+
+      render(
+        <AnniversaryCard
+          date={new Date('2020-03-10')}
+          label="生日"
+          icon={<Cake className="w-5 h-5" />}
+        />
+      );
+
+      // 2026-03-10 已过（< 2026-06-15）→ 下一次是 2027-03-10，距今天整 268 天
+      expect(screen.getByText('268 天')).toBeInTheDocument();
+    });
+
+    it('纪念日恰是今天显示 0 天（边界：nextDate === today 不 rollover）', () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-06-15T00:00:00'));
+
+      render(
+        <AnniversaryCard
+          date={new Date('2020-06-15')}
+          label="生日"
+          icon={<Cake className="w-5 h-5" />}
+        />
+      );
+
+      expect(screen.getByText('0 天')).toBeInTheDocument();
+    });
   });
 });

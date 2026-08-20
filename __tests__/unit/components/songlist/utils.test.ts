@@ -107,6 +107,37 @@ describe('songlist utils', () => {
       expect(sortSongs(songs, { key: 'title', dir: 'asc' }).map(x => x.title)).toEqual(['A', 'B']);
       expect(sortSongs(songs, { key: 'title', dir: 'desc' }).map(x => x.title)).toEqual(['B', 'A']);
     });
+    it('按 artist 排序走 artistPinyin 而非原文（utils.ts L49）', () => {
+      // 拉丁歌手与中文歌手混排：按拼音 amei < zed → 阿妹在前；
+      // 若误用原文比较，zh-Hans-CN 整序下拉丁恒在 CJK 之前 → Zed 在前，可区分两个字段
+      const songs = [
+        s({ artist: 'Zed', artistPinyin: 'zed' }),
+        s({ artist: '阿妹', artistPinyin: 'amei' }),
+        s({ artist: '周杰伦', artistPinyin: 'zhoujielun' }),
+      ];
+      expect(sortSongs(songs, { key: 'artist', dir: 'asc' }).map(x => x.artist))
+        .toEqual(['阿妹', 'Zed', '周杰伦']); // amei < zed < zhoujielun
+    });
+    it('按 language 排序取 languages[0]（utils.ts L50）', () => {
+      const songs = [
+        s({ languages: ['英语'] }),
+        s({ languages: ['国语'] }),
+        s({ languages: ['日语'] }),
+      ];
+      // zh-Hans-CN 拼音序：guo < ri < ying
+      expect(sortSongs(songs, { key: 'language', dir: 'asc' }).map(x => x.languages[0]))
+        .toEqual(['国语', '日语', '英语']);
+    });
+    it('按 genre 排序取 genres[0]（utils.ts L51）', () => {
+      const songs = [
+        s({ genres: ['摇滚'] }),
+        s({ genres: ['民谣'] }),
+        s({ genres: ['流行'] }),
+      ];
+      // zh-Hans-CN 拼音序：liu < min < yao
+      expect(sortSongs(songs, { key: 'genre', dir: 'asc' }).map(x => x.genres[0]))
+        .toEqual(['流行', '民谣', '摇滚']);
+    });
   });
 
   describe('highlightSegments', () => {

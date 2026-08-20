@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SongRow from '../../../../src/components/react/songlist/SongRow';
 import type { Song } from '../../../../src/components/react/songlist/types';
@@ -90,5 +90,19 @@ describe('SongRow', () => {
     row.focus();
     await user.keyboard(' ');
     expect(onCopy).toHaveBeenCalledWith(song);
+  });
+
+  it('按 Tab 或字母键不触发 onCopy（SongRow.tsx L37 守卫 false 侧）', () => {
+    const onCopy = vi.fn();
+    const { container } = render(<SongRow song={song} query="" variant="row" copied={false} onCopy={onCopy} />);
+    const row = container.querySelector('[data-testid="song-row"]') as HTMLElement;
+    fireEvent.keyDown(row, { key: 'Tab' });
+    fireEvent.keyDown(row, { key: 'a' });
+    expect(onCopy).not.toHaveBeenCalled();
+  });
+
+  it('card 变体无 SC 曲不渲染 sc-badge（SongRow.tsx L56 false 侧）', () => {
+    render(<SongRow song={song} query="" variant="card" copied={false} onCopy={vi.fn()} />);
+    expect(document.querySelector('.sc-badge')).not.toBeInTheDocument();
   });
 });

@@ -31,7 +31,11 @@ test.describe('AI 对话页', () => {
     await page.waitForLoadState('networkidle');
     const input = page.getByPlaceholder(/说点什么/);
     await input.fill('你好');
-    await page.getByRole('button', { name: /发送/ }).click();
+    // 水合未完成时 fill 的值可能被 React 重置吞掉 → 显式确认受控值已生效、发送按钮可用，再点击
+    await expect(input).toHaveValue('你好');
+    const send = page.getByRole('button', { name: /发送/ });
+    await expect(send).toBeEnabled();
+    await send.click();
     await expect(page.getByText('AI 生成 · 二创')).toBeVisible();
     await expect(page.getByText('你好').first()).toBeVisible(); // AI 回复"你好"（用户发的也是"你好"，用 .first() 避免严格模式冲突）
   });
@@ -43,8 +47,13 @@ test.describe('AI 对话页', () => {
     );
     await page.goto('/ai/chat/');
     await page.waitForLoadState('networkidle');
-    await page.getByPlaceholder(/说点什么/).fill('hi');
-    await page.getByRole('button', { name: /发送/ }).click();
+    const input = page.getByPlaceholder(/说点什么/);
+    await input.fill('hi');
+    // 同上：确认受控值生效且按钮可用后再点击，避免水合竞态把 fill 吞掉
+    await expect(input).toHaveValue('hi');
+    const send = page.getByRole('button', { name: /发送/ });
+    await expect(send).toBeEnabled();
+    await send.click();
     // 错误消息出现在 assistant 气泡内（与正常回复相同 DOM 结构）
     await expect(page.getByText('AI 生成 · 二创')).toBeVisible();
     await expect(page.getByText('（回复中断，请重试）')).toBeVisible();

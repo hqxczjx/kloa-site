@@ -58,6 +58,29 @@ describe('FilterBar', () => {
     expect(baseProps.onToggleGenre).toHaveBeenCalledWith('流行');
   });
 
+  it('选中流派 chip 有 is-active 与 aria-pressed=true，未选中保持 false（FilterBar.tsx L57-65）', () => {
+    render(<FilterBar {...baseProps} selectedGenres={['流行']} />);
+    const selected = screen.getByLabelText('筛选流派: 流行');
+    expect(selected).toHaveClass('is-active');
+    expect(selected).toHaveAttribute('aria-pressed', 'true');
+    // 同组未选中 chip 走 active=false 侧
+    const unselected = screen.getByLabelText('筛选流派: 影视');
+    expect(unselected).not.toHaveClass('is-active');
+    expect(unselected).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('展开更多后 moreGenres 中的选中流派同样高亮（FilterBar.tsx L72-86）', async () => {
+    const user = userEvent.setup();
+    render(<FilterBar {...baseProps} selectedGenres={['爵士']} />);
+    await user.click(screen.getByRole('button', { name: /\+2 更多流派/ }));
+
+    const selected = screen.getByLabelText('筛选流派: 爵士');
+    expect(selected).toHaveClass('is-active');
+    expect(selected).toHaveAttribute('aria-pressed', 'true');
+    // moreGenres 中未选中的 chip 走 active=false 侧
+    expect(screen.getByLabelText('筛选流派: 民谣')).toHaveAttribute('aria-pressed', 'false');
+  });
+
   it('热门流派直出，更多流派默认隐藏，点 +N 展开后可见', async () => {
     const user = userEvent.setup();
     render(<FilterBar {...baseProps} />);
