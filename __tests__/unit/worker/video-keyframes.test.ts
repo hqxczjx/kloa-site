@@ -85,6 +85,22 @@ describe('video create endpoint — keyframes 分支', () => {
     expect(res.status).toBe(400);
   });
 
+  it('关键帧模式：LLM 长度 motion（实测约 190-230 字符）通过——上限 500', async () => {
+    // 回归：上限曾为 200，真实 storyboard 输出 226 字符的 motion 被自家网关拒掉（3 段废 2 段）
+    const fetchMock = vi.fn().mockImplementation(OK_UPSTREAM);
+    const realLenMotion = 'Camera tracks low and forward through the garden path following Kloa as she runs between flower beds, arms pumping, hair and dress flowing in wind, dress hem catching light, she leaps gracefully over a low stone border with petals scattering around her, landing softly and continuing forward with joyful determined expression.'.slice(0, 226);
+    const res = await call({ ...KF_REQ, prompt: realLenMotion }, { AGNES_API_KEY: 'k' }, fetchMock);
+    expect(res.status).toBe(200);
+    const sent = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(sent.prompt).toBe(realLenMotion);
+  });
+
+  it('关键帧模式：prompt 超过 500 字符返回 400（动作描述过长）', async () => {
+    const res = await call({ ...KF_REQ, prompt: 'a'.repeat(501) }, { AGNES_API_KEY: 'k' }, vi.fn());
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toBe('动作描述过长');
+  });
+
   it('动作模式回归：仍走顶层 image 且不受影响', async () => {
     const fetchMock = vi.fn().mockImplementation(OK_UPSTREAM);
     const res = await call({ action: '微微笑', duration: 5 }, { AGNES_API_KEY: 'k' }, fetchMock);

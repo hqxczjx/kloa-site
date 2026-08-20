@@ -44,7 +44,9 @@ export async function createVideoHandler(request: Request, env: Env): Promise<Re
       return json({ error: '关键帧 URL 有误' }, 400);
     }
     const kfPrompt = typeof body.prompt === 'string' ? body.prompt.trim() : '';
-    if (!kfPrompt || kfPrompt.length > 200) return json({ error: '请输入动作描述' }, 400);
+    // keyframes 模式的 prompt 来自 storyboard LLM 的单句 motion（实测 190-230 字符），非用户手输，
+    // 上限须容纳 LLM 输出；200 会导致近半段被自家网关拒掉
+    if (!kfPrompt || kfPrompt.length > 500) return json({ error: !kfPrompt ? '请输入动作描述' : '动作描述过长' }, 400);
 
     const upstream = await fetch(`${AGNES_BASE_URL}/videos`, {
       method: 'POST',
