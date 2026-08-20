@@ -1,12 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '../../..');
-const readSrc = (rel: string): string => readFileSync(join(ROOT, rel), 'utf-8');
-
+import { readSrc } from './helpers';
 describe('Hydration 指令优化（减少首屏 JS 执行）', () => {
   it('ToasterWrapper 用 client:idle（首屏不可见，空闲时激活）', () => {
     expect(readSrc('src/layouts/BaseLayout.astro')).toContain('<ToasterWrapper client:idle');

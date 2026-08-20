@@ -1,12 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, existsSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '../../..');
-const readSrc = (rel: string): string => readFileSync(join(ROOT, rel), 'utf-8');
-
+import { existsSync } from 'fs';
+import { readSrc, srcPath } from './helpers';
 describe('Hero 立绘图片优化（AVIF/WebP + 响应式 + 消除 CLS）', () => {
   it('Hero.astro 从 astro:assets 导入 Picture 组件（多格式输出）', () => {
     const hero = readSrc('src/components/astro/Hero.astro');
@@ -30,7 +24,7 @@ describe('Hero 立绘图片优化（AVIF/WebP + 响应式 + 消除 CLS）', () =
 
   it('立绘源文件位于 src/images/ 以启用 Astro 图片优化管线', () => {
     const candidates = ['png', 'jpg', 'jpeg', 'webp', 'avif']
-      .map((ext) => join(ROOT, `src/images/character-1.${ext}`));
+      .map((ext) => srcPath(`src/images/character-1.${ext}`));
     expect(candidates.some((p) => existsSync(p))).toBe(true);
   });
 });

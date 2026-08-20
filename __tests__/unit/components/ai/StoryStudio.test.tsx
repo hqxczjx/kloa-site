@@ -173,6 +173,21 @@ describe('StoryStudio', () => {
     expect(screen.getByTestId('story-video-0')).toHaveAttribute('src', 'https://cdn/seg1.mp4');
   });
 
+  it('轮询网络错误:段标 failed 并解锁按钮', async () => {
+    const { getVideoStatus } = await import('../../../../src/components/react/ai/api');
+    // L54 pollSeg 的 catch:status 请求 reject → 段直接标 failed(首轮轮询即发起,无需等间隔)
+    vi.mocked(getVideoStatus).mockReset().mockRejectedValue(new Error('net'));
+
+    const user = userEvent.setup();
+    render(<StoryStudio />);
+    await user.type(screen.getByPlaceholderText(/故事创意/), 'x');
+    await user.click(screen.getByRole('button', { name: /生成小剧场/ }));
+
+    // 三段全 failed → 段列表 3 个 ✗;终态解锁(L97-101)使按钮恢复
+    expect(await screen.findAllByText('✗ 失败')).toHaveLength(3);
+    expect(await screen.findByRole('button', { name: '生成小剧场' })).toBeEnabled();
+  });
+
   it('retry 后数据隔离:新 run 只显示自己的结果,旧 run 的轮询产物不残留', async () => {
     const { getVideoStatus, createKeyframeVideo } = await import('../../../../src/components/react/ai/api');
     // beforeEach 注入的 createKeyframeVideo once 队列与本测试两轮 run 的语义冲突,重置后按调用序分流:

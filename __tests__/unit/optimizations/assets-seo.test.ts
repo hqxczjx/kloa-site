@@ -1,15 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, existsSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '../../..');
-const readSrc = (rel: string): string => readFileSync(join(ROOT, rel), 'utf-8');
-
+import { existsSync } from 'fs';
+import { readSrc, srcPath } from './helpers';
 describe('资源与 SEO 补全', () => {
   it('favicon.svg 存在（BaseLayout 已引用，原缺失 404）', () => {
-    expect(existsSync(join(ROOT, 'public/favicon.svg'))).toBe(true);
+    expect(existsSync(srcPath('public/favicon.svg'))).toBe(true);
   });
 
   it('配置了 site URL（SEO canonical / sitemap 基础）', () => {
@@ -32,7 +26,7 @@ describe('资源与 SEO 补全', () => {
   });
 
   it('public/_headers 配置了 Cloudflare 缓存策略', () => {
-    expect(existsSync(join(ROOT, 'public/_headers'))).toBe(true);
+    expect(existsSync(srcPath('public/_headers'))).toBe(true);
     const headers = readSrc('public/_headers');
     expect(headers).toMatch(/Cache-Control/);
     expect(headers).toMatch(/immutable|max-age/);

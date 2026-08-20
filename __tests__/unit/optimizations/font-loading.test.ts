@@ -1,12 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '../../..');
-const readSrc = (rel: string): string => readFileSync(join(ROOT, rel), 'utf-8');
-
+import { readSrc } from './helpers';
 describe('字体加载优化（消除渲染阻塞）', () => {
   it('global.css 不再用阻塞渲染的 CSS @import 加载字体', () => {
     const css = readSrc('src/styles/global.css');

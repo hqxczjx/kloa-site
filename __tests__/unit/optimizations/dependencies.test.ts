@@ -1,16 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const ROOT = join(__dirname, '../../..');
-
-function readSrc(rel: string): string {
-  return readFileSync(join(ROOT, rel), 'utf-8');
-}
-
+import { readSrc } from './helpers';
 describe('依赖优化：移除 framer-motion（省 ~116K JS）', () => {
   it('package.json 不再声明 framer-motion 依赖', () => {
     const pkg = JSON.parse(readSrc('package.json'));

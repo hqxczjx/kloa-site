@@ -1,12 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, '../../..');
-const readSrc = (rel: string): string => readFileSync(join(ROOT, rel), 'utf-8');
-
+import { readSrc } from './helpers';
 describe('动画/过渡收敛（性能 + 无障碍）', () => {
   it('* 的 transition-property 不再包含 opacity（主题切换不涉及 opacity）', () => {
     const css = readSrc('src/styles/global.css');
