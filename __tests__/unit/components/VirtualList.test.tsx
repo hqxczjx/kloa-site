@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import VirtualList from '../../../src/components/react/VirtualList';
 
 interface TestItem {
@@ -94,7 +93,6 @@ describe('VirtualList', () => {
 
   describe('Scrolling', () => {
     it('should update visible items on scroll', async () => {
-      const user = userEvent.setup();
       render(
         <VirtualList
           items={mockItems}
@@ -122,7 +120,6 @@ describe('VirtualList', () => {
     });
 
     it('should handle scroll to bottom', async () => {
-      const user = userEvent.setup();
       render(
         <VirtualList
           items={mockItems}
@@ -146,7 +143,6 @@ describe('VirtualList', () => {
     });
 
     it('should handle scroll to top after scrolling down', async () => {
-      const user = userEvent.setup();
       render(
         <VirtualList
           items={mockItems}
@@ -355,91 +351,6 @@ describe('VirtualList', () => {
   });
 
   describe('Additional Coverage Tests', () => {
-    it('should handle very large item count', () => {
-      const largeItems = Array.from({ length: 100 }, (_, i) => ({
-        id: i,
-        name: `Item ${i}`,
-      }));
-      render(
-        <VirtualList
-          items={largeItems}
-          itemHeight={50}
-          containerHeight={500}
-          renderItem={mockRenderItem}
-        />
-      );
-
-      expect(screen.getByTestId('item-0')).toBeInTheDocument();
-    });
-
-    it('should handle very small item count', () => {
-      const smallItems = [{ id: 0, name: 'Single Item' }];
-      render(
-        <VirtualList
-          items={smallItems}
-          itemHeight={50}
-          containerHeight={500}
-          renderItem={mockRenderItem}
-        />
-      );
-
-      expect(screen.getByTestId('item-0')).toBeInTheDocument();
-    });
-
-    it('should handle items exactly equal to container height', () => {
-      const exactItems = Array.from({ length: 10 }, (_, i) => ({
-        id: i,
-        name: `Item ${i}`,
-      }));
-      render(
-        <VirtualList
-          items={exactItems}
-          itemHeight={50}
-          containerHeight={500}
-          renderItem={mockRenderItem}
-        />
-      );
-
-      expect(screen.getByTestId('item-0')).toBeInTheDocument();
-      expect(screen.getByTestId('item-9')).toBeInTheDocument();
-    });
-
-    it('should handle odd item count', () => {
-      const oddItems = Array.from({ length: 7 }, (_, i) => ({
-        id: i,
-        name: `Item ${i}`,
-      }));
-      render(
-        <VirtualList
-          items={oddItems}
-          itemHeight={50}
-          containerHeight={500}
-          renderItem={mockRenderItem}
-        />
-      );
-
-      expect(screen.getByTestId('item-0')).toBeInTheDocument();
-      expect(screen.getByTestId('item-6')).toBeInTheDocument();
-    });
-
-    it('should handle even item count', () => {
-      const evenItems = Array.from({ length: 8 }, (_, i) => ({
-        id: i,
-        name: `Item ${i}`,
-      }));
-      render(
-        <VirtualList
-          items={evenItems}
-          itemHeight={50}
-          containerHeight={500}
-          renderItem={mockRenderItem}
-        />
-      );
-
-      expect(screen.getByTestId('item-0')).toBeInTheDocument();
-      expect(screen.getByTestId('item-7')).toBeInTheDocument();
-    });
-
     it('should maintain scroll position after multiple scrolls', async () => {
       render(
         <VirtualList
@@ -525,26 +436,6 @@ describe('VirtualList', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('item-0')).toBeInTheDocument();
-      });
-    });
-
-    it('should handle scroll beyond item count', async () => {
-      render(
-        <VirtualList
-          items={mockItems}
-          itemHeight={50}
-          containerHeight={500}
-          renderItem={mockRenderItem}
-        />
-      );
-
-      const container = screen.getByRole('list').parentElement;
-
-      // Scroll to bottom
-      fireEvent.scroll(container!, { target: { scrollTop: 1000 } });
-
-      await waitFor(() => {
-        expect(screen.getByTestId('item-24')).toBeInTheDocument();
       });
     });
 

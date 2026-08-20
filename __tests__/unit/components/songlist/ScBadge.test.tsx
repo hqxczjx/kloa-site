@@ -1,17 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import ScBadge from '../../../src/components/react/songlist/ScBadge';
+import ScBadge from '../../../../src/components/react/songlist/ScBadge';
 
 describe('ScBadge', () => {
   it('渲染金额与宝石图标', () => {
     render(<ScBadge amount="100 SC" />);
     expect(screen.getByText('100 SC')).toBeInTheDocument();
     expect(document.querySelector('.sc-badge__gem')).toBeInTheDocument();
-  });
-
-  it('应用 sc-badge 类', () => {
-    const { container } = render(<ScBadge amount="30 SC" />);
-    expect(container.querySelector('.sc-badge')).toBeInTheDocument();
   });
 
   it('带 title 提示', () => {

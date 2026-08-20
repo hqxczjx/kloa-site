@@ -1,84 +1,29 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render } from '@testing-library/react';
+import { Toaster } from 'sonner';
 import ToasterWrapper from '../../../src/components/ui/ToasterWrapper';
 
+// mock sonner，只捕获 ToasterWrapper 透传的 props
+vi.mock('sonner', () => ({
+  Toaster: vi.fn(() => null),
+}));
+
 describe('ToasterWrapper', () => {
-  describe('Rendering', () => {
-    it('should render the toaster component', () => {
-      const { container } = render(<ToasterWrapper />);
-      expect(container.firstChild).toBeInTheDocument();
-    });
+  it('向 sonner Toaster 透传 duration/position 与 duality-toast 类名（ToasterWrapper.tsx L5-15）', () => {
+    render(<ToasterWrapper />);
 
-    it('should render with correct duration prop', () => {
-      const { container } = render(<ToasterWrapper />);
-      const toaster = container.firstChild as HTMLElement;
-      expect(toaster).toBeInTheDocument();
-    });
-
-    it('should render with bottom-center position', () => {
-      const { container } = render(<ToasterWrapper />);
-      const toaster = container.firstChild as HTMLElement;
-      expect(toaster).toBeInTheDocument();
-    });
-  });
-
-  describe('Toast Options', () => {
-    it('should apply custom toast class name', () => {
-      const { container } = render(<ToasterWrapper />);
-      const toaster = container.firstChild as HTMLElement;
-      expect(toaster).toBeInTheDocument();
-    });
-
-    it('should apply custom description class name', () => {
-      const { container } = render(<ToasterWrapper />);
-      const toaster = container.firstChild as HTMLElement;
-      expect(toaster).toBeInTheDocument();
-    });
-
-    it('should apply custom icon class name', () => {
-      const { container } = render(<ToasterWrapper />);
-      const toaster = container.firstChild as HTMLElement;
-      expect(toaster).toBeInTheDocument();
-    });
-  });
-
-  describe('Default Values', () => {
-    it('should use default duration of 3000ms', () => {
-      const { container } = render(<ToasterWrapper />);
-      const toaster = container.firstChild as HTMLElement;
-      expect(toaster).toBeInTheDocument();
-    });
-
-    it('should use default position of bottom-center', () => {
-      const { container } = render(<ToasterWrapper />);
-      const toaster = container.firstChild as HTMLElement;
-      expect(toaster).toBeInTheDocument();
+    const calls = (Toaster as unknown as ReturnType<typeof vi.fn>).mock.calls;
+    expect(calls.length).toBe(1);
+    expect(calls[0][0]).toMatchObject({
+      duration: 3000,
+      position: 'bottom-center',
+      toastOptions: {
+        classNames: {
+          toast: 'duality-toast',
+          description: 'duality-toast-description',
+          icon: 'duality-toast-icon',
+        },
+      },
     });
   });
 });
-
-  describe('Additional Coverage Tests', () => {
-    it('should render with correct duration', () => {
-      const { container } = render(<ToasterWrapper />);
-      expect(container).toBeInTheDocument();
-    });
-
-    it('should render with correct position', () => {
-      const { container } = render(<ToasterWrapper />);
-      expect(container).toBeInTheDocument();
-    });
-
-    it('should apply custom toast classes', () => {
-      const { container } = render(<ToasterWrapper />);
-      expect(container).toBeInTheDocument();
-    });
-
-    it('should render without crashing', () => {
-      expect(() => render(<ToasterWrapper />)).not.toThrow();
-    });
-
-    it('should have correct toast configuration', () => {
-      const { container } = render(<ToasterWrapper />);
-      expect(container).toBeInTheDocument();
-    });
-  });

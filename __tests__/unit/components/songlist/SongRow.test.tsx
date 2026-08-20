@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import SongRow from '../../../src/components/react/songlist/SongRow';
-import type { Song } from '../../../src/components/react/songlist/types';
+import SongRow from '../../../../src/components/react/songlist/SongRow';
+import type { Song } from '../../../../src/components/react/songlist/types';
 
 const song: Song = {
   title: '晴天', artist: '周杰伦', languages: ['国语'], genres: ['流行', '抒情'], gifts: [],

@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   songKey, getTags, scAmount, hasGift, langColor,
   matchesFilters, filterSongs, sortSongs, highlightSegments, deriveFacets,
-} from '../../../src/components/react/songlist/utils';
-import type { Song } from '../../../src/components/react/songlist/types';
+} from '../../../../src/components/react/songlist/utils';
+import type { Song } from '../../../../src/components/react/songlist/types';
 
 const s = (over: Partial<Song>): Song => ({
   title: 'T', artist: 'A', titlePinyin: 'tp', artistPinyin: 'ap',

@@ -2,10 +2,10 @@ import { describe, it, expect, vi } from 'vitest';
 import { Fragment } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import SongTable from '../../../src/components/react/songlist/SongTable';
-import type { Song, SortState } from '../../../src/components/react/songlist/types';
+import SongTable from '../../../../src/components/react/songlist/SongTable';
+import type { Song, SortState } from '../../../../src/components/react/songlist/types';
 
-vi.mock('../../../src/components/react/VirtualList', () => ({
+vi.mock('../../../../src/components/react/VirtualList', () => ({
   default: ({ items, renderItem }: any) => (
     <div data-testid="virtual-list" data-total-items={items.length}>
       {items.map((it: any, i: number) => (

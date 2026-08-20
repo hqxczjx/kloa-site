@@ -9,6 +9,7 @@ describe('AboutPage', () => {
       // "本站声明"出现两次（天使和恶魔模式），使用getAllByText
       const disclaimerTexts = screen.getAllByText('本站声明');
       expect(disclaimerTexts.length).toBeGreaterThan(0);
+      expect(screen.getByText('关于本站')).toBeInTheDocument();
     });
 
     it('should render disclaimer content', () => {
@@ -42,32 +43,20 @@ describe('AboutPage', () => {
       expect(link).toHaveAttribute('href', 'https://space.bilibili.com/38028857');
     });
 
-    it('should have correct rel attribute for external links', () => {
+    it('外链（target="_blank"）均带含 noopener 的 rel（AboutPage.tsx L59 / L192）', () => {
       render(<AboutPage />);
-      // 获取所有包含"@卿家ん"的链接，选择第一个
-      const links = screen.getAllByText('@卿家ん');
-      const link = links[0];
-      expect(link).toBeInTheDocument();
-      // 链接可能没有target属性
-    });
-
-    it('should have proper heading structure', () => {
-      render(<AboutPage />);
-      const headings = screen.getAllByRole('heading');
-      expect(headings.length).toBeGreaterThan(0);
+      const external = screen
+        .getAllByRole('link')
+        .filter((a) => a.hasAttribute('target'));
+      expect(external.length).toBeGreaterThan(0);
+      for (const link of external) {
+        expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
+      }
     });
 
     it('should render properly', () => {
-      render(<AboutPage />);
-      // AboutPage可能没有main role，只检查元素存在
       const { container } = render(<AboutPage />);
       expect(container).toBeInTheDocument();
-    });
-
-    it('should have text content', () => {
-      render(<AboutPage />);
-      const 克罗雅Texts = screen.getAllByText(/克罗雅/);
-      expect(克罗雅Texts.length).toBeGreaterThan(0);
     });
   });
 
@@ -93,62 +82,3 @@ describe('AboutPage', () => {
     });
   });
 });
-
-  describe('Additional Coverage Tests', () => {
-    it('should render all content sections', () => {
-      render(<AboutPage />);
-
-      expect(screen.getByText('关于本站')).toBeInTheDocument();
-      const disclaimerTexts = screen.getAllByText('本站声明');
-      expect(disclaimerTexts.length).toBeGreaterThan(0);
-    });
-
-    it('should render all links correctly', () => {
-      render(<AboutPage />);
-
-      const links = screen.getAllByRole('link');
-      expect(links.length).toBeGreaterThan(0);
-    });
-
-    it('should have proper heading hierarchy', () => {
-      render(<AboutPage />);
-
-      const headings = screen.getAllByRole('heading');
-      expect(headings.length).toBeGreaterThan(1);
-    });
-
-    it('should render with accessible colors', () => {
-      const { container } = render(<AboutPage />);
-
-      expect(container).toBeInTheDocument();
-    });
-
-    it('should have proper text content', () => {
-      render(<AboutPage />);
-
-      const websiteTexts = screen.getAllByText(/本网站为/);
-      expect(websiteTexts.length).toBeGreaterThan(0);
-      const 克罗雅Texts = screen.getAllByText(/克罗雅/);
-      expect(克罗雅Texts.length).toBeGreaterThan(0);
-    });
-
-    it('should render successfully', () => {
-      expect(() => render(<AboutPage />)).not.toThrow();
-    });
-
-    it('should have proper HTML structure', () => {
-      const { container } = render(<AboutPage />);
-
-      // 检查是否有div元素（AboutPage使用div布局）
-      expect(container.querySelectorAll('div').length).toBeGreaterThan(0);
-    });
-
-    it('should have proper ARIA attributes', () => {
-      render(<AboutPage />);
-
-      const links = screen.getAllByRole('link');
-      links.forEach(link => {
-        expect(link).toHaveAttribute('href');
-      });
-    });
-  });
