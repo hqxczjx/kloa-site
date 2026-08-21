@@ -16,6 +16,15 @@ export default function ChatStudio() {
     abortRef.current?.abort();
   }, []);
 
+  // 两种形态语气不同，混在同一历史里会让模型串味；切换即开新对话
+  const switchForm = useCallback((next: ChatForm) => {
+    if (form === next) return;
+    abortRef.current?.abort();
+    setForm(next);
+    setMessages([]);
+    setStreaming(false);
+  }, [form]);
+
   const send = useCallback(async () => {
     const message = input.trim();
     if (!message || streaming) return;
@@ -62,7 +71,7 @@ export default function ChatStudio() {
       <div className="flex gap-3 justify-center mb-4">
         <button
           aria-label={form === 'angel' ? '当前天使形态' : '切换到天使形态'}
-          onClick={() => setForm('angel')}
+          onClick={() => switchForm('angel')}
           className="px-4 py-2 rounded-full text-sm font-medium transition-all"
           style={form === 'angel'
             ? { background: 'linear-gradient(135deg, oklch(0.78 0.10 15), oklch(0.72 0.08 240))', color: '#fff' }
@@ -72,7 +81,7 @@ export default function ChatStudio() {
         </button>
         <button
           aria-label={form === 'demon' ? '当前恶魔形态' : '切换到恶魔形态'}
-          onClick={() => setForm('demon')}
+          onClick={() => switchForm('demon')}
           className="px-4 py-2 rounded-full text-sm font-medium transition-all"
           style={form === 'demon'
             ? { background: 'linear-gradient(135deg, oklch(0.64 0.10 240), oklch(0.55 0.12 270))', color: '#fff' }

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ChatRequest } from '../../../worker/_lib/types';
+import songs from '../../../src/data/songs.json';
 
 // 把全局 caches / fetch 替换成可控 mock
 function makeCache() {
@@ -67,6 +68,33 @@ describe('chat endpoint', () => {
     const res = await callEndpoint({ form: 'demon', message: 'hi', history: [] } satisfies ChatRequest, { AGNES_API_KEY: 'k' }, fetchMock);
     expect(res.status).toBe(503);
     expect((await res.json()).error).toContain('繁忙');
+  });
+
+  it('上游请求体带 temperature 且 system 含人设素材', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('data: [DONE]\n\n', { status: 200 }));
+    await callEndpoint({ form: 'angel', message: 'hi', history: [] } satisfies ChatRequest, { AGNES_API_KEY: 'k' }, fetchMock);
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(String(init.body)) as { temperature?: number; messages?: { content?: string }[] };
+    expect(body.temperature).toBe(0.8);
+    expect(body.messages?.[0]?.content).toContain('雅团子');
+  });
+
+  it('消息命中推荐歌意图时注入曲库节选（真实曲库中的歌）', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('data: [DONE]\n\n', { status: 200 }));
+    await callEndpoint({ form: 'angel', message: '推荐一首歌', history: [] } satisfies ChatRequest, { AGNES_API_KEY: 'k' }, fetchMock);
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(String(init.body)) as { messages?: { content?: string }[] };
+    const sys = body.messages?.[0]?.content ?? '';
+    expect(sys).toContain('曲库节选');
+    expect(songs.some((s) => sys.includes(s.title))).toBe(true);
+  });
+
+  it('普通消息不注入曲库节选', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('data: [DONE]\n\n', { status: 200 }));
+    await callEndpoint({ form: 'angel', message: '今天天气怎么样', history: [] } satisfies ChatRequest, { AGNES_API_KEY: 'k' }, fetchMock);
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(String(init.body)) as { messages?: { content?: string }[] };
+    expect(body.messages?.[0]?.content ?? '').not.toContain('曲库节选');
   });
 
   it('同一 IP 超过限流阈值返回 429', async () => {

@@ -1,7 +1,8 @@
-import { buildAgnesMessages } from '../_lib/prompts';
+import songsJson from '../../src/data/songs.json';
+import { buildAgnesMessages, wantsSongRecommendation, sampleSongs } from '../_lib/prompts';
 import { agnesChatUrl, agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
 import { checkRateLimit, clientIP } from '../_lib/ratelimit';
-import { CHAT_MODEL, CHAT_MAX_TOKENS, MAX_INPUT_CHARS, MAX_HISTORY_TURNS } from '../_lib/config';
+import { CHAT_MODEL, CHAT_MAX_TOKENS, CHAT_TEMPERATURE, CHAT_SONG_SAMPLE_COUNT, MAX_INPUT_CHARS, MAX_HISTORY_TURNS } from '../_lib/config';
 import type { ChatRequest, Env } from '../_lib/types';
 
 export async function chatHandler(request: Request, env: Env): Promise<Response> {
@@ -36,7 +37,11 @@ export async function chatHandler(request: Request, env: Env): Promise<Response>
     return json({ error: '服务未配置' }, 503);
   }
 
-  const messages = buildAgnesMessages({ form, topic: body.topic, message: body.message, history });
+  // 命中推荐歌意图时注入她真唱过的曲库节选（站内 songs.json），推荐才有的放矢
+  const needSongs = body.topic === '推荐一首歌' || wantsSongRecommendation(body.message);
+  const songPool = needSongs ? sampleSongs(songsJson, CHAT_SONG_SAMPLE_COUNT) : undefined;
+
+  const messages = buildAgnesMessages({ form, topic: body.topic, message: body.message, history, songPool });
 
   const upstream = await fetch(agnesChatUrl(), {
     method: 'POST',
@@ -46,6 +51,7 @@ export async function chatHandler(request: Request, env: Env): Promise<Response>
       messages,
       stream: true,
       max_tokens: CHAT_MAX_TOKENS,
+      temperature: CHAT_TEMPERATURE,
     }),
   });
 

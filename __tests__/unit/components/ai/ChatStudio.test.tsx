@@ -92,4 +92,40 @@ describe('ChatStudio', () => {
     await screen.findByText('嗨'); // 等默认流完成，abortRef.current 已设
     unmount(); // 触发 cleanup：abortRef.current?.abort()
   });
+
+  it('切换形态清空消息历史（两种语气不串味）', async () => {
+    const user = userEvent.setup();
+    render(<ChatStudio />);
+    await user.type(screen.getByLabelText('输入框'), '你好');
+    await user.click(screen.getByRole('button', { name: /发送/ }));
+    expect(await screen.findByText('嗨')).toBeInTheDocument();
+    await user.click(screen.getByLabelText('切换到恶魔形态'));
+    expect(screen.queryByText('嗨')).toBeNull();
+    expect(screen.queryByText('你好')).toBeNull();
+    expect(screen.getByText(/选个话题或直接和她说点什么吧/)).toBeInTheDocument();
+  });
+
+  it('点击当前形态按钮不清空历史', async () => {
+    const user = userEvent.setup();
+    render(<ChatStudio />);
+    await user.type(screen.getByLabelText('输入框'), '你好');
+    await user.click(screen.getByRole('button', { name: /发送/ }));
+    expect(await screen.findByText('嗨')).toBeInTheDocument();
+    await user.click(screen.getByLabelText('当前天使形态'));
+    expect(screen.getByText('嗨')).toBeInTheDocument();
+  });
+
+  it('流式中途切换形态会复位状态并可再次发送', async () => {
+    mockedStreamChat.mockImplementation(async () => {}); // 永不回调：模拟流式进行中
+    const user = userEvent.setup();
+    render(<ChatStudio />);
+    await user.type(screen.getByLabelText('输入框'), '你好');
+    await user.click(screen.getByRole('button', { name: /发送/ }));
+    await user.click(screen.getByLabelText('切换到恶魔形态'));
+    expect(screen.queryByText('你好')).toBeNull();
+    expect(screen.getByText(/选个话题或直接和她说点什么吧/)).toBeInTheDocument();
+    await user.type(screen.getByLabelText('输入框'), '在吗');
+    await user.click(screen.getByRole('button', { name: /发送/ }));
+    expect(mockedStreamChat).toHaveBeenCalledTimes(2);
+  });
 });

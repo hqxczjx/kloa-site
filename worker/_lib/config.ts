@@ -7,6 +7,8 @@ export const RATE_LIMIT_WINDOW_SEC = 60;   // 窗口大小（秒）
 export const MAX_INPUT_CHARS = 100;        // 单条用户输入字数上限
 export const MAX_HISTORY_TURNS = 6;        // 保留最近 N 条历史消息
 export const CHAT_MAX_TOKENS = 512;        // 单次回复 token 上限
+export const CHAT_TEMPERATURE = 0.8;       // 角色扮演场景偏活泛，避免默认值太保守
+export const CHAT_SONG_SAMPLE_COUNT = 10;  // 命中推荐歌意图时注入的曲库节选条数
 
 export const IMAGE_MODEL = 'agnes-image-2.1-flash';
 // agnes 需公开可拉取的立绘 URL。可用环境变量 AGNES_CHARACTER_URL 覆盖（本地联调用临时公开图）。

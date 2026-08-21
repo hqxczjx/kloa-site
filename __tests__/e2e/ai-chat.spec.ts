@@ -58,4 +58,20 @@ test.describe('AI 对话页', () => {
     await expect(page.getByText('AI 生成 · 二创')).toBeVisible();
     await expect(page.getByText('（回复中断，请重试）')).toBeVisible();
   });
+
+  test('切换形态清空消息历史', async ({ page }) => {
+    await page.goto('/ai/chat/');
+    await page.waitForLoadState('networkidle');
+    const input = page.getByPlaceholder(/说点什么/);
+    await input.fill('你好');
+    await expect(input).toHaveValue('你好');
+    const send = page.getByRole('button', { name: /发送/ });
+    await expect(send).toBeEnabled();
+    await send.click();
+    await expect(page.getByText('AI 生成 · 二创').first()).toBeVisible();
+    // 切到恶魔形态 = 开新对话，旧消息与空态提示复位
+    await page.getByLabel('切换到恶魔形态').click();
+    await expect(page.getByText('选个话题或直接和她说点什么吧 ✨')).toBeVisible();
+    await expect(page.getByText('AI 生成 · 二创')).toHaveCount(0);
+  });
 });
