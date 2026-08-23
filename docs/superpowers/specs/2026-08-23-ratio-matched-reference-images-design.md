@@ -15,8 +15,11 @@
 约束无法用 center-crop 表达、本地 dev 不可用；纯 prompt 调整——潜空间失配
 根因仍在）。
 
-- 横版比例（4:3、16:9）直接砍掉：换装立绘玩法天然适合竖版/方版，砍掉后
-  每个保留比例都有构图精确匹配的参考图。
+- 换装 UI 的横版比例（4:3、16:9）砍掉：换装立绘玩法天然适合竖版/方版，
+  砍掉后每个保留比例都有构图精确匹配的参考图。
+- 例外：`16:9` 保留为 API 合法档（映射原全身立绘 + `cinematic widescreen
+  composition` 构图词）——小剧场 `StoryStudio` 硬编码 16:9 生成关键帧喂
+  关键帧视频链，行为须保持不变（评审发现的计划遗漏，产品决策：保留横版）。
 - 裁切档位（全部顶部对齐 y=0，头部必须完整，脚部取舍）：
 
 | ratio | 裁切尺寸    | 构图       | 产物文件                          |
@@ -41,11 +44,12 @@
     '1:1':  'https://kloa.fans/images/illustration-1x1.webp',
     '3:4':  'https://kloa.fans/images/illustration-3x4.webp',
     '9:16': 'https://kloa.fans/images/illustration-9x16.webp',
+    '16:9': 'https://kloa.fans/images/illustration.webp', // 小剧场关键帧专用
   } as const;
   ```
 - `api/image.ts`：`RATIOS` 集合从 `Object.keys(RATIO_IMAGE_URLS)` 推导
-  （消灭重复定义）；选图 `RATIO_IMAGE_URLS[ratio]`，查不到 fallback 到
-  1:1 图。
+  （消灭重复定义）；选图 `RATIO_IMAGE_URLS[ratio] ?? RATIO_IMAGE_URLS['1:1']`
+  （防御性回退，正常路径不可达）。
 - `AGNES_CHARACTER_URL` 覆盖语义保留：设置时所有 ratio 均用它（本地
   联调后门，行为不变）。
 - `_lib/prompts.ts`：`buildImagePrompt(style, extra, ratio)` 新增 ratio
@@ -54,9 +58,11 @@
   `'9:16' → 'knee-up illustration composition'`）。`preserve original
   composition` 保留——参考图比例匹配后该约束不再自相矛盾。
 
-### 3. 前端 `ImageStudio.tsx`
+### 3. 前端 `ImageStudio.tsx` 与 `types.ts`
 
-- ratio 下拉只留 `1:1` / `3:4` / `9:16`。
+- `ImageRequest['ratio']` 类型为 API 合法四档 `'1:1' | '3:4' | '9:16' | '16:9'`
+  （StoryStudio 的 16:9 调用须类型合法）；换装下拉只渲染 `1:1` / `3:4` /
+  `9:16` 三个 option，4:3 与 16:9 不暴露给换装用户。
 - 预览图 `src` 按 ratio 切换 `/images/illustration-{1x1|3x4|9x16}.webp`
   （生成前即可见参考图构图，管理预期）。
 - 默认 ratio 仍为 `1:1`，其余不动。

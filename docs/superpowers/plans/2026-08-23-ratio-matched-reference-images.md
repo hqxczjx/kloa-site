@@ -55,12 +55,15 @@ Expected: FAIL，报 `RATIO_IMAGE_URLS` 未导出（import undefined / keys of u
 
 ```ts
 // 图生图参考图按输出比例分档：立绘原图 1024×2496（≈1:2.44），直接送入失配画布会被
-// 模型压扁或重构人体。三档图由 scripts/generate-character-crops.mjs 顶部对齐裁切生成，
-// 立绘更新后需重跑（bun run gen:crops）并提交产物。键集合即图生图合法比例。
+// 模型压扁或重构人体。三档裁切图由 scripts/generate-character-crops.mjs 顶部对齐裁切生成，
+// 立绘更新后需重跑（bun run gen:crops）并提交产物。键集合即 API 合法比例
+//（16:9 为小剧场关键帧专用档，换装 UI 不展示）。
 export const RATIO_IMAGE_URLS = {
   '1:1': 'https://kloa.fans/images/illustration-1x1.webp',
   '3:4': 'https://kloa.fans/images/illustration-3x4.webp',
   '9:16': 'https://kloa.fans/images/illustration-9x16.webp',
+  // 16:9 仅小剧场关键帧用（StoryStudio）：保留原全身立绘与横版电影感
+  '16:9': 'https://kloa.fans/images/illustration.webp',
 } as const;
 ```
 
@@ -140,11 +143,12 @@ Expected: FAIL，`RATIO_COMPOSITION_PROMPTS` 未导出、`buildImagePrompt` 两�
 `worker/_lib/prompts.ts` 中：`STYLE_PROMPTS` 之后、`buildImagePrompt` 之前新增：
 
 ```ts
-// 构图词与 config.RATIO_IMAGE_URLS 的三档裁切构图一一对应，帮助模型理解参考图取景。
+// 构图词与 config.RATIO_IMAGE_URLS 的四档参考图构图一一对应，帮助模型理解参考图取景。
 export const RATIO_COMPOSITION_PROMPTS: Record<string, string> = {
   '1:1': 'upper-body portrait composition',
   '3:4': 'waist-up portrait composition',
   '9:16': 'knee-up illustration composition',
+  '16:9': 'cinematic widescreen composition',
 };
 ```
 
@@ -375,27 +379,29 @@ Expected: FAIL——16:9 用例找不到该选项；预览 src 仍是 `/images/i
 
 - [ ] **Step 3: 实现**
 
-(1) `src/components/react/ai/types.ts` 中 `ImageRequest.ratio` 收窄：
+(1) `src/components/react/ai/types.ts` 中 `ImageRequest.ratio` 收窄为 API 合法四档（16:9 供 StoryStudio 关键帧调用，4:3 彻底移除）：
 
 ```ts
 export interface ImageRequest {
   style: string;
   extra?: string;
   size: '1K' | '2K';
-  ratio: '1:1' | '3:4' | '9:16';
+  ratio: '1:1' | '3:4' | '9:16' | '16:9';
 }
 ```
 
 (2) `src/components/react/ai/ImageStudio.tsx`：
 
-import 之后新增（命名与 worker 产物文件一致，防漂移）：
+import 之后新增（命名与 worker 产物文件一致，防漂移；16:9 用原全身立绘，与 worker 端该档映射一致）：
 
 ```tsx
 // 与 worker RATIO_IMAGE_URLS 的产物同名（1x1/3x4/9x16），选比例即预览该比例的参考图构图。
+// 16:9 仅小剧场关键帧链路使用（映射原全身立绘），换装下拉不展示该档。
 const RATIO_PREVIEW: Record<ImageRequest['ratio'], string> = {
   '1:1': '/images/illustration-1x1.webp',
   '3:4': '/images/illustration-3x4.webp',
   '9:16': '/images/illustration-9x16.webp',
+  '16:9': '/images/illustration.webp',
 };
 ```
 
@@ -511,7 +517,7 @@ Expected: 全部 PASS，覆盖率不低于阈值（statements 95 / branches 88 /
 - [ ] **Step 2: 类型检查**
 
 Run: `bun run type-check`
-Expected: 无错误（重点确认 `ImageRequest['ratio']` 收窄未波及其他引用；`buildImagePrompt` 三参调用处均已更新）。
+Expected: 无错误（重点确认：`ImageRequest['ratio']` 四档联合下 `StoryStudio.tsx` 的 16:9 调用合法、4:3 已无引用；`buildImagePrompt` 三参调用处均已更新）。
 
 - [ ] **Step 3: lint**
 
