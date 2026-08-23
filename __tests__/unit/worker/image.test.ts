@@ -88,9 +88,34 @@ describe('image endpoint', () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(
       JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }
     ));
-    const res = await call({ style: '水彩手绘', size: '1K', ratio: '16:9' }, { AGNES_API_KEY: 'k' }, fetchMock);
+    const res = await call({ style: '水彩手绘', size: '1K', ratio: '4:3' }, { AGNES_API_KEY: 'k' }, fetchMock);
     expect(res.status).toBe(200);
     const sent = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
     expect(sent.extra_body.image).toEqual(['https://kloa.fans/images/illustration-1x1.webp']);
+  });
+
+  it('16:9 保留原全身立绘（小剧场关键帧链路）', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }
+    ));
+    const res = await call({ style: '水彩手绘', size: '1K', ratio: '16:9' }, { AGNES_API_KEY: 'k' }, fetchMock);
+    expect(res.status).toBe(200);
+    const sent = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(sent.extra_body.image).toEqual(['https://kloa.fans/images/illustration.webp']);
+    expect(sent.prompt).toContain('cinematic widescreen composition');
+  });
+
+  it('空串 AGNES_CHARACTER_URL 穿透查表（环境变量语义）', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }
+    ));
+    const res = await call(
+      { style: '水彩手绘', size: '1K', ratio: '3:4' },
+      { AGNES_API_KEY: 'k', AGNES_CHARACTER_URL: '' },
+      fetchMock
+    );
+    expect(res.status).toBe(200);
+    const sent = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(sent.extra_body.image).toEqual(['https://kloa.fans/images/illustration-3x4.webp']);
   });
 });

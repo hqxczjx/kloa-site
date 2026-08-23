@@ -21,6 +21,8 @@ export const RATIO_IMAGE_URLS = {
   '1:1': 'https://kloa.fans/images/illustration-1x1.webp',
   '3:4': 'https://kloa.fans/images/illustration-3x4.webp',
   '9:16': 'https://kloa.fans/images/illustration-9x16.webp',
+  // 16:9 仅小剧场关键帧用（StoryStudio）：保留原全身立绘与横版电影感，换装 UI 不展示此档
+  '16:9': 'https://kloa.fans/images/illustration.webp',
 } as const;
 export const MAX_IMAGE_EXTRA_CHARS = 50;
 

@@ -15,10 +15,11 @@ describe('config', () => {
   it('生图基准立绘与前端预览共用 illustration.webp（防漂移回旧图）', () => {
     expect(DEFAULT_CHARACTER_IMAGE_URL).toBe('https://kloa.fans/images/illustration.webp');
   });
-  it('比例参考图映射恰好三档且 URL 与比例对应', () => {
-    expect(Object.keys(RATIO_IMAGE_URLS).sort()).toEqual(['1:1', '3:4', '9:16']);
+  it('比例参考图映射恰好四档且 URL 与比例对应', () => {
+    expect(Object.keys(RATIO_IMAGE_URLS)).toEqual(['1:1', '3:4', '9:16', '16:9']);
     expect(RATIO_IMAGE_URLS['1:1']).toBe('https://kloa.fans/images/illustration-1x1.webp');
     expect(RATIO_IMAGE_URLS['3:4']).toBe('https://kloa.fans/images/illustration-3x4.webp');
     expect(RATIO_IMAGE_URLS['9:16']).toBe('https://kloa.fans/images/illustration-9x16.webp');
+    expect(RATIO_IMAGE_URLS['16:9']).toBe('https://kloa.fans/images/illustration.webp');
   });
 });

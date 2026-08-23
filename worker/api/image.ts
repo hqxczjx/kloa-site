@@ -11,7 +11,7 @@ interface ImageRequest {
   ratio?: string;
 }
 
-// 合法比例由映射表推导，单一数据源（横版 4:3/16:9 已砍：立绘玩法无构图匹配的参考图）。
+// 合法比例由映射表推导，单一数据源（四档：三档裁切 + 小剧场横版）。
 const RATIOS = Object.keys(RATIO_IMAGE_URLS);
 
 export async function imageHandler(request: Request, env: Env): Promise<Response> {
@@ -33,7 +33,7 @@ export async function imageHandler(request: Request, env: Env): Promise<Response
   if (!apiKey) return json({ error: '服务未配置' }, 503);
 
   const override = (env as Env & { AGNES_CHARACTER_URL?: string }).AGNES_CHARACTER_URL;
-  const characterUrl = override || RATIO_IMAGE_URLS[ratio as keyof typeof RATIO_IMAGE_URLS];
+  const characterUrl = (override || RATIO_IMAGE_URLS[ratio as keyof typeof RATIO_IMAGE_URLS]) ?? RATIO_IMAGE_URLS['1:1'];
   const prompt = buildImagePrompt(body.style, body.extra, ratio);
 
   const upstream = await fetch(`${AGNES_BASE_URL}/images/generations`, {

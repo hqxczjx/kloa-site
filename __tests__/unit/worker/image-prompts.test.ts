@@ -26,14 +26,15 @@ describe('image prompts', () => {
     expect(buildImagePrompt('随便', undefined, '1:1').toLowerCase()).toContain('随便');
   });
 
-  it('RATIO_COMPOSITION_PROMPTS 恰好覆盖三档比例', () => {
-    expect(Object.keys(RATIO_COMPOSITION_PROMPTS).sort()).toEqual(['1:1', '3:4', '9:16']);
+  it('RATIO_COMPOSITION_PROMPTS 恰好覆盖四档比例', () => {
+    expect(Object.keys(RATIO_COMPOSITION_PROMPTS)).toEqual(['1:1', '3:4', '9:16', '16:9']);
     expect(RATIO_COMPOSITION_PROMPTS['1:1']).toBe('upper-body portrait composition');
     expect(RATIO_COMPOSITION_PROMPTS['3:4']).toBe('waist-up portrait composition');
     expect(RATIO_COMPOSITION_PROMPTS['9:16']).toBe('knee-up illustration composition');
+    expect(RATIO_COMPOSITION_PROMPTS['16:9']).toBe('cinematic widescreen composition');
   });
 
   it('未知比例构图词回退 upper-body（与 1:1 参考图兜底一致）', () => {
-    expect(buildImagePrompt('水彩手绘', undefined, '16:9')).toContain('upper-body portrait composition');
+    expect(buildImagePrompt('水彩手绘', undefined, '4:3')).toContain('upper-body portrait composition');
   });
 });
