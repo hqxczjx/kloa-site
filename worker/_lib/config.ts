@@ -14,6 +14,14 @@ export const IMAGE_MODEL = 'agnes-image-2.1-flash';
 // agnes 需公开可拉取的立绘 URL。可用环境变量 AGNES_CHARACTER_URL 覆盖（本地联调用临时公开图）。
 // 与前端预览（ImageStudio/VideoStudio）共用 public/images/illustration.webp，避免界面与生图基准漂移。
 export const DEFAULT_CHARACTER_IMAGE_URL = 'https://kloa.fans/images/illustration.webp';
+// 图生图参考图按输出比例分档：立绘原图 1024×2496（≈1:2.44），直接送入失配画布会被
+// 模型压扁或重构人体。三档图由 scripts/generate-character-crops.mjs 顶部对齐裁切生成，
+// 立绘更新后需重跑（bun run gen:crops）并提交产物。键集合即图生图合法比例。
+export const RATIO_IMAGE_URLS = {
+  '1:1': 'https://kloa.fans/images/illustration-1x1.webp',
+  '3:4': 'https://kloa.fans/images/illustration-3x4.webp',
+  '9:16': 'https://kloa.fans/images/illustration-9x16.webp',
+} as const;
 export const MAX_IMAGE_EXTRA_CHARS = 50;
 
 export const VIDEO_MODEL = 'agnes-video-v2.0';
