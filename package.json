@@ -24,6 +24,7 @@
     "lint:security": "oxlint -c .oxlintrc.json",
     "lint:secrets": "gitleaks detect --source . --no-banner --redact --verbose",
     "gen:fonts": "node scripts/generate-font-subset.mjs",
+    "gen:crops": "node scripts/generate-character-crops.mjs",
     "setup:e2e": "playwright install --with-deps chromium"
   },
   "devDependencies": {
@@ -42,6 +43,7 @@
     "eslint-plugin-security": "^4.0.1",
     "happy-dom": "^20.11.2",
     "oxlint": "^1.78.0",
+    "sharp": "^0.35.3",
     "subset-font": "^2.5.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10",
