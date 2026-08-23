@@ -96,4 +96,15 @@ describe('ImageStudio', () => {
     await user.selectOptions(screen.getByRole('combobox', { name: '比例' }), '3:4');
     expect(preview).toHaveAttribute('src', '/images/illustration-3x4.webp');
   });
+
+  it('切换比例后生成请求带新 ratio', async () => {
+    const user = userEvent.setup();
+    render(<ImageStudio />);
+    await user.click(screen.getByRole('button', { name: '水彩手绘' }));
+    await user.selectOptions(screen.getByRole('combobox', { name: '比例' }), '9:16');
+    await user.click(screen.getByRole('button', { name: /生成/ }));
+    expect(mockedGenerateImage).toHaveBeenCalledWith(
+      expect.objectContaining({ ratio: '9:16' })
+    );
+  });
 });
