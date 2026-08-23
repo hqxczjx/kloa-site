@@ -1,7 +1,7 @@
 import { buildImagePrompt } from '../_lib/prompts';
 import { agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
 import { checkRateLimit, clientIP } from '../_lib/ratelimit';
-import { AGNES_BASE_URL, IMAGE_MODEL, DEFAULT_CHARACTER_IMAGE_URL, MAX_IMAGE_EXTRA_CHARS } from '../_lib/config';
+import { AGNES_BASE_URL, IMAGE_MODEL, RATIO_IMAGE_URLS, MAX_IMAGE_EXTRA_CHARS } from '../_lib/config';
 import type { Env } from '../_lib/types';
 
 interface ImageRequest {
@@ -11,7 +11,8 @@ interface ImageRequest {
   ratio?: string;
 }
 
-const RATIOS = new Set(['1:1', '3:4', '4:3', '16:9', '9:16']);
+// 合法比例由映射表推导，单一数据源（横版 4:3/16:9 已砍：立绘玩法无构图匹配的参考图）。
+const RATIOS = Object.keys(RATIO_IMAGE_URLS);
 
 export async function imageHandler(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
@@ -27,12 +28,13 @@ export async function imageHandler(request: Request, env: Env): Promise<Response
   if (body.extra && body.extra.length > MAX_IMAGE_EXTRA_CHARS) return json({ error: `追加描述过长（限 ${MAX_IMAGE_EXTRA_CHARS} 字）` }, 400);
 
   const size = body.size === '2K' ? '2K' : '1K';
-  const ratio = body.ratio && RATIOS.has(body.ratio) ? body.ratio : '1:1';
+  const ratio = body.ratio && RATIOS.includes(body.ratio) ? body.ratio : '1:1';
   const apiKey = env.AGNES_API_KEY;
   if (!apiKey) return json({ error: '服务未配置' }, 503);
 
-  const characterUrl = (env as Env & { AGNES_CHARACTER_URL?: string }).AGNES_CHARACTER_URL || DEFAULT_CHARACTER_IMAGE_URL;
-  const prompt = buildImagePrompt(body.style, body.extra);
+  const override = (env as Env & { AGNES_CHARACTER_URL?: string }).AGNES_CHARACTER_URL;
+  const characterUrl = override || RATIO_IMAGE_URLS[ratio as keyof typeof RATIO_IMAGE_URLS];
+  const prompt = buildImagePrompt(body.style, body.extra, ratio);
 
   const upstream = await fetch(`${AGNES_BASE_URL}/images/generations`, {
     method: 'POST',

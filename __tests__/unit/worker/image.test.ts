@@ -8,7 +8,7 @@ function makeCache() {
   } as unknown as Cache;
 }
 
-async function call(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
+async function call(body: unknown, env: { AGNES_API_KEY: string; AGNES_CHARACTER_URL?: string }, fetchMock: typeof fetch) {
   const mod = await import('../../../worker/api/image');
   globalThis.fetch = fetchMock as typeof fetch;
   globalThis.caches = { default: makeCache() } as unknown as typeof caches;
@@ -57,5 +57,40 @@ describe('image endpoint', () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response('', { status: 503 }));
     const res = await call({ style: '水彩手绘', size: '1K' }, { AGNES_API_KEY: 'k' }, fetchMock);
     expect(res.status).toBe(503);
+  });
+
+  it('ratio 选中对应裁切参考图', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }
+    ));
+    const res = await call({ style: '水彩手绘', size: '1K', ratio: '9:16' }, { AGNES_API_KEY: 'k' }, fetchMock);
+    expect(res.status).toBe(200);
+    const sent = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(sent.extra_body.image).toEqual(['https://kloa.fans/images/illustration-9x16.webp']);
+    expect(sent.prompt).toContain('knee-up illustration composition');
+  });
+
+  it('AGNES_CHARACTER_URL 覆盖所有比例的选图（本地联调后门）', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }
+    ));
+    const res = await call(
+      { style: '水彩手绘', size: '1K', ratio: '3:4' },
+      { AGNES_API_KEY: 'k', AGNES_CHARACTER_URL: 'https://example.com/tmp.png' },
+      fetchMock
+    );
+    expect(res.status).toBe(200);
+    const sent = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(sent.extra_body.image).toEqual(['https://example.com/tmp.png']);
+  });
+
+  it('非法 ratio 回退 1:1 参考图', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }
+    ));
+    const res = await call({ style: '水彩手绘', size: '1K', ratio: '16:9' }, { AGNES_API_KEY: 'k' }, fetchMock);
+    expect(res.status).toBe(200);
+    const sent = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(sent.extra_body.image).toEqual(['https://kloa.fans/images/illustration-1x1.webp']);
   });
 });
