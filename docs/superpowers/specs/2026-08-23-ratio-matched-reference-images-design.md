@@ -77,7 +77,7 @@
 
 覆盖率阈值 95/88/97/98 不可破坏：
 
-- `config.test.ts`：映射表恰好三键、URL 与比例一一对应。
+- `config.test.ts`：映射表恰好四键（含 16:9 小剧场专用档）、URL 与比例一一对应。
 - `image.test.ts`：各 ratio → `extra_body.image` 断言正确 URL；
   `AGNES_CHARACTER_URL` 覆盖生效；非法 ratio 落到 1:1。
 - `image-prompts.test.ts`：三个 ratio 的构图词注入断言。
