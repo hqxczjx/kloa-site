@@ -1,0 +1,11 @@
+#!/bin/sh
+# 提交前拦截字体子集缺口：src/ 新增中文字符而未重跑 gen:fonts 时，
+# 本地立即失败（不再等到 CI 才发现）。检查为纯 JSON 集合对比，毫秒级。
+# 启用方式（clone 后一次）：git config core.hooksPath scripts/hooks
+node scripts/check-font-coverage.mjs || {
+  echo ""
+  echo "⚠️  提交被拦截：源码新增了中文字符但字体子集未更新。"
+  echo "    修复：bun run gen:fonts && git add public/fonts scripts/fonts/subset-chars.json"
+  echo "    （需要本地 scripts/fonts/ 下的源 OTF）"
+  exit 1
+}
