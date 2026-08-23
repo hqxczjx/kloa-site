@@ -103,11 +103,20 @@ export const STYLE_PROMPTS: Record<string, string> = {
   '节日主题': 'festive holiday theme, warm lights, celebration atmosphere, seasonal decorations',
 };
 
-export function buildImagePrompt(style: string, extra?: string): string {
+// 构图词与 config.RATIO_IMAGE_URLS 的三档裁切构图一一对应，帮助模型理解参考图取景。
+export const RATIO_COMPOSITION_PROMPTS: Record<string, string> = {
+  '1:1': 'upper-body portrait composition',
+  '3:4': 'waist-up portrait composition',
+  '9:16': 'knee-up illustration composition',
+};
+
+export function buildImagePrompt(style: string, extra: string | undefined, ratio: string): string {
   const base = STYLE_PROMPTS[style] ?? style;
   const parts: string[] = [];
   if (extra && extra.trim()) parts.push(extra.trim());
-  parts.push(base, 'preserve original composition and character identity, keep the same character');
+  parts.push(base);
+  parts.push(RATIO_COMPOSITION_PROMPTS[ratio] ?? RATIO_COMPOSITION_PROMPTS['1:1']);
+  parts.push('preserve original composition and character identity, keep the same character');
   return parts.join(', ');
 }
 
