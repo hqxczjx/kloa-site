@@ -16,7 +16,7 @@ export interface ImageRequest {
   style: string;
   extra?: string;
   size: '1K' | '2K';
-  ratio: '1:1' | '3:4' | '4:3' | '16:9' | '9:16';
+  ratio: '1:1' | '3:4' | '9:16' | '16:9';
 }
 
 export interface ImageResponse {

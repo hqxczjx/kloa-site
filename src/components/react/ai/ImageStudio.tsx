@@ -3,6 +3,15 @@ import { Wand2, Download } from 'lucide-react';
 import { generateImage, STYLES } from './api';
 import type { ImageRequest } from './types';
 
+// 与 worker RATIO_IMAGE_URLS 的产物同名（1x1/3x4/9x16），选比例即预览该比例的参考图构图。
+// 16:9 仅小剧场关键帧链路使用（映射原全身立绘），换装下拉不展示该档。
+const RATIO_PREVIEW: Record<ImageRequest['ratio'], string> = {
+  '1:1': '/images/illustration-1x1.webp',
+  '3:4': '/images/illustration-3x4.webp',
+  '9:16': '/images/illustration-9x16.webp',
+  '16:9': '/images/illustration.webp',
+};
+
 export default function ImageStudio() {
   const [style, setStyle] = useState<string>('');
   const [extra, setExtra] = useState('');
@@ -37,7 +46,7 @@ export default function ImageStudio() {
       <div className="grid md:grid-cols-2 gap-6">
         {/* 左：输入 */}
         <div className="glass rounded-2xl p-5">
-          <img src="/images/illustration.webp" alt="立绘预览" className="w-full max-h-64 object-contain rounded-xl mb-4" />
+          <img src={RATIO_PREVIEW[ratio]} alt="立绘预览" className="w-full max-h-64 object-contain rounded-xl mb-4" />
           <div className="text-sm mb-2" style={{ color: 'var(--text-secondary)' }}>选风格</div>
           <div className="grid grid-cols-2 gap-2 mb-4">
             {STYLES.map((s) => (
@@ -62,7 +71,7 @@ export default function ImageStudio() {
             </label>
             <label>比例
               <select value={ratio} onChange={(e) => setRatio(e.target.value as ImageRequest['ratio'])} className="glass rounded-lg px-2 py-1 ml-1">
-                <option value="1:1">1:1</option><option value="3:4">3:4</option><option value="4:3">4:3</option><option value="16:9">16:9</option><option value="9:16">9:16</option>
+                <option value="1:1">1:1</option><option value="3:4">3:4</option><option value="9:16">9:16</option>
               </select>
             </label>
           </div>
