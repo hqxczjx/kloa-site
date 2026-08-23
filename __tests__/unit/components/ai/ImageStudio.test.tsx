@@ -78,12 +78,12 @@ describe('ImageStudio', () => {
     expect(await screen.findByText('生成失败')).toBeInTheDocument();
   });
 
-  it('换装比例选项只展示三档（4:3/16:9 不暴露）', async () => {
+  it('换装比例选项展示四档（4:3/16:9 不暴露）', async () => {
     render(<ImageStudio />);
     const ratio = screen.getByRole('combobox', { name: '比例' });
     expect(screen.queryByRole('option', { name: '4:3' })).not.toBeInTheDocument();
     expect(screen.queryByRole('option', { name: '16:9' })).not.toBeInTheDocument();
-    expect(within(ratio).getAllByRole('option').length).toBe(3);
+    expect(within(ratio).getAllByRole('option').length).toBe(4);
   });
 
   it('预览图跟随比例联动为对应裁切版', async () => {
@@ -93,6 +93,8 @@ describe('ImageStudio', () => {
     expect(preview).toHaveAttribute('src', '/images/illustration-1x1.webp');
     await user.selectOptions(screen.getByRole('combobox', { name: '比例' }), '9:16');
     expect(preview).toHaveAttribute('src', '/images/illustration-9x16.webp');
+    await user.selectOptions(screen.getByRole('combobox', { name: '比例' }), '9:16-full');
+    expect(preview).toHaveAttribute('src', '/images/illustration-9x16-full.webp');
     await user.selectOptions(screen.getByRole('combobox', { name: '比例' }), '3:4');
     expect(preview).toHaveAttribute('src', '/images/illustration-3x4.webp');
   });

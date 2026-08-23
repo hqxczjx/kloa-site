@@ -1,7 +1,7 @@
 import { buildImagePrompt } from '../_lib/prompts';
 import { agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
 import { checkRateLimit, clientIP } from '../_lib/ratelimit';
-import { AGNES_BASE_URL, IMAGE_MODEL, RATIO_IMAGE_URLS, MAX_IMAGE_EXTRA_CHARS } from '../_lib/config';
+import { AGNES_BASE_URL, IMAGE_MODEL, RATIO_FRAMES, MAX_IMAGE_EXTRA_CHARS } from '../_lib/config';
 import type { Env } from '../_lib/types';
 
 interface ImageRequest {
@@ -11,8 +11,8 @@ interface ImageRequest {
   ratio?: string;
 }
 
-// 合法比例由映射表推导，单一数据源（四档：三档裁切 + 小剧场横版）。
-const RATIOS = Object.keys(RATIO_IMAGE_URLS);
+// 合法档位由映射表推导，单一数据源（三档裁切 + 全身 letterbox + 小剧场横版）。
+const RATIOS = Object.keys(RATIO_FRAMES);
 
 export async function imageHandler(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
@@ -33,7 +33,8 @@ export async function imageHandler(request: Request, env: Env): Promise<Response
   if (!apiKey) return json({ error: '服务未配置' }, 503);
 
   const override = (env as Env & { AGNES_CHARACTER_URL?: string }).AGNES_CHARACTER_URL;
-  const characterUrl = (override || RATIO_IMAGE_URLS[ratio as keyof typeof RATIO_IMAGE_URLS]) ?? RATIO_IMAGE_URLS['1:1'];
+  const frame = RATIO_FRAMES[ratio as keyof typeof RATIO_FRAMES] ?? RATIO_FRAMES['1:1'];
+  const characterUrl = override || frame.image;
   const prompt = buildImagePrompt(body.style, body.extra, ratio);
 
   const upstream = await fetch(`${AGNES_BASE_URL}/images/generations`, {
@@ -43,7 +44,7 @@ export async function imageHandler(request: Request, env: Env): Promise<Response
       model: IMAGE_MODEL,
       prompt,
       size,
-      ratio,
+      ratio: frame.apiRatio,
       extra_body: { image: [characterUrl], response_format: 'url' },
     }),
   });

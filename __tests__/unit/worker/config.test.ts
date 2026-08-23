@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AGNES_BASE_URL, CHAT_MODEL, RATE_LIMIT_MAX, MAX_INPUT_CHARS, DEFAULT_CHARACTER_IMAGE_URL, RATIO_IMAGE_URLS } from '../../../worker/_lib/config';
+import { AGNES_BASE_URL, CHAT_MODEL, RATE_LIMIT_MAX, MAX_INPUT_CHARS, DEFAULT_CHARACTER_IMAGE_URL, RATIO_FRAMES } from '../../../worker/_lib/config';
 
 describe('config', () => {
   it('指向 agnes v1 base url', () => {
@@ -15,11 +15,13 @@ describe('config', () => {
   it('生图基准立绘与前端预览共用 illustration.webp（防漂移回旧图）', () => {
     expect(DEFAULT_CHARACTER_IMAGE_URL).toBe('https://kloa.fans/images/illustration.webp');
   });
-  it('比例参考图映射恰好四档且 URL 与比例对应', () => {
-    expect(Object.keys(RATIO_IMAGE_URLS)).toEqual(['1:1', '3:4', '9:16', '16:9']);
-    expect(RATIO_IMAGE_URLS['1:1']).toBe('https://kloa.fans/images/illustration-1x1.webp');
-    expect(RATIO_IMAGE_URLS['3:4']).toBe('https://kloa.fans/images/illustration-3x4.webp');
-    expect(RATIO_IMAGE_URLS['9:16']).toBe('https://kloa.fans/images/illustration-9x16.webp');
-    expect(RATIO_IMAGE_URLS['16:9']).toBe('https://kloa.fans/images/illustration.webp');
+  it('比例参考图映射恰好五档：三档裁切＋全身 letterbox＋小剧场横版', () => {
+    expect(Object.keys(RATIO_FRAMES)).toEqual(['1:1', '3:4', '9:16', '9:16-full', '16:9']);
+    expect(RATIO_FRAMES['1:1']).toEqual({ image: 'https://kloa.fans/images/illustration-1x1.webp', apiRatio: '1:1' });
+    expect(RATIO_FRAMES['3:4']).toEqual({ image: 'https://kloa.fans/images/illustration-3x4.webp', apiRatio: '3:4' });
+    expect(RATIO_FRAMES['9:16']).toEqual({ image: 'https://kloa.fans/images/illustration-9x16.webp', apiRatio: '9:16' });
+    // 全身档：letterbox 参考图，画布仍上送 API 最竖的 9:16
+    expect(RATIO_FRAMES['9:16-full']).toEqual({ image: 'https://kloa.fans/images/illustration-9x16-full.webp', apiRatio: '9:16' });
+    expect(RATIO_FRAMES['16:9']).toEqual({ image: 'https://kloa.fans/images/illustration.webp', apiRatio: '16:9' });
   });
 });

@@ -26,11 +26,12 @@ describe('image prompts', () => {
     expect(buildImagePrompt('随便', undefined, '1:1').toLowerCase()).toContain('随便');
   });
 
-  it('RATIO_COMPOSITION_PROMPTS 恰好覆盖四档比例', () => {
-    expect(Object.keys(RATIO_COMPOSITION_PROMPTS)).toEqual(['1:1', '3:4', '9:16', '16:9']);
+  it('RATIO_COMPOSITION_PROMPTS 恰好覆盖五档比例（与 RATIO_FRAMES 一一对应）', () => {
+    expect(Object.keys(RATIO_COMPOSITION_PROMPTS)).toEqual(['1:1', '3:4', '9:16', '9:16-full', '16:9']);
     expect(RATIO_COMPOSITION_PROMPTS['1:1']).toBe('upper-body portrait composition');
     expect(RATIO_COMPOSITION_PROMPTS['3:4']).toBe('waist-up portrait composition');
     expect(RATIO_COMPOSITION_PROMPTS['9:16']).toBe('knee-up illustration composition');
+    expect(RATIO_COMPOSITION_PROMPTS['9:16-full']).toBe('full-body illustration composition, entire figure from head to feet');
     expect(RATIO_COMPOSITION_PROMPTS['16:9']).toBe('cinematic widescreen composition');
   });
 

@@ -70,6 +70,18 @@ describe('image endpoint', () => {
     expect(sent.prompt).toContain('knee-up illustration composition');
   });
 
+  it('9:16 全身档选 letterbox 参考图且画布上送仍为 9:16', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }
+    ));
+    const res = await call({ style: '水彩手绘', size: '1K', ratio: '9:16-full' }, { AGNES_API_KEY: 'k' }, fetchMock);
+    expect(res.status).toBe(200);
+    const sent = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
+    expect(sent.extra_body.image).toEqual(['https://kloa.fans/images/illustration-9x16-full.webp']);
+    expect(sent.ratio).toBe('9:16');
+    expect(sent.prompt).toContain('full-body illustration composition');
+  });
+
   it('AGNES_CHARACTER_URL 覆盖所有比例的选图（本地联调后门）', async () => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(
       JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }

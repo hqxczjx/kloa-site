@@ -14,15 +14,19 @@ export const IMAGE_MODEL = 'agnes-image-2.1-flash';
 // agnes 需公开可拉取的立绘 URL。可用环境变量 AGNES_CHARACTER_URL 覆盖（本地联调用临时公开图）。
 // 与前端预览（ImageStudio/VideoStudio）共用 public/images/illustration.webp，避免界面与生图基准漂移。
 export const DEFAULT_CHARACTER_IMAGE_URL = 'https://kloa.fans/images/illustration.webp';
-// 图生图参考图按输出比例分档：立绘原图 1024×2496（≈1:2.44），直接送入失配画布会被
-// 模型压扁或重构人体。三档图由 scripts/generate-character-crops.mjs 顶部对齐裁切生成，
-// 立绘更新后需重跑（bun run gen:crops）并提交产物。键集合即图生图合法比例。
-export const RATIO_IMAGE_URLS = {
-  '1:1': 'https://kloa.fans/images/illustration-1x1.webp',
-  '3:4': 'https://kloa.fans/images/illustration-3x4.webp',
-  '9:16': 'https://kloa.fans/images/illustration-9x16.webp',
-  // 16:9 仅小剧场关键帧用（StoryStudio）：保留原全身立绘与横版电影感，换装 UI 不展示此档
-  '16:9': 'https://kloa.fans/images/illustration.webp',
+// 图生图参考图按档位选择：立绘原图 1024×2496（≈1:2.44），直接送入失配画布会被
+// 模型压扁或重构人体。档位图由 scripts/generate-character-crops.mjs 生成（三档顶部对齐
+// 裁切 + 一档 letterbox 全身），立绘更新后需重跑（bun run gen:crops）并提交产物。
+// 键为档位 id（前端下拉值），apiRatio 为上送 agnes 的画布比例——9:16 有膝上/全身两档，
+// 故档位与画布比例不再一一对应。16:9 仅小剧场关键帧用（StoryStudio），换装 UI 不展示。
+export const RATIO_FRAMES = {
+  '1:1': { image: 'https://kloa.fans/images/illustration-1x1.webp', apiRatio: '1:1' },
+  '3:4': { image: 'https://kloa.fans/images/illustration-3x4.webp', apiRatio: '3:4' },
+  '9:16': { image: 'https://kloa.fans/images/illustration-9x16.webp', apiRatio: '9:16' },
+  // 全身档：API 最竖仅 9:16，装不下 1:2.44 立绘，参考图等比缩小（宽 746）居中、
+  // 两侧黑边由模型补背景，人物比例不畸变
+  '9:16-full': { image: 'https://kloa.fans/images/illustration-9x16-full.webp', apiRatio: '9:16' },
+  '16:9': { image: 'https://kloa.fans/images/illustration.webp', apiRatio: '16:9' },
 } as const;
 export const MAX_IMAGE_EXTRA_CHARS = 50;
 

@@ -103,11 +103,12 @@ export const STYLE_PROMPTS: Record<string, string> = {
   '节日主题': 'festive holiday theme, warm lights, celebration atmosphere, seasonal decorations',
 };
 
-// 构图词与 config.RATIO_IMAGE_URLS 的四档裁切构图一一对应，帮助模型理解参考图取景。
+// 构图词与 config.RATIO_FRAMES 的档位构图一一对应，帮助模型理解参考图取景。
 export const RATIO_COMPOSITION_PROMPTS: Record<string, string> = {
   '1:1': 'upper-body portrait composition',
   '3:4': 'waist-up portrait composition',
   '9:16': 'knee-up illustration composition',
+  '9:16-full': 'full-body illustration composition, entire figure from head to feet',
   '16:9': 'cinematic widescreen composition',
 };
 

@@ -28,6 +28,19 @@
 | 3:4   | 1024×1365  | 头→腰      | `public/images/illustration-3x4.webp`  |
 | 9:16  | 1024×1820  | 头→膝      | `public/images/illustration-9x16.webp` |
 
+### 全身档（`9:16-full`，追加决策）
+
+- 需求：裁切档全部"脚部取舍"，用户要"全身包括脚"的档位。Agnes 生图 API
+  支持的最竖画布为 9:16（0.5625），装不下 1:2.44 立绘，跨比例直送必然畸变。
+- 方案：letterbox——立绘等比缩到高 1820（宽 746 = floor(1024×1820/2496)），
+  水平居中，两侧各 139px 纯黑 padding（与立绘原背景一致），生图模型补两侧
+  背景。人物比例不畸变，全身含脚完整。
+- 档位与画布比例解耦：`RATIO_FRAMES` 值由 URL 字符串改为
+  `{ image, apiRatio }` 对象，`9:16-full` 档上送 `apiRatio: '9:16'`。
+  9:16 有膝上/全身两档，档位 id 与画布比例不再一一对应。
+- 构图词：`full-body illustration composition, entire figure from head to feet`。
+- 产物：`public/images/illustration-9x16-full.webp`（1024×1820）。
+
 ## 组件改动
 
 ### 1. 裁切脚本 `scripts/generate-character-crops.mjs`
@@ -38,18 +51,20 @@
 
 ### 2. worker
 
-- `config.ts` 新增单一数据源：
+- `config.ts` 新增单一数据源（全身档追加后值升级为 `{ image, apiRatio }` 对象，
+  键为档位 id、`apiRatio` 为上送 Agnes 的画布比例）：
   ```ts
-  export const RATIO_IMAGE_URLS = {
-    '1:1':  'https://kloa.fans/images/illustration-1x1.webp',
-    '3:4':  'https://kloa.fans/images/illustration-3x4.webp',
-    '9:16': 'https://kloa.fans/images/illustration-9x16.webp',
-    '16:9': 'https://kloa.fans/images/illustration.webp', // 小剧场关键帧专用
+  export const RATIO_FRAMES = {
+    '1:1':       { image: '.../illustration-1x1.webp',        apiRatio: '1:1' },
+    '3:4':       { image: '.../illustration-3x4.webp',        apiRatio: '3:4' },
+    '9:16':      { image: '.../illustration-9x16.webp',       apiRatio: '9:16' },
+    '9:16-full': { image: '.../illustration-9x16-full.webp',  apiRatio: '9:16' },
+    '16:9':      { image: '.../illustration.webp',            apiRatio: '16:9' }, // 小剧场关键帧专用
   } as const;
   ```
-- `api/image.ts`：`RATIOS` 集合从 `Object.keys(RATIO_IMAGE_URLS)` 推导
-  （消灭重复定义）；选图 `RATIO_IMAGE_URLS[ratio] ?? RATIO_IMAGE_URLS['1:1']`
-  （防御性回退，正常路径不可达）。
+- `api/image.ts`：`RATIOS` 集合从 `Object.keys(RATIO_FRAMES)` 推导
+  （消灭重复定义）；选图 `RATIO_FRAMES[ratio] ?? RATIO_FRAMES['1:1']`
+  （防御性回退，正常路径不可达）；画布比例上送 `frame.apiRatio`。
 - `AGNES_CHARACTER_URL` 覆盖语义保留：设置时所有 ratio 均用它（本地
   联调后门，行为不变）。
 - `_lib/prompts.ts`：`buildImagePrompt(style, extra, ratio)` 新增 ratio
@@ -60,10 +75,10 @@
 
 ### 3. 前端 `ImageStudio.tsx` 与 `types.ts`
 
-- `ImageRequest['ratio']` 类型为 API 合法四档 `'1:1' | '3:4' | '9:16' | '16:9'`
-  （StoryStudio 的 16:9 调用须类型合法）；换装下拉只渲染 `1:1` / `3:4` /
-  `9:16` 三个 option，4:3 与 16:9 不暴露给换装用户。
-- 预览图 `src` 按 ratio 切换 `/images/illustration-{1x1|3x4|9x16}.webp`
+- `ImageRequest['ratio']` 类型为档位五值 `'1:1' | '3:4' | '9:16' | '9:16-full' | '16:9'`
+  （StoryStudio 的 16:9 调用须类型合法）；换装下拉渲染 `1:1` / `3:4` /
+  `9:16` / `9:16-full` 四个 option，4:3 与 16:9 不暴露给换装用户。
+- 预览图 `src` 按 ratio 切换 `/images/illustration-{1x1|3x4|9x16|9x16-full}.webp`
   （生成前即可见参考图构图，管理预期）。
 - 默认 ratio 仍为 `1:1`，其余不动。
 
@@ -71,16 +86,18 @@
 
 - 非法/缺失 ratio：校验后仍查不到映射时 fallback 到 1:1 图（防御性，
   正常路径不可达）。
-- 前端 select 只有三个合法选项，无非法值入口。
+- 前端 select 只有四个合法选项，无非法值入口。
 
 ## 测试
 
 覆盖率阈值 95/88/97/98 不可破坏：
 
-- `config.test.ts`：映射表恰好四键（含 16:9 小剧场专用档）、URL 与比例一一对应。
-- `image.test.ts`：各 ratio → `extra_body.image` 断言正确 URL；
-  `AGNES_CHARACTER_URL` 覆盖生效；非法 ratio 落到 1:1。
-- `image-prompts.test.ts`：三个 ratio 的构图词注入断言。
+- `config.test.ts`：映射表恰好五键（含 9:16-full 全身档、16:9 小剧场专用档）、
+  每档 `{ image, apiRatio }` 断言。
+- `image.test.ts`：各 ratio → `extra_body.image` 断言正确 URL；全身档
+  `ratio` 上送仍为 `'9:16'`；`AGNES_CHARACTER_URL` 覆盖生效；非法 ratio 落到 1:1。
+- `image-prompts.test.ts`：五个档位构图词注入断言（含全身档
+  `full-body illustration composition, entire figure from head to feet`）。
 - 前端组件测试：ratio 选项数、预览 src 随 ratio 变化。
 - `scripts/generate-character-crops.mjs` 不进覆盖率统计（与
   `generate-font-subset.mjs` 同待遇）。
