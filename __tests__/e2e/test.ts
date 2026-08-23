@@ -15,4 +15,17 @@ export const test = base.extend({
   },
 });
 
+/**
+ * 等待所有 astro island 完成水合。networkidle 只代表网络静默，React island 的
+ * JS 可能尚未执行：水合前 fill 的值会被初始 state 重置吞掉（DOM 有值但 state 空，
+ * 受控按钮保持 disabled），表现为随机的 toBeEnabled 超时。astro-island 水合
+ * 完成后会移除 ssr 属性，以此为准。
+ */
+export async function waitForHydration(page: import('@playwright/test').Page) {
+  await page.waitForFunction(() => {
+    const islands = document.querySelectorAll('astro-island');
+    return islands.length > 0 && [...islands].every((el) => !el.hasAttribute('ssr'));
+  });
+}
+
 export { expect };

@@ -1,4 +1,4 @@
-import { test, expect } from './test';
+import { test, expect, waitForHydration } from './test';
 
 // 构造一段 OpenAI 兼容 SSE 体
 function sseBody() {
@@ -29,6 +29,7 @@ test.describe('AI 对话页', () => {
     await page.goto('/ai/chat/');
     // 等待水合完成（input 的 onChange 绑定后，fill 才能触发按钮 enabled）
     await page.waitForLoadState('networkidle');
+    await waitForHydration(page);
     const input = page.getByPlaceholder(/说点什么/);
     await input.fill('你好');
     // 水合未完成时 fill 的值可能被 React 重置吞掉 → 显式确认受控值已生效、发送按钮可用，再点击
@@ -47,6 +48,7 @@ test.describe('AI 对话页', () => {
     );
     await page.goto('/ai/chat/');
     await page.waitForLoadState('networkidle');
+    await waitForHydration(page);
     const input = page.getByPlaceholder(/说点什么/);
     await input.fill('hi');
     // 同上：确认受控值生效且按钮可用后再点击，避免水合竞态把 fill 吞掉
@@ -62,6 +64,7 @@ test.describe('AI 对话页', () => {
   test('切换形态清空消息历史', async ({ page }) => {
     await page.goto('/ai/chat/');
     await page.waitForLoadState('networkidle');
+    await waitForHydration(page);
     const input = page.getByPlaceholder(/说点什么/);
     await input.fill('你好');
     await expect(input).toHaveValue('你好');
