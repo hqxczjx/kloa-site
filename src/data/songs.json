@@ -1,5 +1,109 @@
 [
   {
+    "title": "宁夏",
+    "artist": "梁静茹",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "ちゃんと言わなきゃ愛さない",
+    "artist": "石川さゆり",
+    "languages": [
+      "日语"
+    ],
+    "genres": [
+      "爵士",
+      "影视"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "过完冬季",
+    "artist": "CoCo李玟",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "R&B"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "蓝色雨",
+    "artist": "温岚",
+    "languages": [
+      "国语",
+      "英语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "好心分手",
+    "artist": "卢巧音、王力宏",
+    "languages": [
+      "粤语",
+      "国语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "勘ぐれい",
+    "artist": "ずっと真夜中でいいのに。",
+    "languages": [
+      "日语"
+    ],
+    "genres": [
+      "摇滚",
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "Falling Behind",
+    "artist": "Laufey",
+    "languages": [
+      "英语"
+    ],
+    "genres": [
+      "巴萨诺瓦",
+      "爵士"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "讨厌",
+    "artist": "芮恩",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "R&B"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "太聪明",
+    "artist": "陈绮贞",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
     "title": "CC The World",
     "artist": "Pharrell Williams、Cara Delevingne",
     "languages": [
