@@ -257,10 +257,14 @@
             border-radius:.75rem; }
   .sl-search { flex:1; min-width:8rem; background:transparent; border:none; outline:none;
                color:var(--text-primary); font-size:.95rem; }
+  /* pill 族（chip/more/toggle）统一 inline-flex + line-height:1 居中：
+     默认 line-box 居中下 CJK 字形按基线排布、descent 空白大，可视文字偏上 ~1.2px；
+     strut 收缩到 1em 后字形溢出上下对称，实测 topGap=bottomGap。 */
   .sl-chip { font-size:.75rem; font-weight:600; padding:.25rem .6rem; border-radius:9999px;
              white-space:nowrap; cursor:pointer; transition:transform .15s ease, box-shadow .15s ease;
              border:1px solid transparent; background:color-mix(in oklab, var(--text-primary) 8%, transparent);
-             color:var(--text-secondary); }
+             color:var(--text-secondary);
+             display:inline-flex; align-items:center; justify-content:center; line-height:1; }
   .sl-chip:hover { transform:translateY(-1px); }
   .sl-chip.is-pink { background:color-mix(in oklab, var(--color-pink-500) 18%, transparent); color:var(--color-pink-500); }
   .sl-chip.is-blue { background:color-mix(in oklab, var(--color-blue-500) 18%, transparent); color:var(--color-blue-500); }
@@ -269,10 +273,12 @@
   .sl-chip.is-blue.is-active { box-shadow:0 0 0 2px var(--color-blue-500); }
   .sl-chip:disabled { opacity:.5; cursor:not-allowed; transform:none; }
   .sl-more { font-size:.75rem; padding:.25rem .6rem; border-radius:9999px; cursor:pointer;
-             border:1px dashed var(--glass-border); color:var(--text-secondary); background:transparent; }
+             border:1px dashed var(--glass-border); color:var(--text-secondary); background:transparent;
+             display:inline-flex; align-items:center; justify-content:center; line-height:1; }
   .sl-toggle { font-size:.75rem; font-weight:700; padding:.25rem .65rem; border-radius:9999px; cursor:pointer;
                border:1px solid transparent; background:color-mix(in oklab, var(--color-pink-500) 14%, transparent);
-               color:var(--color-pink-500); }
+               color:var(--color-pink-500);
+               display:inline-flex; align-items:center; justify-content:center; line-height:1; }
   .sl-toggle.is-active { box-shadow:0 0 0 2px var(--color-pink-500); }
 
   .song-table { background:var(--glass-bg); border:1px solid var(--glass-border);
