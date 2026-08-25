@@ -23,6 +23,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # 用管理员 PAT（而非默认 GITHUB_TOKEN）检出并推送：main 的分支保护
+          # 要求 Unit Tests / E2E Tests 两个 required status checks，GITHUB_TOKEN
+          # （github-actions[bot]）直推必被 GH006 拒绝（checks 无法先于 push 通过）。
+          # PAT 需 fine-grained：仅本仓库、Contents: Read and write，存 SONGS_SYNC_PAT。
+          token: ${{ secrets.SONGS_SYNC_PAT }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -34,6 +40,10 @@ jobs:
 
       - name: Commit if changed
         run: |
+          if [ -z "${{ secrets.SONGS_SYNC_PAT }}" ]; then
+            echo "::error::SONGS_SYNC_PAT 未配置，推送会退回 GITHUB_TOKEN 并被分支保护拒绝（GH006）。请按 workflow 头部注释创建 PAT 并存入仓库 secret。"
+            exit 1
+          fi
           if git diff --quiet -- src/data/songs.json; then
             echo "songs.json 无变化，跳过提交"
           else
