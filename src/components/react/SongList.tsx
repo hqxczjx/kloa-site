@@ -4,14 +4,14 @@ import type { Song, FilterState, SortState, SortKey } from './songlist/types';
 import { filterSongs, sortSongs, deriveFacets, songKey } from './songlist/utils';
 import FilterBar from './songlist/FilterBar';
 import SongTable from './songlist/SongTable';
-
-export interface SongListProps {
-  songs: Song[];
-}
+import { SONGS } from '../../data/generated/songs-data';
 
 const EMPTY_FILTER: FilterState = { query: '', languages: [], genres: [], scOnly: false };
 
-export default function SongList({ songs }: SongListProps) {
+// P0-1：歌曲数据直接 import 生成模块（构建期注入拼音），不再经 astro-island props
+// 序列化进 HTML——数据随本组件的 JS chunk 在 client:visible 水合时按需拉取
+export default function SongList() {
+  const songs = SONGS;
   const [filter, setFilter] = useState<FilterState>(EMPTY_FILTER);
   const [sort, setSort] = useState<SortState>({ key: 'default', dir: 'asc' });
   const [copiedId, setCopiedId] = useState<string | null>(null);

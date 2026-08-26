@@ -73,6 +73,15 @@ describe('songlist utils', () => {
     it('搜索：拼音匹配（用预计算 titlePinyin）', () => {
       expect(matchesFilters(s({ title: '大鱼', titlePinyin: 'dayu' }), { query: 'dayu', languages: [], genres: [], scOnly: false })).toBe(true);
     });
+    it('搜索：ASCII 标题无 titlePinyin，回退 title.toLowerCase()（P0-2）', () => {
+      // pinyinKey('CC The World') === 'cc the world'，与原文小写逐字节相同 → 字段省略
+      expect(matchesFilters(s({ title: 'CC The World', titlePinyin: undefined }), { query: 'cc the', languages: [], genres: [], scOnly: false })).toBe(true);
+      expect(matchesFilters(s({ title: 'Lemon', titlePinyin: undefined }), { query: 'LEMON', languages: [], genres: [], scOnly: false })).toBe(true);
+      expect(matchesFilters(s({ title: 'Lemon', titlePinyin: undefined }), { query: 'lemonade', languages: [], genres: [], scOnly: false })).toBe(false);
+    });
+    it('搜索：ASCII 歌手无 artistPinyin，回退 artist.toLowerCase()（P0-2）', () => {
+      expect(matchesFilters(s({ artist: 'Kenshi Yonezu', artistPinyin: undefined }), { query: 'kenshi', languages: [], genres: [], scOnly: false })).toBe(true);
+    });
     it('纯空白 query 视为无搜索', () => {
       expect(matchesFilters(s({ title: '大鱼' }), { query: '   ', languages: [], genres: [], scOnly: false })).toBe(true);
       expect(matchesFilters(s({ title: '其它' }), { query: '   ', languages: [], genres: [], scOnly: false })).toBe(true);
@@ -106,6 +115,22 @@ describe('songlist utils', () => {
       const songs = [s({ title: 'A' }), s({ title: 'B' })];
       expect(sortSongs(songs, { key: 'title', dir: 'asc' }).map(x => x.title)).toEqual(['A', 'B']);
       expect(sortSongs(songs, { key: 'title', dir: 'desc' }).map(x => x.title)).toEqual(['B', 'A']);
+    });
+    it('titlePinyin 缺省时排序回退 title.toLowerCase()，与拼音键混排（P0-2）', () => {
+      const songs = [
+        s({ title: '阿城', titlePinyin: 'acheng' }),
+        s({ title: 'Lemon', titlePinyin: undefined }),
+        s({ title: 'Bad', titlePinyin: undefined }),
+      ];
+      // acheng < bad < lemon（ASCII 回退键与拼音键同域比较，顺序不变）
+      expect(sortSongs(songs, { key: 'title', dir: 'asc' }).map(x => x.title)).toEqual(['阿城', 'Bad', 'Lemon']);
+    });
+    it('artistPinyin 缺省时排序回退 artist.toLowerCase()（P0-2）', () => {
+      const songs = [
+        s({ artist: '周杰伦', artistPinyin: 'zhoujielun' }),
+        s({ artist: 'Aimyon', artistPinyin: undefined }),
+      ];
+      expect(sortSongs(songs, { key: 'artist', dir: 'asc' }).map(x => x.artist)).toEqual(['Aimyon', '周杰伦']);
     });
     it('按 artist 排序走 artistPinyin 而非原文（utils.ts L49）', () => {
       // 拉丁歌手与中文歌手混排：按拼音 amei < zed → 阿妹在前；

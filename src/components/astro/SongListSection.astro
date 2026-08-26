@@ -1,16 +1,8 @@
 ---
 import SongList from '../react/SongList';
 import PersistentPlayer from '../react/PersistentPlayer';
-import songs from '../../data/songs.json';
-import { pinyinKey } from '../react/songlist/pinyin.server';
+import { SONGS } from '../../data/generated/songs-data';
 import { ArrowLeft, Music as MusicIcon } from 'lucide-react';
-
-// 服务端预生成拼音字段，避免浏览器端打包 pinyin-pro（SongList.js 290KB→~150KB）
-const songsWithPinyin = songs.map((s) => ({
-  ...s,
-  titlePinyin: pinyinKey(s.title),
-  artistPinyin: pinyinKey(s.artist),
-}));
 
 interface Props {
   /** 是否显示「返回首页」链接：/music 用 true，首页内嵌用 false */
@@ -45,7 +37,7 @@ const Title = showBackLink ? 'h1' : 'h2';
       <Title class="text-3xl md:text-4xl font-serif font-bold mb-2 flex items-center gap-3">
         <MusicIcon className="w-8 h-8 md:w-10 md:h-10" style={{ color: 'var(--accent-primary)' }} />
         <span class="bg-linear-to-br from-pink-500 to-blue-500 bg-clip-text text-transparent">
-          歌单（{songs.length}首）
+          歌单（{SONGS.length}首）
         </span>
       </Title>
       <p class="text-base md:text-lg" style={{ color: 'var(--text-secondary)' }}>
@@ -54,8 +46,10 @@ const Title = showBackLink ? 'h1' : 'h2';
     </div>
   </div>
 
-  {/* Song List — client:visible：首页不拖累首屏；/music 视口内立即水合 */}
-  <SongList client:visible songs={songsWithPinyin} />
+  {/* Song List — client:visible：首页不拖累首屏；/music 视口内立即水合。
+      P0-1：不传 songs props（427 首序列化进 island props 约 133KB），SongList
+      直接 import 生成模块，数据随 island 的 JS chunk 水合时按需拉取 */}
+  <SongList client:visible />
 
   {/* Global Player — client:idle：空闲加载，不阻塞首屏 */}
   <PersistentPlayer client:idle />

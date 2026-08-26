@@ -13,10 +13,11 @@ describe('字体加载优化（消除渲染阻塞）', () => {
     expect(layout).not.toMatch(/rel="stylesheet"\s+href="https?:\/\/[^"]*font/i);
   });
 
-  it('global.css 用本地 @font-face 子集（600/700）+ font-display:swap', () => {
+  it('global.css 用本地 variable @font-face 子集（wght 600-700 单文件）+ font-display:swap', () => {
     const css = readSrc('src/styles/global.css');
-    expect(css).toMatch(/url\("\/fonts\/noto-serif-sc-600\.woff2"\)/);
-    expect(css).toMatch(/url\("\/fonts\/noto-serif-sc-700\.woff2"\)/);
+    expect(css).toMatch(/url\("\/fonts\/noto-serif-sc-var\.woff2"\)/);
+    expect(css).toMatch(/font-weight:\s*600\s+700\s*;/);
+    expect(css).toMatch(/tech\("variations"\)/);
     expect(css).toMatch(/font-display:\s*swap/);
   });
 

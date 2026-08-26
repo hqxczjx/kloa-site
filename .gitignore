@@ -53,5 +53,8 @@ scripts/fonts/*
 # 子集字符清单快照入库（check-font-coverage.mjs 的审计基准）
 !scripts/fonts/subset-chars.json
 
+# 构建期生成的歌曲拼音数据（scripts/generate-song-data.mjs，所有消费脚本会先生成）
+src/data/generated/
+
 # 本地参考资料（agnes-ai 模型文档快照，开发 AI 功能用，不入库）
 docs/ignore/

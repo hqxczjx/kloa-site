@@ -28,7 +28,7 @@ export function langColor(lang: string): LangColor {
   return 'gray';
 }
 
-/** 维度间 AND，维度内 OR；搜索支持 直接命中 + 拼音 */
+/** 维度间 AND，维度内 OR；搜索支持 直接命中 + 拼音（ASCII 无拼音字段，回退 toLowerCase） */
 export function matchesFilters(song: Song, f: FilterState): boolean {
   if (f.scOnly && !hasGift(song)) return false;
   if (f.languages.length > 0 && !song.languages.some((l) => f.languages.includes(l))) return false;
@@ -36,7 +36,10 @@ export function matchesFilters(song: Song, f: FilterState): boolean {
   const q = f.query.trim().toLowerCase();
   if (!q) return true;
   if (song.title.toLowerCase().includes(q) || song.artist.toLowerCase().includes(q)) return true;
-  return song.titlePinyin.includes(q) || song.artistPinyin.includes(q);
+  return (
+    (song.titlePinyin ?? song.title.toLowerCase()).includes(q) ||
+    (song.artistPinyin ?? song.artist.toLowerCase()).includes(q)
+  );
 }
 
 export function filterSongs(songs: Song[], f: FilterState): Song[] {
@@ -45,8 +48,8 @@ export function filterSongs(songs: Song[], f: FilterState): Song[] {
 
 function sortKeyValue(song: Song, key: SortKey): string {
   switch (key) {
-    case 'title': return song.titlePinyin;
-    case 'artist': return song.artistPinyin;
+    case 'title': return song.titlePinyin ?? song.title.toLowerCase();
+    case 'artist': return song.artistPinyin ?? song.artist.toLowerCase();
     case 'language': return song.languages[0] ?? '';
     case 'genre': return song.genres[0] ?? '';
     default: return '';

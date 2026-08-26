@@ -41,7 +41,9 @@ export default defineConfig({
     // 用 astro build + preview（生产静态产物）而非 dev：避免 vite 逐页编译导致的
     // 加载超时/flaky，e2e 更快更稳；preview 也不触发 astro 的 AI-agent 后台 daemon。
     // 直接 astro build 跳过 astro check（类型检查由 test.yml 负责），省 ~5s。
-    command: 'PUBLIC_ASTRO_DEV_TOOLBAR_DISABLED=true bunx astro build && bun run preview',
+    // 先生成 songs-data.ts（gitignored，SongList 直接 import 它）。
+    command:
+      'node scripts/generate-song-data.mjs && PUBLIC_ASTRO_DEV_TOOLBAR_DISABLED=true bunx astro build && bun run preview',
     url: 'http://localhost:4321',
     timeout: 120000,
   },
