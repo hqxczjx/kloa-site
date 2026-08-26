@@ -7,7 +7,8 @@ name: Manual Deploy
 # 所需 secrets（repo Settings → Secrets and variables → Actions 配置，当前未配置，
 # 未配置时首个 step 会快速失败并给出提示）：
 #   CLOUDFLARE_API_TOKEN —— CF dashboard → My Profile → API Tokens 创建 token，
-#       权限至少 Cloudflare Workers Scripts:Edit + Account:Read
+#       权限至少 Workers Scripts:Edit + Account Settings:Read
+#       （或直接使用 'Edit Cloudflare Workers' 模板）
 #   CLOUDFLARE_ACCOUNT_ID —— CF dashboard 首页的 Account ID（非敏感值，走 secret
 #       只为方便 wrangler-action 统一注入）
 #
@@ -36,19 +37,25 @@ jobs:
 
     steps:
       - name: Verify secrets & confirm input
-        # secrets 未配置时最快速失败（先于任何 install/build），给出可操作信息
+        # secrets 未配置时最快速失败（先于任何 install/build），给出可操作信息。
+        # secrets/inputs 走 env 间接引用而非 ${{ }} 插值进脚本：插值会把值拼进
+        # shell 源码，是注入向量（confirm 可被用来外泄 token）
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CONFIRM: ${{ inputs.confirm }}
         run: |
           fail=0
-          if [ -z "${{ secrets.CLOUDFLARE_API_TOKEN }}" ]; then
-            echo "::error::缺少 secret CLOUDFLARE_API_TOKEN。请在 repo Settings → Secrets and variables → Actions 新建：CF dashboard → My Profile → API Tokens 创建（权限 Workers Scripts:Edit + Account:Read）。"
+          if [ -z "$CF_API_TOKEN" ]; then
+            echo "::error::缺少 secret CLOUDFLARE_API_TOKEN。请在 repo Settings → Secrets and variables → Actions 新建：CF dashboard → My Profile → API Tokens 创建（权限至少 Workers Scripts:Edit + Account Settings:Read，或直接使用 'Edit Cloudflare Workers' 模板）。"
             fail=1
           fi
-          if [ -z "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+          if [ -z "$CF_ACCOUNT_ID" ]; then
             echo "::error::缺少 secret CLOUDFLARE_ACCOUNT_ID。值为 CF dashboard 首页的 Account ID。"
             fail=1
           fi
-          if [ "${{ inputs.confirm }}" != "DEPLOY" ]; then
-            echo "::error::confirm 输入必须为 DEPLOY，实际收到 '${{ inputs.confirm }}'。"
+          if [ "$CONFIRM" != "DEPLOY" ]; then
+            echo "::error::confirm 输入必须为 DEPLOY，实际收到 '$CONFIRM'。"
             fail=1
           fi
           exit $fail
