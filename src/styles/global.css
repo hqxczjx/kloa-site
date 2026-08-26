@@ -1,20 +1,13 @@
 @import "tailwindcss";
 
-/* Noto Serif SC 本地子集（仅含站内标题用字，font-display:swap 不阻塞渲染） */
+/* Noto Serif SC 本地 variable 子集（仅含站内标题用字，wght 轴已收窄至 600-700，
+   单文件覆盖两个字重，font-display:swap 不阻塞渲染） */
 @font-face {
   font-family: "Noto Serif SC";
   font-style: normal;
-  font-weight: 600;
+  font-weight: 600 700;
   font-display: swap;
-  src: url("/fonts/noto-serif-sc-600.woff2") format("woff2");
-  unicode-range: U+0020-007E, U+2014, U+3000-303F, U+4E00-9FFF;
-}
-@font-face {
-  font-family: "Noto Serif SC";
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url("/fonts/noto-serif-sc-700.woff2") format("woff2");
+  src: url("/fonts/noto-serif-sc-var.woff2") format("woff2") tech("variations");
   unicode-range: U+0020-007E, U+2014, U+3000-303F, U+4E00-9FFF;
 }
 

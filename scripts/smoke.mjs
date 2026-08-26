@@ -37,9 +37,9 @@ async function fetchText(url) {
     `status=${res.status} lang=${hasLang} title=${hasTitle}`);
 }
 
-// 2. 字体子集：serif 标题字体可加载且非空壳（>10KB 才含真实字形）
+// 2. 字体子集：serif 标题 variable 字体可加载且非空壳（>10KB 才含真实字形）
 {
-  const res = await fetch(SITE_URL + '/fonts/noto-serif-sc-600.woff2', { method: 'GET' });
+  const res = await fetch(SITE_URL + '/fonts/noto-serif-sc-var.woff2', { method: 'GET' });
   const buf = await res.arrayBuffer();
   report('字体子集可加载', res.status === 200 && buf.byteLength > 10 * 1024,
     `status=${res.status} size=${(buf.byteLength / 1024).toFixed(1)}KB`);
