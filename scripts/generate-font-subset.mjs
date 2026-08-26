@@ -43,11 +43,13 @@ console.log(`subset text: ${text.length} chars`);
 writeFileSync(join(ROOT, 'scripts/fonts/subset-chars.json'), JSON.stringify([...chars].sort()) + '\n');
 
 // Variable 子集：单一 woff2 同时覆盖 600/700 两个字重（global.css 用 font-weight:600 700 区间引用）。
-// 源字体为 noto-cjk 官方 Serif SC variable（CFF2，wght 200-900，~21.6MB，不入库）：
+// 源字体为 noto-cjk 官方 Serif SC variable（CFF2，wght 200-900，~21.6MB，不入库）。
+// URL 锁定发布 tag Serif2.003（防 main 分支漂移），下载后校验 sha256：
 //   curl -L -o scripts/fonts/NotoSerifSC-VF.otf \
-//     https://raw.githubusercontent.com/notofonts/noto-cjk/main/Serif/Variable/OTF/Subset/NotoSerifSC-VF.otf
+//     https://raw.githubusercontent.com/notofonts/noto-cjk/Serif2.003/Serif/Variable/OTF/Subset/NotoSerifSC-VF.otf
+//   sha256: 71b4d3ded2d90ff43bb75a4e48cdbe170f0b8d5486dc89ff87f2a1728b56da64
 // variationAxes 用 {min,max} 让 harfbuzz 把 wght 轴收窄到 600-700 并重master化 CFF2：
-// 2026-08 实测收窄后 95.7KB，比两个静态子集（135.9+138.0=273.9KB）小 65%，
+// 2026-08 实测收窄后 95.3KB（97,580B），比两个静态子集（135.9+138.0=273.9KB）小 65%，
 // 也小于全轴 plain 子集（165.5KB）与 TTF/gvar 路线（177.8KB）。
 // 站内 serif 仅用 600/700（h1-h6 默认 600；songlist 800 徽章是 --font-sans）；
 // 若未来需要更多字重，改下方 min/max 并重跑即可。

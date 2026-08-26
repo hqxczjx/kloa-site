@@ -3,7 +3,7 @@
  * 字体子集覆盖审计 —— CI（Unit Tests workflow）每次 push/PR 运行。
  *
  * 背景：serif 标题字体是按「当时源码字符集」生成的手动子集
- * （scripts/generate-font-subset.mjs，源 OTF 11MB 不入库，只能本地重跑）。
+ * （scripts/generate-font-subset.mjs，源 VF OTF ~21.6MB 不入库，只能本地重跑）。
  * 源码新增中文标题字符而未重新生成子集时，线上会静默缺字形（fallback 系统字体）。
  * 此脚本对比「现行源码字符集」与「子集清单快照 subset-chars.json」，发现缺口即失败，
  * 提示维护者本地跑 `bun run gen:fonts` 并提交产物。

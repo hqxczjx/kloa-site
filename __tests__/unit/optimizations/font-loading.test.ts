@@ -17,7 +17,8 @@ describe('字体加载优化（消除渲染阻塞）', () => {
     const css = readSrc('src/styles/global.css');
     expect(css).toMatch(/url\("\/fonts\/noto-serif-sc-var\.woff2"\)/);
     expect(css).toMatch(/font-weight:\s*600\s+700\s*;/);
-    expect(css).toMatch(/tech\("variations"\)/);
+    // src 声明不含 tech(variations)：旧内核遇未知函数丢弃整条 src，标题静默回退系统字体
+    expect(css).not.toMatch(/src:[^;]*tech\(/);
     expect(css).toMatch(/font-display:\s*swap/);
   });
 
