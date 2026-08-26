@@ -2,6 +2,7 @@ import songsJson from '../../src/data/songs.json';
 import { buildAgnesMessages, wantsSongRecommendation, sampleSongs } from '../_lib/prompts';
 import { agnesChatUrl, agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
 import { checkRateLimit, clientIP } from '../_lib/ratelimit';
+import { readJsonBody } from '../_lib/body';
 import { CHAT_MODEL, CHAT_MAX_TOKENS, CHAT_TEMPERATURE, CHAT_SONG_SAMPLE_COUNT, MAX_INPUT_CHARS, MAX_HISTORY_TURNS } from '../_lib/config';
 import type { ChatRequest, Env } from '../_lib/types';
 
@@ -16,13 +17,10 @@ export async function chatHandler(request: Request, env: Env): Promise<Response>
     return json({ error: '操作太频繁，请稍后再试' }, 429);
   }
 
-  // 解析 + 校验
-  let body: ChatRequest;
-  try {
-    body = (await request.json()) as ChatRequest;
-  } catch {
-    return json({ error: '请求格式有误' }, 400);
-  }
+  // 解析 + 校验（统一 body 守卫：413 超限 / 415 非 JSON / 400 格式错误）
+  const parsed = await readJsonBody<ChatRequest>(request);
+  if (!parsed.ok) return json({ error: parsed.error }, parsed.status);
+  const body = parsed.body;
   if (!body || typeof body.message !== 'string' || body.message.trim() === '') {
     return json({ error: '请输入内容' }, 400);
   }

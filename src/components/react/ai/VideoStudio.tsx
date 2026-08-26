@@ -3,8 +3,17 @@ import { Clapperboard, Download } from 'lucide-react';
 import { createVideo, getVideoStatus, ACTIONS } from './api';
 import type { VideoStatus } from './types';
 
-const POLL_INTERVAL_MS = 5000;
-const MAX_ATTEMPTS = 36; // 180s
+// 轮询步长指数式拉长：5s → 10s → 20s → 40s → 60s 为限（替代固定 5s×36，
+// 下调 video-status 端点请量）。7 轮累计 5+10+20+40+60×3 = 255s ≈ 4m15s，
+// 生成约 1-3 分钟即可完成
+const BASE_POLL_MS = 5000;
+const MAX_POLL_MS = 60000;
+const MAX_ATTEMPTS = 7;
+
+// 第 attempt 次（1 起）轮询后的下次步长
+function nextDelay(attempt: number): number {
+  return Math.min(BASE_POLL_MS * 2 ** (attempt - 1), MAX_POLL_MS);
+}
 
 export default function VideoStudio() {
   const [action, setAction] = useState('');
@@ -31,7 +40,7 @@ export default function VideoStudio() {
       if (s.status === 'completed' && s.url) { setStatus('completed'); setUrl(s.url); return; }
       if (s.status === 'failed') { setStatus('failed'); setError('生成失败，请重试'); return; }
       setStatus(s.status);
-      timerRef.current = setTimeout(() => void poll(id, attempt + 1), POLL_INTERVAL_MS);
+      timerRef.current = setTimeout(() => void poll(id, attempt + 1), nextDelay(attempt));
     } catch {
       setStatus('failed'); setError('查询失败，请重试');
     }

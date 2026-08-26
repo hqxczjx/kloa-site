@@ -1,7 +1,9 @@
 import { buildImagePrompt } from '../_lib/prompts';
 import { agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
 import { checkRateLimit, clientIP } from '../_lib/ratelimit';
-import { AGNES_BASE_URL, IMAGE_MODEL, RATIO_FRAMES, MAX_IMAGE_EXTRA_CHARS } from '../_lib/config';
+import { readJsonBody } from '../_lib/body';
+import { aiCacheKey, readCache, writeCache } from '../_lib/aicache';
+import { AGNES_BASE_URL, IMAGE_MODEL, RATIO_FRAMES, MAX_IMAGE_EXTRA_CHARS, AI_CACHE_TTL_SEC } from '../_lib/config';
 import type { Env } from '../_lib/types';
 
 interface ImageRequest {
@@ -21,8 +23,9 @@ export async function imageHandler(request: Request, env: Env): Promise<Response
     return json({ error: '操作太频繁，请稍后再试' }, 429);
   }
 
-  let body: ImageRequest;
-  try { body = (await request.json()) as ImageRequest; } catch { return json({ error: '请求格式有误' }, 400); }
+  const parsed = await readJsonBody<ImageRequest>(request);
+  if (!parsed.ok) return json({ error: parsed.error }, parsed.status);
+  const body = parsed.body;
 
   if (!body?.style || typeof body.style !== 'string') return json({ error: '请选择风格' }, 400);
   if (body.extra && body.extra.length > MAX_IMAGE_EXTRA_CHARS) return json({ error: `追加描述过长（限 ${MAX_IMAGE_EXTRA_CHARS} 字）` }, 400);
@@ -37,16 +40,24 @@ export async function imageHandler(request: Request, env: Env): Promise<Response
   const characterUrl = override || frame.image;
   const prompt = buildImagePrompt(body.style, body.extra, ratio);
 
+  // 直接以最终上送体做缓存 key：入参/模型/参考图任一变化自动失效
+  const upstreamBody = {
+    model: IMAGE_MODEL,
+    prompt,
+    size,
+    ratio: frame.apiRatio,
+    extra_body: { image: [characterUrl], response_format: 'url' as const },
+  };
+
+  // 同入参结果缓存：命中秒回（原本 10-30s）且省 agnes 共享配额；只缓存成功 url
+  const cacheKey = await aiCacheKey('image', upstreamBody);
+  const hit = await readCache<{ url: string }>(caches.default, cacheKey);
+  if (hit?.url) return json(hit, 200);
+
   const upstream = await fetch(`${AGNES_BASE_URL}/images/generations`, {
     method: 'POST',
     headers: agnesHeaders(apiKey),
-    body: JSON.stringify({
-      model: IMAGE_MODEL,
-      prompt,
-      size,
-      ratio: frame.apiRatio,
-      extra_body: { image: [characterUrl], response_format: 'url' },
-    }),
+    body: JSON.stringify(upstreamBody),
   });
 
   if (!upstream.ok) {
@@ -56,6 +67,7 @@ export async function imageHandler(request: Request, env: Env): Promise<Response
   const data = await upstream.json() as { data?: { url?: string }[] };
   const url = data.data?.[0]?.url;
   if (!url) return json({ error: '生成失败，请重试' }, 502);
+  await writeCache(caches.default, cacheKey, { url }, AI_CACHE_TTL_SEC);
   return json({ url }, 200);
 }
 

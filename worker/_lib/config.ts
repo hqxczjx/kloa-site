@@ -4,6 +4,15 @@ export const CHAT_MODEL = 'agnes-2.5-flash';
 export const RATE_LIMIT_MAX = 10;          // 每窗口每 IP 最大请求数
 export const RATE_LIMIT_WINDOW_SEC = 60;   // 窗口大小（秒）
 
+export const MAX_BODY_BYTES = 64 * 1024;   // API JSON body 上限（字节）：Content-Length 预检 + 读后复核
+
+export const AI_CACHE_TTL_SEC = 86400;     // image/storyboard 成功结果缓存 24h（agnes 免费共享配额，减上游压力 + 重复点击秒回）
+
+// video-status 轮询端点独立限流（不复用 10/60s：客户端固定 5s 轮询会打爆共享桶）
+export const VIDEO_STATUS_RATE_LIMIT_MAX = 60;        // 每窗口每 IP 最大查询数
+export const VIDEO_STATUS_RATE_LIMIT_WINDOW_SEC = 60; // 窗口大小（秒）
+export const VIDEO_STATUS_CACHE_TTL_SEC = 60;         // completed 终态短缓存：完成后剩余轮询直接命中，不再打上游
+
 export const MAX_INPUT_CHARS = 100;        // 单条用户输入字数上限
 export const MAX_HISTORY_TURNS = 6;        // 保留最近 N 条历史消息
 export const CHAT_MAX_TOKENS = 512;        // 单次回复 token 上限

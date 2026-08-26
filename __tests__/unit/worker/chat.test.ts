@@ -105,4 +105,26 @@ describe('chat endpoint', () => {
     const res = await callEndpoint({ form: 'angel', message: 'hi', history: [] }, { AGNES_API_KEY: 'k' }, fetchMock);
     expect(res.status).toBe(429);
   });
+
+  it('body 超过 64KB 上限返回 413', async () => {
+    const res = await callEndpoint(
+      { form: 'angel', message: 'x'.repeat(70 * 1024), history: [] },
+      { AGNES_API_KEY: 'k' },
+      vi.fn()
+    );
+    expect(res.status).toBe(413);
+  });
+
+  it('非 JSON Content-Type 返回 415', async () => {
+    const mod = await import('../../../worker/api/chat');
+    globalThis.fetch = vi.fn() as unknown as typeof fetch;
+    globalThis.caches = { default: makeCache() } as unknown as typeof caches;
+    const request = new Request('https://kloa.fans/api/chat', {
+      method: 'POST',
+      headers: { 'content-type': 'text/plain', 'CF-Connecting-IP': '1.1.1.1' },
+      body: 'hello',
+    });
+    const res = await mod.chatHandler(request, { AGNES_API_KEY: 'k' });
+    expect(res.status).toBe(415);
+  });
 });

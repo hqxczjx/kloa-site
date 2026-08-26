@@ -49,6 +49,16 @@ describe('ratelimit', () => {
     expect(clientIP(req)).toBe('9.9.9.9');
   });
 
+  it('自定义上限/命名空间独立生效，不影响默认桶', async () => {
+    const cache = makeCache();
+    const opt = { max: 2, windowSec: 60, namespace: '__rlvs' };
+    expect((await checkRateLimit('1.1.1.1', cache, opt)).allowed).toBe(true);
+    expect((await checkRateLimit('1.1.1.1', cache, opt)).allowed).toBe(true);
+    expect((await checkRateLimit('1.1.1.1', cache, opt)).allowed).toBe(false);
+    // 同 IP 默认命名空间仍从 0 计数（隔离，不连带限流）
+    expect((await checkRateLimit('1.1.1.1', cache)).remaining).toBe(9);
+  });
+
   it('clientIP 缺失时回退 unknown', () => {
     const req = new Request('https://x/');
     expect(clientIP(req)).toBe('unknown');

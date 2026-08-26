@@ -85,4 +85,24 @@ describe('storyboard endpoint', () => {
     const res = await call({ idea: 'x' }, { AGNES_API_KEY: 'k' }, fetchMock);
     expect(res.status).toBe(502);
   });
+
+  it('同 idea 第二次命中缓存秒回，不打上游', async () => {
+    const mod = await import('../../../worker/api/storyboard');
+    // happy-dom Response body 单次消费，多轮调用须每次返回新 Response
+    const fetchMock = vi.fn().mockImplementation(async () => chatContent(VALID));
+    globalThis.fetch = fetchMock as typeof fetch;
+    const cache = makeCache();
+    globalThis.caches = { default: cache } as unknown as typeof caches;
+    const makeReq = () => new Request('https://kloa.fans/api/storyboard', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '3.3.3.3' },
+      body: JSON.stringify({ idea: '克罗雅追蝴蝶' }),
+    });
+    const first = await mod.storyboardHandler(makeReq(), { AGNES_API_KEY: 'k' });
+    const second = await mod.storyboardHandler(makeReq(), { AGNES_API_KEY: 'k' });
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(200);
+    expect(await second.json()).toEqual({ frames: ['f0', 'f1', 'f2', 'f3'], motions: ['m0', 'm1', 'm2'] });
+    expect(fetchMock).toHaveBeenCalledOnce(); // 第二次走缓存
+  });
 });

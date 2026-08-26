@@ -144,7 +144,8 @@ describe('VideoStudio', () => {
     render(<VideoStudio />);
     generateSync();
     await flush();
-    for (let i = 0; i < 40; i++) {
+    // 指数退避后总时长 255s（5+10+20+40+60×3），推进 300s 确保越过超时点
+    for (let i = 0; i < 60; i++) {
       await vi.advanceTimersByTimeAsync(5000);
     }
     expect(screen.getAllByText(/生成较久/).length).toBeGreaterThan(0);

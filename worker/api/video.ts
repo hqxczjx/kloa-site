@@ -1,6 +1,7 @@
 import { buildVideoPrompt, ACTION_PROMPTS } from '../_lib/prompts';
 import { agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
 import { checkRateLimit, clientIP } from '../_lib/ratelimit';
+import { readJsonBody } from '../_lib/body';
 import { AGNES_BASE_URL, VIDEO_MODEL, VIDEO_DURATION_PRESETS, DEFAULT_CHARACTER_IMAGE_URL } from '../_lib/config';
 import type { Env } from '../_lib/types';
 
@@ -30,8 +31,9 @@ export async function createVideoHandler(request: Request, env: Env): Promise<Re
     return json({ error: '操作太频繁，请稍后再试' }, 429);
   }
 
-  let body: VideoRequest;
-  try { body = (await request.json()) as VideoRequest; } catch { return json({ error: '请求格式有误' }, 400); }
+  const parsed = await readJsonBody<VideoRequest>(request);
+  if (!parsed.ok) return json({ error: parsed.error }, parsed.status);
+  const body = parsed.body;
   if (!body || typeof body !== 'object') return json({ error: '请求格式有误' }, 400);
   if (!env.AGNES_API_KEY) return json({ error: '服务未配置' }, 503);
 

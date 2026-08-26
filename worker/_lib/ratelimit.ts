@@ -1,13 +1,25 @@
 import { RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_SEC } from './config';
 
+// 独立窗口/上限/命名空间（默认沿用全局 10/60s；video-status 等高频端点传自己的配置，
+// 命名空间不隔离会导致高频轮询耗尽共享桶、连带封掉其他端点）
+export interface RateLimitOptions {
+  max?: number;
+  windowSec?: number;
+  namespace?: string;
+}
+
 export async function checkRateLimit(
   ip: string,
-  cache: Cache
+  cache: Cache,
+  options: RateLimitOptions = {}
 ): Promise<{ allowed: boolean; remaining: number }> {
-  const key = new Request(`https://kloa.fans/__rl/${ip}`);
+  const max = options.max ?? RATE_LIMIT_MAX;
+  const windowSec = options.windowSec ?? RATE_LIMIT_WINDOW_SEC;
+  const namespace = options.namespace ?? '__rl';
+  const key = new Request(`https://kloa.fans/${namespace}/${ip}`);
   const now = Math.floor(Date.now() / 1000);
   let count = 0;
-  let resetAt = now + RATE_LIMIT_WINDOW_SEC;
+  let resetAt = now + windowSec;
 
   const cached = await cache.match(key);
   if (cached) {
@@ -21,13 +33,13 @@ export async function checkRateLimit(
   }
 
   count += 1;
-  const allowed = count <= RATE_LIMIT_MAX;
-  const remaining = Math.max(0, RATE_LIMIT_MAX - count);
+  const allowed = count <= max;
+  const remaining = Math.max(0, max - count);
 
   const res = new Response(JSON.stringify({ count, resetAt }), {
     headers: {
       'content-type': 'application/json',
-      'cache-control': `max-age=${RATE_LIMIT_WINDOW_SEC}`,
+      'cache-control': `max-age=${windowSec}`,
     },
   });
   await cache.put(key, res);

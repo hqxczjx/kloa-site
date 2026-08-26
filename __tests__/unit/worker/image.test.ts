@@ -130,4 +130,48 @@ describe('image endpoint', () => {
     const sent = JSON.parse((fetchMock.mock.calls[0][1] as RequestInit).body as string);
     expect(sent.extra_body.image).toEqual(['https://kloa.fans/images/illustration-3x4.webp']);
   });
+
+  it('同入参第二次命中缓存秒回，不打上游', async () => {
+    const mod = await import('../../../worker/api/image');
+    // happy-dom Response body 单次消费，多轮调用须每次返回新 Response
+    const fetchMock = vi.fn().mockImplementation(async () => new Response(
+      JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }
+    ));
+    globalThis.fetch = fetchMock as typeof fetch;
+    const cache = makeCache();
+    globalThis.caches = { default: cache } as unknown as typeof caches;
+    const makeReq = () => new Request('https://kloa.fans/api/image', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '2.2.2.2' },
+      body: JSON.stringify({ style: '水彩手绘', size: '1K', ratio: '1:1' }),
+    });
+    const first = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k' });
+    const second = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k' });
+    expect(first.status).toBe(200);
+    expect(second.status).toBe(200);
+    expect((await second.json()).url).toBe('https://cdn/x.png');
+    expect(fetchMock).toHaveBeenCalledOnce(); // 第二次走缓存
+  });
+
+  it('上游失败不写缓存：下次仍打上游', async () => {
+    const mod = await import('../../../worker/api/image');
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response('', { status: 503 }))
+      .mockResolvedValueOnce(new Response(
+        JSON.stringify({ data: [{ url: 'https://cdn/x.png' }] }), { status: 200 }
+      ));
+    globalThis.fetch = fetchMock as typeof fetch;
+    const cache = makeCache();
+    globalThis.caches = { default: cache } as unknown as typeof caches;
+    const makeReq = () => new Request('https://kloa.fans/api/image', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '2.2.2.2' },
+      body: JSON.stringify({ style: '水彩手绘', size: '1K' }),
+    });
+    const first = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k' });
+    const second = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k' });
+    expect(first.status).toBe(503);
+    expect(second.status).toBe(200);
+    expect(fetchMock).toHaveBeenCalledTimes(2); // 失败未缓存，重试真打上游
+  });
 });
