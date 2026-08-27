@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import ThemeToggle from '../components/ui/ThemeToggle.tsx';
+import ThemeToggle from '../components/ui/ThemeToggle.astro';
 import ToasterWrapper from '../components/ui/ToasterWrapper.tsx';
 import { Heart, Music as MusicIcon, User, MessageCircle, Sparkles } from 'lucide-react';
 
@@ -18,6 +18,10 @@ const startYear = 2026;
 const yearDisplay = currentYear === startYear
   ? `${startYear}`
   : `${startYear} - ${currentYear}`;
+
+// /ai/* 页面的 studio 从不调用 toast（grep 证实 sonner 仅 SongList/DanmakuBoard 使用），
+// 不挂 ToasterWrapper 岛——这 4+1 页各省 32KB sonner chunk
+const isAiPage = /^\/ai(?:\/|$)/.test(Astro.url.pathname);
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -69,12 +73,12 @@ const yearDisplay = currentYear === startYear
         <a href="/about/" class="nav-link">关于</a>
       </div>
 
-      <ThemeToggle client:load />
+      <ThemeToggle />
     </nav>
 
     <!-- Mobile Theme Toggle (Top Right) -->
     <div class="md:hidden fixed top-4 right-4 z-50" data-testid="mobile-theme-toggle">
-      <ThemeToggle client:load />
+      <ThemeToggle />
     </div>
 
     <!-- Mobile Navbar (Bottom) -->
@@ -113,8 +117,52 @@ const yearDisplay = currentYear === startYear
       </p>
     </footer>
 
-    <!-- Sonner Toaster -->
-    <ToasterWrapper client:idle />
+    <!-- Sonner Toaster（/ai/* 页不挂——无 toast 调用，省 32KB chunk） -->
+    {!isAiPage && <ToasterWrapper client:idle />}
+
+    <!-- Theme toggle（vanilla）：事件委托同时服务桌面 nav 与移动端两个按钮，
+         替代原先每页 2 个 client:load React 岛。初始渲染由 head 内 FOUC 脚本负责。 -->
+    <script is:inline>
+      (function () {
+        // 防重复绑定（幂等）：脚本全站仅此一份，但避免意外双执行
+        if (window.__themeToggleInit) return;
+        window.__themeToggleInit = true;
+
+        var TO_DARK = '切换到恶魔模式';
+        var TO_LIGHT = '切换到天使模式';
+
+        function syncLabels() {
+          var label = document.documentElement.classList.contains('dark') ? TO_LIGHT : TO_DARK;
+          document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
+            btn.setAttribute('aria-label', label);
+          });
+        }
+
+        document.addEventListener('click', function (e) {
+          var btn = e.target instanceof Element ? e.target.closest('[data-theme-toggle]') : null;
+          if (!btn) return;
+          var toDark = !document.documentElement.classList.contains('dark');
+          document.documentElement.classList.toggle('dark', toDark);
+          try {
+            localStorage.setItem('theme', toDark ? 'dark' : 'light');
+          } catch (err) {
+            // localStorage 不可用（隐私模式等）时静默降级，视觉切换不受影响
+          }
+          syncLabels();
+        });
+
+        // SSR 恒天使态；真实主题已由 head FOUC 脚本落到 html.dark，这里只同步按钮文案
+        syncLabels();
+
+        // 无显式偏好时跟随系统（对齐旧 React 版行为；有 saved 值则不动）
+        var mql = window.matchMedia('(prefers-color-scheme: dark)');
+        mql.addEventListener('change', function () {
+          if (localStorage.getItem('theme')) return;
+          document.documentElement.classList.toggle('dark', mql.matches);
+          syncLabels();
+        });
+      })();
+    </script>
 
     <style is:global>
       /* Desktop Nav Links */

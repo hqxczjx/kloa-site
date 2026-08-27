@@ -1,0 +1,120 @@
+---
+// 原生主题切换按钮（vanilla，无 React 岛）：
+// - 视觉状态（渐变底/滑块/图标/辉光）全部由 html.dark 驱动，head 内 FOUC 脚本
+//   在 body 解析前就已落好 dark 类，因此首帧即正确、无闪换。
+// - 交互（点击切换 + aria-label 同步）由 BaseLayout.astro body 末尾的
+//   is:inline 脚本以事件委托服务全站（桌面 nav + 移动端两个按钮）。
+// - SSR 恒为天使态，与旧 React 版一致；真实态由脚本在加载后同步。
+---
+
+<button type="button" data-theme-toggle class="theme-toggle" aria-label="切换到恶魔模式">
+  <span class="theme-toggle-knob" aria-hidden="true">
+    <!-- lucide sun（与旧 React 版等价，strokeWidth 2.5） -->
+    <svg
+      class="theme-toggle-sun h-4 w-4 text-pink-500"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="4"></circle>
+      <path d="M12 2v2"></path>
+      <path d="M12 20v2"></path>
+      <path d="m4.93 4.93 1.41 1.41"></path>
+      <path d="m17.66 17.66 1.41 1.41"></path>
+      <path d="M2 12h2"></path>
+      <path d="M20 12h2"></path>
+      <path d="m6.34 17.66-1.41 1.41"></path>
+      <path d="m19.07 4.93-1.41 1.41"></path>
+    </svg>
+    <!-- lucide moon -->
+    <svg
+      class="theme-toggle-moon h-4 w-4 text-blue-500"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path
+        d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"
+      ></path>
+    </svg>
+  </span>
+  <!-- 天使光环 / 恶魔辉光（同一个元素，CSS 按 html.dark 切换样式） -->
+  <span class="theme-toggle-glow" aria-hidden="true"></span>
+</button>
+
+<style>
+  /* 尺寸/位移与旧 React 版逐值对齐（w-16 h-8 p-1 / w-6 h-6 top-1 / left 4px ↔ calc(100% - 28px)） */
+  .theme-toggle {
+    position: relative;
+    width: 4rem;
+    height: 2rem;
+    border-radius: 9999px;
+    padding: 0.25rem;
+    transition: all 0.3s;
+    cursor: pointer;
+    background: linear-gradient(135deg, oklch(0.78 0.1 15), oklch(0.72 0.12 15));
+  }
+
+  :global(html.dark) .theme-toggle {
+    background: linear-gradient(135deg, oklch(0.72 0.08 240), oklch(0.64 0.1 240));
+  }
+
+  .theme-toggle-knob {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    display: flex;
+    width: 1.5rem;
+    height: 1.5rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    transition: all 0.3s;
+    background: #fff;
+    box-shadow: 0 2px 8px oklch(0.72 0.12 15 / 0.3);
+  }
+
+  :global(html.dark) .theme-toggle-knob {
+    left: calc(100% - 28px);
+    background: #0f0f12;
+    box-shadow: 0 2px 8px oklch(0.64 0.1 240 / 0.4);
+  }
+
+  .theme-toggle-moon {
+    display: none;
+  }
+
+  :global(html.dark) .theme-toggle-moon {
+    display: block;
+  }
+
+  :global(html.dark) .theme-toggle-sun {
+    display: none;
+  }
+
+  .theme-toggle-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5rem;
+    height: 5rem;
+    transform: translate(-50%, -50%);
+    border-radius: 9999px;
+    pointer-events: none;
+    opacity: 0.3;
+    background: radial-gradient(circle, oklch(0.72 0.12 15 / 0.4) 0%, transparent 70%);
+  }
+
+  :global(html.dark) .theme-toggle-glow {
+    opacity: 0.4;
+    background: radial-gradient(circle, oklch(0.64 0.1 240 / 0.5) 0%, transparent 70%);
+  }
+</style>
