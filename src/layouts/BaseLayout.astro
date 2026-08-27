@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import ThemeToggle from '../components/ui/ThemeToggle.astro';
 import ToasterWrapper from '../components/ui/ToasterWrapper.tsx';
 import { Heart, Music as MusicIcon, User, MessageCircle, Sparkles } from 'lucide-react';
@@ -26,6 +27,9 @@ const isAiPage = /^\/ai(?:\/|$)/.test(Astro.url.pathname);
 <!doctype html>
 <html lang="zh-CN">
   <head>
+    {/* ClientRouter（P1-1）：站内链接改为软导航，配合 PersistentPlayer 的
+        transition:persist 实现 / ↔ /music 点歌续播；预取由 prefetchAll 驱动 */}
+    <ClientRouter />
     <meta charset="UTF-8" />
     <meta name="description" content="克罗雅 - 从远古时期的天堂而来的恶魔&天使" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -159,6 +163,17 @@ const isAiPage = /^\/ai(?:\/|$)/.test(Astro.url.pathname);
         mql.addEventListener('change', function () {
           if (localStorage.getItem('theme')) return;
           document.documentElement.classList.toggle('dark', mql.matches);
+          syncLabels();
+        });
+
+        // ClientRouter 软导航后的主题重同步：swap 会用新文档的 <html> 属性覆盖当前
+        // （SSR 恒天使态 → dark 类被剥掉），且本脚本与 head FOUC 脚本因内容相同不会
+        // 重新执行（ClientRouter 按 textContent 去重）。document 级监听器随 document
+        // 存活，每个软导航后按 localStorage/系统偏好重落 dark 类并同步按钮文案。
+        document.addEventListener('astro:after-swap', function () {
+          var saved = localStorage.getItem('theme');
+          var isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', isDark);
           syncLabels();
         });
       })();

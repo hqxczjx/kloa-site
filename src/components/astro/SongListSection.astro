@@ -51,6 +51,9 @@ const Title = showBackLink ? 'h1' : 'h2';
       直接 import 生成模块，数据随 island 的 JS chunk 水合时按需拉取 */}
   <SongList client:visible />
 
-  {/* Global Player — client:idle：空闲加载，不阻塞首屏 */}
-  <PersistentPlayer client:idle />
+  {/* Global Player — client:idle：空闲加载，不阻塞首屏。
+      transition:persist（P1-1）：ClientRouter 软导航时把整个 astro-island 连同
+      React 状态与 <audio> 移入新页面（仅 / 与 /music 都渲染本组件，二者互通；
+      其余页面不渲染 → 播放器按页面结构消失，属预期）。 */}
+  <PersistentPlayer client:idle transition:persist="persistent-player" />
 </section>
