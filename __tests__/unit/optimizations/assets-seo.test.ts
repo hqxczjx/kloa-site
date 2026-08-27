@@ -25,19 +25,40 @@ describe('资源与 SEO 补全', () => {
     expect(readSrc('src/layouts/BaseLayout.astro')).toMatch(/rel="canonical"/);
   });
 
-  it('public/_headers 配置了 Cloudflare 缓存策略', () => {
+  it('public/_headers 标注 inert：run_worker_first 下 Worker 响应不吃 _headers', () => {
     expect(existsSync(srcPath('public/_headers'))).toBe(true);
+    // 真Source 在 worker/index.ts；_headers 仅作策略文档，须注明防误信
     const headers = readSrc('public/_headers');
-    expect(headers).toMatch(/Cache-Control/);
-    expect(headers).toMatch(/immutable|max-age/);
+    expect(headers).toMatch(/run_worker_first/);
+    expect(headers).toMatch(/worker\/index\.ts/);
   });
 
-  it('HTML 保持浏览器层 must-revalidate + 边缘层 SWR（P0-5）', () => {
-    const headers = readSrc('public/_headers');
+  it('HTML 保持浏览器层 must-revalidate + 边缘层 SWR（P0-5，真源 worker）', () => {
+    const workerSrc = readSrc('worker/index.ts');
     // 浏览器层：删掉会落入不可控的启发式缓存，必须保留 304 快速校验
-    expect(headers).toMatch(/Cache-Control:\s*public,\s*max-age=0,\s*must-revalidate/);
+    expect(workerSrc).toMatch(/max-age=0,\s*must-revalidate/);
     // 边缘层：重复访问零 RTT，最多 10 分钟陈旧，SWR 回源刷新 1 天
-    expect(headers).toMatch(/CDN-Cache-Control:\s*public,\s*max-age=600,\s*stale-while-revalidate=86400/);
+    expect(workerSrc).toMatch(/max-age=600,\s*stale-while-revalidate=86400/);
+  });
+
+  it('安全五头 + /_astro/* immutable 在 worker 全站生效（P1-4，真源 worker）', () => {
+    const workerSrc = readSrc('worker/index.ts');
+    expect(workerSrc).toContain("['x-content-type-options', 'nosniff']");
+    expect(workerSrc).toContain("['referrer-policy', 'strict-origin-when-cross-origin']");
+    expect(workerSrc).toContain("['x-frame-options', 'DENY']");
+    expect(workerSrc).toContain("['permissions-policy', 'camera=(), microphone=(), geolocation=()']");
+    expect(workerSrc).toContain("['strict-transport-security', 'max-age=31536000']");
+    // 指纹化产物 immutable（SET 单值，修复线上双值 cache-control）
+    expect(workerSrc).toMatch(/max-age=31536000,\s*immutable/);
+  });
+
+  it('BaseLayout 预加载 variable 字体（P1-5：preload + font-display:swap 终态）', () => {
+    const layout = readSrc('src/layouts/BaseLayout.astro');
+    expect(layout).toMatch(
+      /<link rel="preload" as="font" type="font\/woff2" crossorigin href="\/fonts\/noto-serif-sc-var\.woff2"/,
+    );
+    // preload 的目标必须真实存在，否则白花一次往返还告警
+    expect(existsSync(srcPath('public/fonts/noto-serif-sc-var.woff2'))).toBe(true);
   });
 
   it('robots.txt 启用了 sitemap 引用', () => {

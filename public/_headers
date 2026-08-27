@@ -1,3 +1,8 @@
+# ⚠️ 本文件在 run_worker_first: true 下不生效——Cloudflare 对 Worker 返回的
+# 响应不应用 _headers 自定义头（实测：HTML 无 CDN-Cache-Control、/_astro/*
+# 拼出双值 cache-control）。唯一真源是 worker/index.ts 的 withResponseHeaders()；
+# 本文件仅作策略文档留存，改缓存规则需两处同步。
+
 # Fingerprinted build assets — safe to cache forever
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable

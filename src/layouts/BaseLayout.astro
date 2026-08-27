@@ -33,6 +33,10 @@ const isAiPage = /^\/ai(?:\/|$)/.test(Astro.url.pathname);
     <meta charset="UTF-8" />
     <meta name="description" content="克罗雅 - 从远古时期的天堂而来的恶魔&天使" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {/* font preload（P1-5）：与 global.css @font-face 同一 woff2，把加载提前到
+        与 CSS 解析并行；crossorigin 必带——font 加载是 anonymous CORS 模式，
+        不带会 preload 两次。font-display:swap 见 font-loading.test.ts */}
+    <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/noto-serif-sc-var.woff2" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
