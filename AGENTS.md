@@ -41,7 +41,7 @@ Vsinger FanSite (Angel/Demon Edition) - Chinese Vtuber character fan site with d
 - Framework: Astro 7.1 (static output)
 - UI: React 19 (island architecture via `client:` directives)
 - Styling: Tailwind CSS v4.0 (CSS-first @theme)
-- Animation: CSS animations / View Transitions (Framer Motion removed to save ~116K)
+- Animation: CSS animations / transitions only (Framer Motion removed to save ~116K; View Transitions planned, roadmap P1-1)
 - Icons: Lucide React
 - Testing: Vitest + Playwright
 
@@ -70,7 +70,7 @@ Vsinger FanSite (Angel/Demon Edition) - Chinese Vtuber character fan site with d
 ### React Patterns
 - Functional components only (no class components)
 - Hooks: `useState`, `useEffect`, `useMemo`, `useCallback`, `useRef`
-- State management: nanostores for global state
+- State management: React local state + CustomEvent (PersistentPlayer listens for the `playSong` window event); no global store
 - Event handlers: named functions (not inline) for performance
 - Avoid prop drilling - use context/store for shared state
 

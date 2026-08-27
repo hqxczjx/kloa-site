@@ -12,6 +12,8 @@
 /robots.txt
   Cache-Control: public, max-age=86400
 
-# HTML pages — always revalidate so updates ship immediately
+# HTML pages — browser always revalidates (304, no heuristic caching);
+# edge serves stale-while-revalidate: 部署频率低，重复访问零 RTT，最多 10 分钟陈旧
 /*
   Cache-Control: public, max-age=0, must-revalidate
+  CDN-Cache-Control: public, max-age=600, stale-while-revalidate=86400

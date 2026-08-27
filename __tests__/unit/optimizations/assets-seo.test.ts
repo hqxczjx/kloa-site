@@ -32,6 +32,14 @@ describe('资源与 SEO 补全', () => {
     expect(headers).toMatch(/immutable|max-age/);
   });
 
+  it('HTML 保持浏览器层 must-revalidate + 边缘层 SWR（P0-5）', () => {
+    const headers = readSrc('public/_headers');
+    // 浏览器层：删掉会落入不可控的启发式缓存，必须保留 304 快速校验
+    expect(headers).toMatch(/Cache-Control:\s*public,\s*max-age=0,\s*must-revalidate/);
+    // 边缘层：重复访问零 RTT，最多 10 分钟陈旧，SWR 回源刷新 1 天
+    expect(headers).toMatch(/CDN-Cache-Control:\s*public,\s*max-age=600,\s*stale-while-revalidate=86400/);
+  });
+
   it('robots.txt 启用了 sitemap 引用', () => {
     const robots = readSrc('public/robots.txt');
     expect(robots).toMatch(/^Sitemap:\s*https:\/\//m);

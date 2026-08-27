@@ -233,16 +233,22 @@
     box-shadow: 0 0 20px var(--glow-color);
   }
 
-  /* Theme Transition */
-  * {
+  /* Theme Transition（收敛自原 `*` 通配——全元素参与过渡是主题切换掉帧的直接来源）。
+     白名单只覆盖颜色随 html.dark 翻转的表面/文字：
+     - body 自带 background-color/color 过渡，未显式设色的文字经继承自动跟随；
+     - .glass / .song-row-grid / .sl-chip / .song-item 各自有过渡声明（位于本块之后，级联不变）；
+     - 行内 style 设色的小元素（AI studios、PersistentPlayer 文字等）接受瞬时切换——这是有意的取舍。
+     prefers-reduced-motion 由文件末尾的全局 reduce 块统一兜底。 */
+  .sl-bar, .song-table, .song-thead, .sort-col.is-active,
+  .sl-search, .sl-more,
+  .song-row .col-title, .song-row .col-artist, .song-row .genre-tag,
+  .song-card .card-title, .song-card .card-artist,
+  .sc-badge,
+  body > footer, body > footer p,
+  main > section[style*="--bg-primary"] {
     transition-property: background-color, border-color, color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
-  }
-
-  /* Exclude animation elements from theme transition */
-  *:where(.animate-levitation, .animate-float-1, .animate-float-2, .animate-float-3, .animate-float-4, .animate-float-5, .animate-float-6, .animate-halo-glow, .animate-horn-glow, .animate-light-ray, .animate-neon-glow, .animate-pulse-slow, .animate-glow-pulse, .animate-title-glow) {
-    transition: none;
   }
 
   /* === 歌单列表重设计（玻璃乐谱） === */
