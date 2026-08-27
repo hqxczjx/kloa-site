@@ -1,4 +1,5 @@
 import { RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_SEC } from './config';
+import { cacheKey } from './aicache';
 
 // 独立窗口/上限/命名空间（默认沿用全局 10/60s；video-status 等高频端点传自己的配置，
 // 命名空间不隔离会导致高频轮询耗尽共享桶、连带封掉其他端点）
@@ -12,11 +13,11 @@ export async function checkRateLimit(
   ip: string,
   cache: Cache,
   options: RateLimitOptions = {}
-): Promise<{ allowed: boolean; remaining: number }> {
+): Promise<{ allowed: boolean; remaining: number; retryAfterSec: number }> {
   const max = options.max ?? RATE_LIMIT_MAX;
   const windowSec = options.windowSec ?? RATE_LIMIT_WINDOW_SEC;
   const namespace = options.namespace ?? '__rl';
-  const key = new Request(`https://kloa.fans/${namespace}/${ip}`);
+  const key = cacheKey(namespace, ip);
   const now = Math.floor(Date.now() / 1000);
   let count = 0;
   let resetAt = now + windowSec;
@@ -35,6 +36,8 @@ export async function checkRateLimit(
   count += 1;
   const allowed = count <= max;
   const remaining = Math.max(0, max - count);
+  // 距窗口重置的剩余秒数：拒绝时随 429 以 Retry-After 头透出，客户端可据此退避
+  const retryAfterSec = Math.max(0, resetAt - now);
 
   const res = new Response(JSON.stringify({ count, resetAt }), {
     headers: {
@@ -42,9 +45,13 @@ export async function checkRateLimit(
       'cache-control': `max-age=${windowSec}`,
     },
   });
-  await cache.put(key, res);
+  try {
+    await cache.put(key, res);
+  } catch {
+    // wrangler dev 下 caches.default 可能只读——写失败不阻塞限流判定（与 aicache 容错一致）
+  }
 
-  return { allowed, remaining };
+  return { allowed, remaining, retryAfterSec };
 }
 
 export function clientIP(request: Request): string {

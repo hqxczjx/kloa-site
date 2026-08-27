@@ -14,7 +14,9 @@ export async function chatHandler(request: Request, env: Env): Promise<Response>
   // 限流
   const rl = await checkRateLimit(clientIP(request), caches.default);
   if (!rl.allowed) {
-    return json({ error: '操作太频繁，请稍后再试' }, 429);
+    const res = json({ error: '操作太频繁，请稍后再试' }, 429);
+    res.headers.set('Retry-After', String(rl.retryAfterSec));
+    return res;
   }
 
   // 解析 + 校验（统一 body 守卫：413 超限 / 415 非 JSON / 400 格式错误）

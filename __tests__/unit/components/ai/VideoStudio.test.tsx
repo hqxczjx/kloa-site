@@ -2,13 +2,18 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import VideoStudio from '../../../../src/components/react/ai/VideoStudio';
-import { createVideo, getVideoStatus } from '../../../../src/components/react/ai/api';
+import { createVideo, getVideoStatus, ApiError } from '../../../../src/components/react/ai/api';
 
-vi.mock('../../../../src/components/react/ai/api', () => ({
-  ACTIONS: ['微微笑', '回头看镜头', '风吹动发丝', '自然眨眼呼吸', '缓缓走近'] as const,
-  createVideo: vi.fn(),
-  getVideoStatus: vi.fn(),
-}));
+// 保留真实 ApiError（polling.isTransientPollError 的 instanceof 依赖类对象同一）
+vi.mock('../../../../src/components/react/ai/api', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../../src/components/react/ai/api')>();
+  return {
+    ...actual,
+    ACTIONS: ['微微笑', '回头看镜头', '风吹动发丝', '自然眨眼呼吸', '缓缓走近'] as const,
+    createVideo: vi.fn(),
+    getVideoStatus: vi.fn(),
+  };
+});
 
 const mockedCreateVideo = vi.mocked(createVideo);
 const mockedGetVideoStatus = vi.mocked(getVideoStatus);
@@ -116,12 +121,30 @@ describe('VideoStudio', () => {
     expect((await screen.findAllByText('生成失败，请重试')).length).toBeGreaterThan(0);
   });
 
-  it('轮询抛错时展示查询失败（L36 catch）', async () => {
-    mockedGetVideoStatus.mockRejectedValueOnce(new Error('net'));
+  it('轮询抛 4xx（非 429）终态：展示查询失败（catch 非瞬时分支）', async () => {
+    mockedGetVideoStatus.mockRejectedValueOnce(new ApiError('查询失败', 404));
     const user = userEvent.setup();
     render(<VideoStudio />);
     await generate(user);
     expect((await screen.findAllByText('查询失败，请重试')).length).toBeGreaterThan(0);
+  });
+
+  it('轮询 429 按退避重试后成功，不判死', async () => {
+    vi.useFakeTimers();
+    mockedGetVideoStatus
+      .mockRejectedValueOnce(new ApiError('查询太频繁，请稍后再试', 429))
+      .mockResolvedValueOnce({ status: 'in_progress', progress: 50 })
+      .mockResolvedValueOnce({ status: 'completed', progress: 100, url: 'https://cdn/v.mp4' });
+    render(<VideoStudio />);
+    generateSync();
+    await flush();
+    // 退避第 1 档 5s 后重试 → in_progress，第 2 档 10s 后 → completed
+    await vi.advanceTimersByTimeAsync(5000);
+    await flush();
+    expect(screen.getAllByText(/50%/).length).toBeGreaterThan(0);
+    await vi.advanceTimersByTimeAsync(10000);
+    await flush();
+    expect(screen.getByTestId('result-video')).toHaveAttribute('src', 'https://cdn/v.mp4');
   });
 
   it('轮询中间态 in_progress 后递归直到 completed（L33 / L34）', async () => {

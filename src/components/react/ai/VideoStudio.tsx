@@ -1,19 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { Clapperboard, Download } from 'lucide-react';
 import { createVideo, getVideoStatus, ACTIONS } from './api';
+import { nextDelay, isTransientPollError } from './polling';
 import type { VideoStatus } from './types';
 
 // 轮询步长指数式拉长：5s → 10s → 20s → 40s → 60s 为限（替代固定 5s×36，
 // 下调 video-status 端点请量）。7 轮累计 5+10+20+40+60×3 = 255s ≈ 4m15s，
-// 生成约 1-3 分钟即可完成
-const BASE_POLL_MS = 5000;
-const MAX_POLL_MS = 60000;
+// 生成约 1-3 分钟即可完成。nextDelay 与 429 重试共用 polling.ts
 const MAX_ATTEMPTS = 7;
-
-// 第 attempt 次（1 起）轮询后的下次步长
-function nextDelay(attempt: number): number {
-  return Math.min(BASE_POLL_MS * 2 ** (attempt - 1), MAX_POLL_MS);
-}
 
 export default function VideoStudio() {
   const [action, setAction] = useState('');
@@ -41,7 +35,13 @@ export default function VideoStudio() {
       if (s.status === 'failed') { setStatus('failed'); setError('生成失败，请重试'); return; }
       setStatus(s.status);
       timerRef.current = setTimeout(() => void poll(id, attempt + 1), nextDelay(attempt));
-    } catch {
+    } catch (e) {
+      if (abortRef.current?.signal.aborted) return;
+      // 429（worker 每 IP 限流）：按 nextDelay 重试，由 MAX_ATTEMPTS 收口（见 polling.ts）
+      if (isTransientPollError(e)) {
+        timerRef.current = setTimeout(() => void poll(id, attempt + 1), nextDelay(attempt));
+        return;
+      }
       setStatus('failed'); setError('查询失败，请重试');
     }
   }

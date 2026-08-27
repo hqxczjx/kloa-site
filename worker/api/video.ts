@@ -27,8 +27,11 @@ function isHttpUrl(s: unknown): s is string {
 
 export async function createVideoHandler(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
-  if (!(await checkRateLimit(clientIP(request), caches.default)).allowed) {
-    return json({ error: '操作太频繁，请稍后再试' }, 429);
+  const rl = await checkRateLimit(clientIP(request), caches.default);
+  if (!rl.allowed) {
+    const res = json({ error: '操作太频繁，请稍后再试' }, 429);
+    res.headers.set('Retry-After', String(rl.retryAfterSec));
+    return res;
   }
 
   const parsed = await readJsonBody<VideoRequest>(request);

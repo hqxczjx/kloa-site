@@ -1,7 +1,7 @@
 import { AGNES_API_ROOT, VIDEO_STATUS_RATE_LIMIT_MAX, VIDEO_STATUS_RATE_LIMIT_WINDOW_SEC, VIDEO_STATUS_CACHE_TTL_SEC } from '../_lib/config';
 import { agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
 import { checkRateLimit, clientIP } from '../_lib/ratelimit';
-import { readCache, writeCache } from '../_lib/aicache';
+import { readCache, writeCache, cacheKey } from '../_lib/aicache';
 import type { Env } from '../_lib/types';
 
 type NormStatus = 'queued' | 'in_progress' | 'completed' | 'failed';
@@ -26,13 +26,17 @@ export async function videoStatusHandler(request: Request, env: Env): Promise<Re
     windowSec: VIDEO_STATUS_RATE_LIMIT_WINDOW_SEC,
     namespace: '__rlvs',
   });
-  if (!rl.allowed) return json({ error: '查询太频繁，请稍后再试' }, 429);
+  if (!rl.allowed) {
+    const res = json({ error: '查询太频繁，请稍后再试' }, 429);
+    res.headers.set('Retry-After', String(rl.retryAfterSec));
+    return res;
+  }
 
   if (!env.AGNES_API_KEY) return json({ error: '服务未配置' }, 503);
 
   // completed 终态短缓存：完成后客户端的剩余轮询直接命中，不再打上游（非终态不缓存）
-  const cacheKey = new Request(`https://kloa.fans/__vs/${encodeURIComponent(id)}`);
-  const hit = await readCache<StatusPayload>(caches.default, cacheKey);
+  const vsKey = cacheKey('__vs', encodeURIComponent(id));
+  const hit = await readCache<StatusPayload>(caches.default, vsKey);
   if (hit?.status === 'completed') return json(hit, 200);
 
   const upstream = await fetch(`${AGNES_API_ROOT}/agnesapi?video_id=${encodeURIComponent(id)}`, {
@@ -48,7 +52,7 @@ export async function videoStatusHandler(request: Request, env: Env): Promise<Re
   const url = status === 'completed' ? (data?.url || data?.metadata?.url) : undefined;
   const payload: StatusPayload = { status, progress: typeof data.progress === 'number' ? data.progress : 0, url };
   if (status === 'completed' && url) {
-    await writeCache(caches.default, cacheKey, payload, VIDEO_STATUS_CACHE_TTL_SEC);
+    await writeCache(caches.default, vsKey, payload, VIDEO_STATUS_CACHE_TTL_SEC);
   }
   return json(payload, 200);
 }

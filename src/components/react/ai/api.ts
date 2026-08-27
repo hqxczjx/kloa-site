@@ -1,5 +1,16 @@
 import type { ChatRequest, ImageRequest, VideoRequest, VideoStatusResponse, KeyframeVideoRequest } from './types';
 
+// API 非 2xx 时抛出；status 供轮询方区分瞬时（429/5xx，见 polling.ts）与终态错误
+export class ApiError extends Error {
+  readonly status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
 export interface StreamCallbacks {
   onDelta: (text: string) => void;
   onDone: () => void;
@@ -75,7 +86,7 @@ export async function generateImage(req: ImageRequest, signal?: AbortSignal): Pr
   if (!res.ok) {
     let m = '生成失败，请重试';
     try { m = ((await res.json()) as { error?: string }).error ?? m; } catch { /* 默认 */ }
-    throw new Error(m);
+    throw new ApiError(m, res.status);
   }
   return ((await res.json()) as { url: string }).url;
 }
@@ -92,14 +103,14 @@ export async function createVideo(req: VideoRequest, signal?: AbortSignal): Prom
   if (!res.ok) {
     let m = '创建任务失败，请重试';
     try { m = ((await res.json()) as { error?: string }).error ?? m; } catch { /* 默认 */ }
-    throw new Error(m);
+    throw new ApiError(m, res.status);
   }
   return ((await res.json()) as { video_id: string }).video_id;
 }
 
 export async function getVideoStatus(id: string, signal?: AbortSignal): Promise<VideoStatusResponse> {
   const res = await fetch(`/api/video/status?id=${encodeURIComponent(id)}`, { signal });
-  if (!res.ok) throw new Error('查询失败');
+  if (!res.ok) throw new ApiError('查询失败', res.status);
   return (await res.json()) as VideoStatusResponse;
 }
 
@@ -118,7 +129,7 @@ export async function createStoryboard(idea: string, signal?: AbortSignal): Prom
   if (!res.ok) {
     let m = '分镜生成失败，请重试';
     try { m = ((await res.json()) as { error?: string }).error ?? m; } catch { /* 默认 */ }
-    throw new Error(m);
+    throw new ApiError(m, res.status);
   }
   return (await res.json()) as StoryboardResponse;
 }
@@ -133,7 +144,7 @@ export async function createKeyframeVideo(req: KeyframeVideoRequest, signal?: Ab
   if (!res.ok) {
     let m = '创建任务失败，请重试';
     try { m = ((await res.json()) as { error?: string }).error ?? m; } catch { /* 默认 */ }
-    throw new Error(m);
+    throw new ApiError(m, res.status);
   }
   return ((await res.json()) as { video_id: string }).video_id;
 }

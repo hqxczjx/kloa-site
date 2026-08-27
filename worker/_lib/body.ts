@@ -15,7 +15,7 @@ export async function readJsonBody<T>(
 ): Promise<JsonBodyResult<T>> {
   const declared = Number(request.headers.get('content-length'));
   if (Number.isFinite(declared) && declared > maxBytes) {
-    return { ok: false, status: 413, error: '请求体过大' };
+    return { ok: false, status: 413, error: '请求体过大（限 64KB）' };
   }
 
   const contentType = (request.headers.get('content-type') ?? '').toLowerCase();
@@ -26,7 +26,7 @@ export async function readJsonBody<T>(
 
   const text = await request.text();
   if (byteLength(text) > maxBytes) {
-    return { ok: false, status: 413, error: '请求体过大' };
+    return { ok: false, status: 413, error: '请求体过大（限 64KB）' };
   }
 
   try {

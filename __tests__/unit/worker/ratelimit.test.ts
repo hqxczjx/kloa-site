@@ -59,6 +59,26 @@ describe('ratelimit', () => {
     expect((await checkRateLimit('1.1.1.1', cache)).remaining).toBe(9);
   });
 
+  it('拒绝时 retryAfterSec = 距窗口重置的剩余秒数（供 429 Retry-After 头）', async () => {
+    vi.setSystemTime(1_700_000_000_000);
+    const cache = makeCache();
+    const opt = { max: 1, windowSec: 60 };
+    expect((await checkRateLimit('2.2.2.2', cache, opt)).allowed).toBe(true);
+    const denied = await checkRateLimit('2.2.2.2', cache, opt);
+    expect(denied.allowed).toBe(false);
+    expect(denied.retryAfterSec).toBe(60);
+  });
+
+  it('cache.put 抛错时容错：不 reject、仍返回计数（dev 只读缓存不 500）', async () => {
+    const boom = {
+      async match() { return undefined; },
+      async put() { throw new Error('cache readonly'); },
+    } as unknown as Cache;
+    const r = await checkRateLimit('3.3.3.3', boom);
+    expect(r.allowed).toBe(true);
+    expect(r.remaining).toBe(9);
+  });
+
   it('clientIP 缺失时回退 unknown', () => {
     const req = new Request('https://x/');
     expect(clientIP(req)).toBe('unknown');

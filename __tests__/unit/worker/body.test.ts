@@ -41,20 +41,20 @@ describe('readJsonBody', () => {
       () => { read = true; return Promise.resolve('{}'); }
     );
     const r = await readJsonBody(req, 64);
-    expect(r).toEqual({ ok: false, status: 413, error: '请求体过大' });
+    expect(r).toEqual({ ok: false, status: 413, error: '请求体过大（限 64KB）' });
     expect(read).toBe(false);
   });
 
   it('chunked 无 Content-Length：读后超限返回 413', async () => {
     const req = stubRequest({ 'content-type': 'application/json' }, () => Promise.resolve('x'.repeat(100)));
     const r = await readJsonBody(req, 64);
-    expect(r).toEqual({ ok: false, status: 413, error: '请求体过大' });
+    expect(r).toEqual({ ok: false, status: 413, error: '请求体过大（限 64KB）' });
   });
 
   it('复核按 UTF-8 字节数而非字符数（CJK 1 字 = 3 字节）', async () => {
     const req = stubRequest({ 'content-type': 'application/json' }, () => Promise.resolve('汉'.repeat(10))); // 10 字符 / 30 字节
     const r = await readJsonBody(req, 20);
-    expect(r).toEqual({ ok: false, status: 413, error: '请求体过大' });
+    expect(r).toEqual({ ok: false, status: 413, error: '请求体过大（限 64KB）' });
   });
 
   it('真实 Request 大 body（>64KB 默认上限）返回 413', async () => {

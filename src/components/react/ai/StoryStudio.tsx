@@ -1,10 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { Clapperboard, Download } from 'lucide-react';
 import { createStoryboard, generateImage, createKeyframeVideo, getVideoStatus } from './api';
+import { nextDelay, isTransientPollError } from './polling';
 import type { VideoStatus } from './types';
 
-const POLL_INTERVAL_MS = 5000;
-const MAX_ATTEMPTS = 36; // 每段 180s
+// 轮询步长与 429 重试共用 polling.ts：8 轮累计 5+10+20+40+60×4 = 315s ≈ 5m15s，
+// 段生成约 1-4 分钟即可完成。原先固定 5s×36（180s）时 3 段并发即 36 req/min，
+// 再加 CGNAT 同 IP 多客户端即 429（限流 60/60s 每 IP）
+const MAX_ATTEMPTS = 8;
 
 type Phase = 'idle' | 'storyboarding' | 'frames' | 'videos';
 
@@ -49,9 +52,19 @@ export default function StoryStudio() {
       updateSeg(i, { status: s.status, progress: s.progress, url: s.url ?? undefined });
       if (s.status === 'completed' && s.url) return;
       if (s.status === 'failed' || s.status === 'timeout') return;
-      const t = setTimeout(() => pollSeg(i, id, attempt + 1, signal), POLL_INTERVAL_MS);
+      const t = setTimeout(() => pollSeg(i, id, attempt + 1, signal), nextDelay(attempt));
       timersRef.current.push(t);
-    }).catch(() => { if (!signal.aborted) updateSeg(i, { status: 'failed' }); });
+    }).catch(e => {
+      if (signal.aborted) return;
+      // 429（CGNAT 同 IP 共用限流）：按 nextDelay 重试，由 MAX_ATTEMPTS 收口
+      // （见 polling.ts）；重试期间段 status 不动（非终态）。4xx 即段失败
+      if (isTransientPollError(e)) {
+        const t = setTimeout(() => pollSeg(i, id, attempt + 1, signal), nextDelay(attempt));
+        timersRef.current.push(t);
+        return;
+      }
+      updateSeg(i, { status: 'failed' });
+    });
   }
 
   async function run() {
@@ -91,7 +104,7 @@ export default function StoryStudio() {
     }
   }
 
-  // 终态解锁。不变量:本谓词与 pollSeg 的续轮条件(L50-51)严格对称(completed 需有 url),
+  // 终态解锁。不变量:本谓词与 pollSeg 的续轮条件(L53-54)严格对称(completed 需有 url),
   // 且段级 catch 保证 Promise.all 不 reject——三者协同确保「按钮可点 ⟺ 无存活轮询」;
   // run() 开头的 abort+clear 是该不变量被破坏时的纵深防御,勿单独"简化"任何一处。
   useEffect(() => {

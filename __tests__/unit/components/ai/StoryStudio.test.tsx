@@ -2,23 +2,29 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import StoryStudio from '../../../../src/components/react/ai/StoryStudio';
+import { ApiError } from '../../../../src/components/react/ai/api';
 
-vi.mock('../../../../src/components/react/ai/api', () => ({
-  createStoryboard: vi.fn().mockResolvedValue({
-    frames: ['f0', 'f1', 'f2', 'f3'],
-    motions: ['m0', 'm1', 'm2'],
-  }),
-  generateImage: vi.fn()
-    .mockResolvedValueOnce('https://cdn/k0.png')
-    .mockResolvedValueOnce('https://cdn/k1.png')
-    .mockResolvedValueOnce('https://cdn/k2.png')
-    .mockResolvedValueOnce('https://cdn/k3.png'),
-  createKeyframeVideo: vi.fn()
-    .mockResolvedValueOnce('vid_0')
-    .mockResolvedValueOnce('vid_1')
-    .mockResolvedValueOnce('vid_2'),
-  getVideoStatus: vi.fn().mockResolvedValue({ status: 'completed', progress: 100, url: 'https://cdn/seg.mp4' }),
-}));
+// 保留真实 ApiError（polling.isTransientPollError 的 instanceof 依赖类对象同一）
+vi.mock('../../../../src/components/react/ai/api', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../../../src/components/react/ai/api')>();
+  return {
+    ...actual,
+    createStoryboard: vi.fn().mockResolvedValue({
+      frames: ['f0', 'f1', 'f2', 'f3'],
+      motions: ['m0', 'm1', 'm2'],
+    }),
+    generateImage: vi.fn()
+      .mockResolvedValueOnce('https://cdn/k0.png')
+      .mockResolvedValueOnce('https://cdn/k1.png')
+      .mockResolvedValueOnce('https://cdn/k2.png')
+      .mockResolvedValueOnce('https://cdn/k3.png'),
+    createKeyframeVideo: vi.fn()
+      .mockResolvedValueOnce('vid_0')
+      .mockResolvedValueOnce('vid_1')
+      .mockResolvedValueOnce('vid_2'),
+    getVideoStatus: vi.fn().mockResolvedValue({ status: 'completed', progress: 100, url: 'https://cdn/seg.mp4' }),
+  };
+});
 
 describe('StoryStudio', () => {
   beforeEach(async () => {
@@ -173,10 +179,11 @@ describe('StoryStudio', () => {
     expect(screen.getByTestId('story-video-0')).toHaveAttribute('src', 'https://cdn/seg1.mp4');
   });
 
-  it('轮询网络错误:段标 failed 并解锁按钮', async () => {
+  it('轮询 4xx(非 429)终态:段标 failed 并解锁按钮', async () => {
     const { getVideoStatus } = await import('../../../../src/components/react/ai/api');
-    // L54 pollSeg 的 catch:status 请求 reject → 段直接标 failed(首轮轮询即发起,无需等间隔)
-    vi.mocked(getVideoStatus).mockReset().mockRejectedValue(new Error('net'));
+    // pollSeg 的 catch:非瞬时(status 请求 4xx)→ 段直接标 failed(首轮轮询即发起,无需等间隔)。
+    // 429/网络错误走退避重试的路径由 StoryStudio.polling.test.tsx 覆盖
+    vi.mocked(getVideoStatus).mockReset().mockRejectedValue(new ApiError('查询失败', 404));
 
     const user = userEvent.setup();
     render(<StoryStudio />);

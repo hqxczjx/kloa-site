@@ -4,6 +4,12 @@
 const CACHE_ORIGIN = 'https://kloa.fans';
 const CACHE_PREFIX = '__aicache';
 
+// 统一缓存 key 构造（origin + 命名空间 + 各段）。aicache / ratelimit / video-status
+// 三处共用同一 Cache API，字符串拼接散落各处易漂移，收敛到此。
+export function cacheKey(namespace: string, ...parts: string[]): Request {
+  return new Request([`${CACHE_ORIGIN}/${namespace}`, ...parts].join('/'));
+}
+
 // 规范化入参：递归排序对象字段 + trim 字符串 + 丢弃 undefined，
 // 使字段序/首尾空白不同的等价入参落到同一缓存 key
 export function canonicalize(value: unknown): unknown {
@@ -22,7 +28,7 @@ export function canonicalize(value: unknown): unknown {
 
 export async function aiCacheKey(endpoint: string, params: unknown): Promise<Request> {
   const hash = await sha256Hex(JSON.stringify(canonicalize(params)));
-  return new Request(`${CACHE_ORIGIN}/${CACHE_PREFIX}/${endpoint}/${hash}`);
+  return cacheKey(CACHE_PREFIX, endpoint, hash);
 }
 
 export async function readCache<T>(cache: Cache, key: Request): Promise<T | undefined> {
