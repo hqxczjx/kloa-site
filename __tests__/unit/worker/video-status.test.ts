@@ -8,12 +8,32 @@ function makeCache() {
   } as unknown as Cache;
 }
 
-async function call(query: string, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch, cache?: Cache) {
+// 内存版 Rate Limiting binding：按 key 计数（limit 对齐 wrangler.jsonc 的 RATE_LIMITER_STATUS 60/60s）
+function makeLimiter(limit: number) {
+  const counts = new Map<string, number>();
+  return {
+    async limit({ key }: { key: string }) {
+      const n = (counts.get(key) ?? 0) + 1;
+      counts.set(key, n);
+      return { success: n <= limit };
+    },
+  } as unknown as RateLimit;
+}
+
+const allowAll = { limit: async () => ({ success: true }) } as unknown as RateLimit;
+
+async function call(
+  query: string,
+  env: { AGNES_API_KEY: string },
+  fetchMock: typeof fetch,
+  cache?: Cache,
+  limiter: RateLimit = allowAll,
+) {
   const mod = await import('../../../worker/api/video-status');
   globalThis.fetch = fetchMock as typeof fetch;
   globalThis.caches = { default: cache ?? makeCache() } as unknown as typeof caches;
   const request = new Request(`https://kloa.fans/api/video/status${query}`);
-  return mod.videoStatusHandler(request, env);
+  return mod.videoStatusHandler(request, { ...env, RATE_LIMITER_STATUS: limiter });
 }
 
 function statusResponse(body: Record<string, unknown>): Response {
@@ -74,16 +94,17 @@ describe('video status endpoint', () => {
 
   it('独立限流：60 次/60s 内放行，第 61 次返回 429 且不打上游', async () => {
     const cache = makeCache();
+    const limiter = makeLimiter(60);
     // happy-dom Response body 单次消费，多轮调用须每次返回新 Response
     const fetchMock = vi.fn().mockImplementation(async () => statusResponse({ status: 'queued', progress: 0 }));
     for (let i = 0; i < 60; i++) {
-      const res = await call('?id=rl_1', { AGNES_API_KEY: 'k' }, fetchMock, cache);
+      const res = await call('?id=rl_1', { AGNES_API_KEY: 'k' }, fetchMock, cache, limiter);
       expect(res.status).toBe(200);
     }
-    const res = await call('?id=rl_1', { AGNES_API_KEY: 'k' }, fetchMock, cache);
+    const res = await call('?id=rl_1', { AGNES_API_KEY: 'k' }, fetchMock, cache, limiter);
     expect(res.status).toBe(429);
     expect((await res.json()).error).toContain('频繁');
-    // Retry-After：距窗口重置的剩余秒数（0, 60]——真实时钟下可能跨秒得 59
+    // Retry-After：binding 响应无重置时刻，保守取整个窗口（VIDEO_STATUS_RATE_LIMIT_WINDOW_SEC = 60）
     const retryAfter = Number(res.headers.get('Retry-After'));
     expect(retryAfter).toBeGreaterThan(0);
     expect(retryAfter).toBeLessThanOrEqual(60);

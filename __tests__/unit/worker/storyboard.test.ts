@@ -8,6 +8,9 @@ function makeCache() {
   } as unknown as Cache;
 }
 
+// 恒放行的 Rate Limiting binding mock（限流行为由 ratelimit.test.ts / chat / video-status 覆盖）
+const allowAll = { limit: async () => ({ success: true }) } as unknown as RateLimit;
+
 function chatContent(content: string): Response {
   return new Response(JSON.stringify({ choices: [{ message: { content } }] }), { status: 200 });
 }
@@ -28,7 +31,7 @@ async function call(
     headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '3.3.3.3' },
     ...(method === 'POST' ? { body: JSON.stringify(body) } : {}), // GET 带 body 会抛错
   });
-  return mod.storyboardHandler(request, env);
+  return mod.storyboardHandler(request, { ...env, RATE_LIMITER: allowAll });
 }
 
 describe('storyboard endpoint', () => {
@@ -98,8 +101,8 @@ describe('storyboard endpoint', () => {
       headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '3.3.3.3' },
       body: JSON.stringify({ idea: '克罗雅追蝴蝶' }),
     });
-    const first = await mod.storyboardHandler(makeReq(), { AGNES_API_KEY: 'k' });
-    const second = await mod.storyboardHandler(makeReq(), { AGNES_API_KEY: 'k' });
+    const first = await mod.storyboardHandler(makeReq(), { AGNES_API_KEY: 'k', RATE_LIMITER: allowAll });
+    const second = await mod.storyboardHandler(makeReq(), { AGNES_API_KEY: 'k', RATE_LIMITER: allowAll });
     expect(first.status).toBe(200);
     expect(second.status).toBe(200);
     expect(await second.json()).toEqual({ frames: ['f0', 'f1', 'f2', 'f3'], motions: ['m0', 'm1', 'm2'] });

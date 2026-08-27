@@ -16,4 +16,8 @@ export interface ChatRequest {
 export interface Env {
   AGNES_API_KEY: string;
   ASSETS: Fetcher;
+  // Workers Rate Limiting binding（全局 RateLimit 类型来自 @cloudflare/workers-types），
+  // 声明见 wrangler.jsonc 的 ratelimits：生成端点 10/60s、video-status 轮询 60/60s
+  RATE_LIMITER: RateLimit;
+  RATE_LIMITER_STATUS: RateLimit;
 }

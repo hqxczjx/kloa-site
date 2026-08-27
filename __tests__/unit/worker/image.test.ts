@@ -8,6 +8,9 @@ function makeCache() {
   } as unknown as Cache;
 }
 
+// 恒放行的 Rate Limiting binding mock（限流行为由 ratelimit.test.ts / chat / video-status 覆盖）
+const allowAll = { limit: async () => ({ success: true }) } as unknown as RateLimit;
+
 async function call(body: unknown, env: { AGNES_API_KEY: string; AGNES_CHARACTER_URL?: string }, fetchMock: typeof fetch) {
   const mod = await import('../../../worker/api/image');
   globalThis.fetch = fetchMock as typeof fetch;
@@ -18,7 +21,7 @@ async function call(body: unknown, env: { AGNES_API_KEY: string; AGNES_CHARACTER
       headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '2.2.2.2' },
       body: JSON.stringify(body),
     }),
-    env
+    { ...env, RATE_LIMITER: allowAll }
   );
 }
 
@@ -145,8 +148,8 @@ describe('image endpoint', () => {
       headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '2.2.2.2' },
       body: JSON.stringify({ style: '水彩手绘', size: '1K', ratio: '1:1' }),
     });
-    const first = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k' });
-    const second = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k' });
+    const first = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k', RATE_LIMITER: allowAll });
+    const second = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k', RATE_LIMITER: allowAll });
     expect(first.status).toBe(200);
     expect(second.status).toBe(200);
     expect((await second.json()).url).toBe('https://cdn/x.png');
@@ -168,8 +171,8 @@ describe('image endpoint', () => {
       headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '2.2.2.2' },
       body: JSON.stringify({ style: '水彩手绘', size: '1K' }),
     });
-    const first = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k' });
-    const second = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k' });
+    const first = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k', RATE_LIMITER: allowAll });
+    const second = await mod.imageHandler(makeReq(), { AGNES_API_KEY: 'k', RATE_LIMITER: allowAll });
     expect(first.status).toBe(503);
     expect(second.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledTimes(2); // 失败未缓存，重试真打上游

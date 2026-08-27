@@ -10,7 +10,7 @@ interface StoryboardRequest { idea?: string; }
 
 export async function storyboardHandler(request: Request, env: Env): Promise<Response> {
   if (request.method !== 'POST') return json({ error: 'Method Not Allowed' }, 405);
-  const rl = await checkRateLimit(clientIP(request), caches.default);
+  const rl = await checkRateLimit(clientIP(request), env.RATE_LIMITER);
   if (!rl.allowed) {
     const res = json({ error: '操作太频繁，请稍后再试' }, 429);
     res.headers.set('Retry-After', String(rl.retryAfterSec));

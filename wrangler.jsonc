@@ -9,5 +9,15 @@
   },
   "build": {
     "command": "bun run build"
-  }
+  },
+  // 限流：Workers Rate Limiting binding——单次 limit() 原子计数，替代旧 caches.default
+  // 读-改-写（同 IP 并发漏计数、条目可被逐出致限流静默失效）。
+  // 约束：limit/period 固定于此、运行时不可按端点参数化；period 仅允许 10 或 60；
+  // namespace_id 须为账户内唯一正整数字符串。故按上限档位拆两个 binding：
+  //   RATE_LIMITER        10 次/60s：chat/image/storyboard/video 四个生成端点共享桶（沿用旧 __rl 语义）
+  //   RATE_LIMITER_STATUS 60 次/60s：video-status 5s 轮询独立桶（沿用旧 __rlvs 语义）
+  "ratelimits": [
+    { "name": "RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } },
+    { "name": "RATE_LIMITER_STATUS", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } }
+  ]
 }

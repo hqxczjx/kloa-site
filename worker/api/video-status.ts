@@ -1,4 +1,4 @@
-import { AGNES_API_ROOT, VIDEO_STATUS_RATE_LIMIT_MAX, VIDEO_STATUS_RATE_LIMIT_WINDOW_SEC, VIDEO_STATUS_CACHE_TTL_SEC } from '../_lib/config';
+import { AGNES_API_ROOT, VIDEO_STATUS_RATE_LIMIT_WINDOW_SEC, VIDEO_STATUS_CACHE_TTL_SEC } from '../_lib/config';
 import { agnesHeaders, normalizeAgnesError } from '../_lib/agnes';
 import { checkRateLimit, clientIP } from '../_lib/ratelimit';
 import { readCache, writeCache, cacheKey } from '../_lib/aicache';
@@ -20,9 +20,8 @@ export async function videoStatusHandler(request: Request, env: Env): Promise<Re
   const id = new URL(request.url).searchParams.get('id');
   if (!id) return json({ error: '缺少 id' }, 400);
 
-  // 独立命名空间限流：客户端 5s 轮询曾无任何限制；独立桶避免耗尽其他端点共享的 10/60s
-  const rl = await checkRateLimit(clientIP(request), caches.default, {
-    max: VIDEO_STATUS_RATE_LIMIT_MAX,
+  // 独立限流：客户端 5s 轮询曾无任何限制；独立 binding（60/60s）+ 独立命名空间避免耗尽生成端点共享的 10/60s
+  const rl = await checkRateLimit(clientIP(request), env.RATE_LIMITER_STATUS, {
     windowSec: VIDEO_STATUS_RATE_LIMIT_WINDOW_SEC,
     namespace: '__rlvs',
   });

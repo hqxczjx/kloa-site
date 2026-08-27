@@ -8,6 +8,9 @@ function makeCache() {
   } as unknown as Cache;
 }
 
+// 恒放行的 Rate Limiting binding mock（限流行为由 ratelimit.test.ts / chat / video-status 覆盖）
+const allowAll = { limit: async () => ({ success: true }) } as unknown as RateLimit;
+
 async function call(
   body: unknown,
   env: { AGNES_API_KEY: string },
@@ -22,7 +25,7 @@ async function call(
     headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '3.3.3.3' },
     ...(method === 'POST' ? { body: JSON.stringify(body) } : {}), // GET 带 body 会抛错
   });
-  return mod.createVideoHandler(request, env);
+  return mod.createVideoHandler(request, { ...env, RATE_LIMITER: allowAll });
 }
 
 describe('video create endpoint', () => {

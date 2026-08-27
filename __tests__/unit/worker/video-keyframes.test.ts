@@ -8,6 +8,9 @@ function makeCache() {
   } as unknown as Cache;
 }
 
+// 恒放行的 Rate Limiting binding mock（限流行为由 ratelimit.test.ts / chat / video-status 覆盖）
+const allowAll = { limit: async () => ({ success: true }) } as unknown as RateLimit;
+
 async function call(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: typeof fetch) {
   const mod = await import('../../../worker/api/video');
   globalThis.fetch = fetchMock as typeof fetch;
@@ -17,7 +20,7 @@ async function call(body: unknown, env: { AGNES_API_KEY: string }, fetchMock: ty
     headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '3.3.3.3' },
     body: JSON.stringify(body),
   });
-  return mod.createVideoHandler(request, env);
+  return mod.createVideoHandler(request, { ...env, RATE_LIMITER: allowAll });
 }
 
 const OK_UPSTREAM = () => Promise.resolve(new Response(

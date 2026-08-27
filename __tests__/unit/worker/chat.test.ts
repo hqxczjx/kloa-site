@@ -2,36 +2,37 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { ChatRequest } from '../../../worker/_lib/types';
 import songs from '../../../src/data/songs.json';
 
-// 把全局 caches / fetch 替换成可控 mock
-function makeCache() {
-  const store = new Map<string, Response>();
+// 内存版 Rate Limiting binding：按 key 计数，limit 对齐 wrangler.jsonc 的 RATE_LIMITER（10/60s）
+function makeLimiter(limit: number) {
+  const counts = new Map<string, number>();
   return {
-    async match(req: Request) { const h = store.get(new URL(req.url).pathname); return h ? h.clone() : undefined; },
-    async put(req: Request, res: Response) { store.set(new URL(req.url).pathname, res.clone()); },
-  } as unknown as Cache;
+    async limit({ key }: { key: string }) {
+      const n = (counts.get(key) ?? 0) + 1;
+      counts.set(key, n);
+      return { success: n <= limit };
+    },
+  } as unknown as RateLimit;
 }
 
-let sharedCache: Cache;
+let sharedLimiter: RateLimit;
 async function callEndpoint(
   body: unknown,
-  env: { AGNES_API_KEY: string },
+  env: { AGNES_API_KEY: string; RATE_LIMITER?: RateLimit },
   fetchMock: typeof fetch,
   method: 'GET' | 'POST' = 'POST',
 ) {
   const mod = await import('../../../worker/api/chat');
   globalThis.fetch = fetchMock as typeof fetch;
-  if (!sharedCache) sharedCache = makeCache();
-  globalThis.caches = { default: sharedCache } as unknown as typeof caches;
   const request = new Request('https://kloa.fans/api/chat', {
     method,
     headers: { 'content-type': 'application/json', 'CF-Connecting-IP': '1.1.1.1' },
     ...(method === 'POST' ? { body: JSON.stringify(body) } : {}), // GET 带 body 会抛错
   });
-  return mod.chatHandler(request, env);
+  return mod.chatHandler(request, { ...env, RATE_LIMITER: env.RATE_LIMITER ?? sharedLimiter });
 }
 
 describe('chat endpoint', () => {
-  beforeEach(() => { vi.resetModules(); sharedCache = undefined as any; });
+  beforeEach(() => { vi.resetModules(); sharedLimiter = makeLimiter(10); });
 
   it('GET 请求返回 405', async () => {
     const res = await callEndpoint(undefined, { AGNES_API_KEY: 'k' }, vi.fn(), 'GET');
@@ -104,6 +105,9 @@ describe('chat endpoint', () => {
     }
     const res = await callEndpoint({ form: 'angel', message: 'hi', history: [] }, { AGNES_API_KEY: 'k' }, fetchMock);
     expect(res.status).toBe(429);
+    // binding 响应无重置时刻，Retry-After 保守取整个窗口（RATE_LIMIT_WINDOW_SEC = 60）
+    expect(res.headers.get('Retry-After')).toBe('60');
+    expect(fetchMock).toHaveBeenCalledTimes(10); // 拒绝的请求不再打上游
   });
 
   it('body 超过 64KB 上限返回 413', async () => {
@@ -118,13 +122,12 @@ describe('chat endpoint', () => {
   it('非 JSON Content-Type 返回 415', async () => {
     const mod = await import('../../../worker/api/chat');
     globalThis.fetch = vi.fn() as unknown as typeof fetch;
-    globalThis.caches = { default: makeCache() } as unknown as typeof caches;
     const request = new Request('https://kloa.fans/api/chat', {
       method: 'POST',
       headers: { 'content-type': 'text/plain', 'CF-Connecting-IP': '1.1.1.1' },
       body: 'hello',
     });
-    const res = await mod.chatHandler(request, { AGNES_API_KEY: 'k' });
+    const res = await mod.chatHandler(request, { AGNES_API_KEY: 'k', RATE_LIMITER: makeLimiter(10) });
     expect(res.status).toBe(415);
   });
 });

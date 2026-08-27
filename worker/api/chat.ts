@@ -12,7 +12,7 @@ export async function chatHandler(request: Request, env: Env): Promise<Response>
   }
 
   // 限流
-  const rl = await checkRateLimit(clientIP(request), caches.default);
+  const rl = await checkRateLimit(clientIP(request), env.RATE_LIMITER);
   if (!rl.allowed) {
     const res = json({ error: '操作太频繁，请稍后再试' }, 429);
     res.headers.set('Retry-After', String(rl.retryAfterSec));
