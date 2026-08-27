@@ -319,6 +319,19 @@
   .song-card .card-artist { font-size:.8rem; color:var(--text-secondary); }
   .song-card .card-meta { display:flex; gap:.4rem; align-items:center; flex-wrap:wrap; margin-top:.1rem; }
 
+  /* P2-3：VirtualList 去 JS 虚拟化后，离屏行的布局/绘制交给浏览器原生
+     content-visibility:auto 跳过（滚动零 React 重渲染）。
+     占位高度与 SongTable 的 itemHeight 一致：桌面表格行 52px / 移动卡片 108px
+     （断点 639px 与 useIsMobile 相同）；auto 前缀让浏览器记住首次渲染后的
+     真实尺寸，个别行内容换行也不产生滚动条抖动。 */
+  .cv-row {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 52px;
+  }
+  @media (max-width: 639px) {
+    .cv-row { contain-intrinsic-size: auto 108px; }
+  }
+
   .sc-badge { display:inline-flex; align-items:center; gap:.2rem; font-size:.7rem; font-weight:800;
               padding:.15rem .45rem; border-radius:9999px; white-space:nowrap;
               background:var(--accent-primary); color:#fff;

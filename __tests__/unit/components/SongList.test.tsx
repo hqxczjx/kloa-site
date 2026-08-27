@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Fragment } from 'react';
 import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SongList from '../../../src/components/react/SongList';
@@ -7,15 +6,6 @@ import { toast } from 'sonner';
 
 vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
-}));
-vi.mock('../../../src/components/react/VirtualList', () => ({
-  default: ({ items, renderItem }: any) => (
-    <div data-testid="virtual-list" data-total-items={items.length}>
-      {items.map((it: any, i: number) => (
-        <Fragment key={i}>{renderItem(it, i)}</Fragment>
-      ))}
-    </div>
-  ),
 }));
 
 // vi.hoisted：vi.mock 工厂会被提升到文件顶部，引用的数据必须同样提升

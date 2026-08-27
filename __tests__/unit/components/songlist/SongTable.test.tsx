@@ -1,19 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
-import { Fragment } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SongTable from '../../../../src/components/react/songlist/SongTable';
 import type { Song, SortState } from '../../../../src/components/react/songlist/types';
-
-vi.mock('../../../../src/components/react/VirtualList', () => ({
-  default: ({ items, renderItem }: any) => (
-    <div data-testid="virtual-list" data-total-items={items.length}>
-      {items.map((it: any, i: number) => (
-        <Fragment key={i}>{renderItem(it, i)}</Fragment>
-      ))}
-    </div>
-  ),
-}));
 
 const songs: Song[] = [
   { title: '晴天', artist: '周杰伦', languages: ['国语'], genres: ['流行'], gifts: [] },
@@ -38,6 +27,16 @@ describe('SongTable', () => {
   it('渲染每行为 song-row', () => {
     render(<SongTable songs={songs} {...full} onSortChange={vi.fn()} />);
     expect(screen.getAllByTestId('song-row')).toHaveLength(2);
+  });
+
+  it('行挂在 li.cv-row 上（P2-3：离屏渲染由 content-visibility 跳过）', () => {
+    render(<SongTable songs={songs} {...full} onSortChange={vi.fn()} />);
+    const rows = screen.getAllByTestId('song-row');
+    for (const row of rows) {
+      const li = row.closest('li');
+      expect(li).toHaveClass('cv-row');
+      expect(li).toHaveStyle({ height: '52px' }); // 桌面行高（matchMedia 默认桌面）
+    }
   });
 
   it('点击歌名列头调用 onSortChange("title")', async () => {
