@@ -17,6 +17,11 @@ describe('Hero 立绘图片优化（AVIF/WebP + 响应式 + 消除 CLS）', () =
     expect(hero).toContain("formats={['avif', 'webp']}");
   });
 
+  it('fallbackFormat 指定 webp：不再生成 PNG 原格式 fallback（P2-5，dist 减 ~400KB）', () => {
+    const hero = readSrc('src/components/astro/Hero.astro');
+    expect(hero).toContain('fallbackFormat="webp"');
+  });
+
   it('Hero.astro 不再用指向 public 的原生 <img> 加载立绘', () => {
     const hero = readSrc('src/components/astro/Hero.astro');
     expect(hero).not.toMatch(/<img[^>]+src=["']\/images\/character/);

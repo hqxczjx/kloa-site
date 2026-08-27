@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets';
 import { ArrowDown, Tv, MessageCircle } from 'lucide-react';
 import { BilibiliIcon } from '../ui/BrandIcons';
-import AnniversaryCards from '../react/AnniversaryCards';
+import AnniversaryCards from './AnniversaryCards.astro';
 import characterImg from '../../images/character-1.png';
 ---
 
@@ -106,6 +106,7 @@ import characterImg from '../../images/character-1.png';
           src={characterImg}
           alt="克罗雅角色立绘"
           formats={['avif', 'webp']}
+          fallbackFormat="webp"
           widths={[256, 384, 512]}
           sizes="(min-width: 768px) 400px, 288px"
           loading="eager"
@@ -192,6 +193,6 @@ import characterImg from '../../images/character-1.png';
     </div>
   </div>
 
-  <!-- Anniversary Cards -->
-  <AnniversaryCards client:visible />
+  <!-- Anniversary Cards（P2-2 静态化：纯 Astro 组件 + 内联倒计时脚本，无 hydration） -->
+  <AnniversaryCards />
 </section>

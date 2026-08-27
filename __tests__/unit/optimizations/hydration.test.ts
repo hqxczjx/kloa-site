@@ -9,11 +9,13 @@ describe('Hydration 指令优化（减少首屏 JS 执行）', () => {
     expect(readSrc('src/layouts/BaseLayout.astro')).not.toContain('<ToasterWrapper client:load');
   });
 
-  it('AnniversaryCards 用 client:visible（装饰卡片，进入视口才激活）', () => {
-    expect(readSrc('src/components/astro/Hero.astro')).toContain('<AnniversaryCards client:visible');
+  it('AnniversaryCards 已静态化（P2-2）：Hero 直接渲染 Astro 组件，不再有 hydration 指令', () => {
+    const hero = readSrc('src/components/astro/Hero.astro');
+    expect(hero).toMatch(/import\s+AnniversaryCards\s+from\s+'\.\/AnniversaryCards\.astro'/);
+    expect(hero).toContain('<AnniversaryCards />');
   });
 
-  it('AnniversaryCards 不再用 client:load', () => {
-    expect(readSrc('src/components/astro/Hero.astro')).not.toContain('<AnniversaryCards client:load');
+  it('AnniversaryCards 不再使用任何 client:* 指令（首页少 1 个 React 岛）', () => {
+    expect(readSrc('src/components/astro/Hero.astro')).not.toMatch(/<AnniversaryCards[^>]*client:/);
   });
 });
