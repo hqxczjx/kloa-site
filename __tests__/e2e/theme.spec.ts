@@ -28,14 +28,30 @@ test.describe('Theme Toggle', () => {
     // Set system preference to dark
     await page.emulateMedia({ colorScheme: 'dark' });
 
-    // Reload，theme store 水合后异步按系统偏好恢复 dark
+    // Reload，head FOUC 脚本在 body 解析前按系统偏好落好 dark 类
     await page.reload();
 
-    // 先等按钮回到 dark 状态（store 异步恢复的稳定信号，替代 networkidle + 固定 sleep）；
-    // html 的 dark 类是 SSR 瞬间值，水合中可能短暂丢失，故以按钮为准
+    // 主题已同步完成（FOUC 脚本 + body 末尾 syncLabels 均为同步执行），
+    // 等待仅为断言稳定性，无水合过程
     const themeToggle = page.locator('button[aria-label*="切换"]').first();
     await expect(themeToggle).toHaveAttribute('aria-label', '切换到天使模式');
 
+    await expect(page.locator('html')).toHaveClass(/dark/);
+  });
+
+  test('should follow live system theme change when no saved theme', async ({ page }) => {
+    // beforeEach 已 clear storage + light：初始天使态
+    await expect(page.locator('html')).not.toHaveClass(/dark/);
+
+    // 不重载，live 翻转系统偏好——body 脚本的 mql change 监听器跟随
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await expect(page.locator('html')).toHaveClass(/dark/);
+    await expect(page.locator('button[aria-label*="切换"]').first()).toHaveAttribute('aria-label', '切换到天使模式');
+
+    // 守卫：有显式保存值后 live 翻转不再覆盖（用户选择优先于系统偏好）
+    await page.evaluate(() => localStorage.setItem('theme', 'light'));
+    await page.emulateMedia({ colorScheme: 'light' });
+    // mql 监听器因 saved 存在直接 return——html 保持 dark，证明未被系统翻转
     await expect(page.locator('html')).toHaveClass(/dark/);
   });
 
@@ -88,10 +104,10 @@ test.describe('Theme Toggle', () => {
       async () => await page.evaluate(() => localStorage.getItem('theme'))
     ).toBe('dark');
 
-    // Reload，theme store 水合后异步恢复 dark
+    // Reload，head FOUC 脚本同步恢复 dark
     await page.reload();
 
-    // 先等按钮回到 dark 状态（store 异步恢复的稳定信号，替代 networkidle + 固定 sleep）
+    // FOUC 脚本 + syncLabels 同步完成，等待仅为断言稳定性
     const themeToggleAfterReload = page.locator('button[aria-label*="切换"]').first();
     await expect(themeToggleAfterReload).toHaveAttribute('aria-label', '切换到天使模式');
 

@@ -46,7 +46,12 @@ const isAiPage = /^\/ai(?:\/|$)/.test(Astro.url.pathname);
     <script is:inline>
       // Apply theme immediately to prevent flash
       (function() {
-        const saved = localStorage.getItem('theme');
+        let saved = null;
+        try {
+          saved = localStorage.getItem('theme');
+        } catch (err) {
+          // localStorage 不可用（隐私模式等）时跟随系统偏好
+        }
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const isDark = saved === 'dark' || (!saved && prefersDark);
         if (isDark) {
@@ -158,24 +163,42 @@ const isAiPage = /^\/ai(?:\/|$)/.test(Astro.url.pathname);
         // SSR 恒天使态；真实主题已由 head FOUC 脚本落到 html.dark，这里只同步按钮文案
         syncLabels();
 
+        // localStorage 读取守卫：隐私模式等场景抛异常时视作无保存偏好，跟随系统
+        function readSavedTheme() {
+          try {
+            return localStorage.getItem('theme');
+          } catch (err) {
+            return null;
+          }
+        }
+
+        // 按 localStorage/系统偏好重落 dark 类并同步按钮文案（after-swap 与跨标签页共用）
+        function applyTheme() {
+          var saved = readSavedTheme();
+          var isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', isDark);
+          syncLabels();
+        }
+
         // 无显式偏好时跟随系统（对齐旧 React 版行为；有 saved 值则不动）
         var mql = window.matchMedia('(prefers-color-scheme: dark)');
         mql.addEventListener('change', function () {
-          if (localStorage.getItem('theme')) return;
+          if (readSavedTheme()) return;
           document.documentElement.classList.toggle('dark', mql.matches);
           syncLabels();
         });
 
+        // 跨标签页同步：另一标签页改主题/clear 时本页跟随（对齐旧 React 版行为）
+        window.addEventListener('storage', function (e) {
+          if (e.key !== 'theme' && e.key !== null) return;
+          applyTheme();
+        });
+
         // ClientRouter 软导航后的主题重同步：swap 会用新文档的 <html> 属性覆盖当前
         // （SSR 恒天使态 → dark 类被剥掉），且本脚本与 head FOUC 脚本因内容相同不会
-        // 重新执行（ClientRouter 按 textContent 去重）。document 级监听器随 document
-        // 存活，每个软导航后按 localStorage/系统偏好重落 dark 类并同步按钮文案。
-        document.addEventListener('astro:after-swap', function () {
-          var saved = localStorage.getItem('theme');
-          var isDark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
-          document.documentElement.classList.toggle('dark', isDark);
-          syncLabels();
-        });
+        // 重新执行（ClientRouter 按 textContent 去重）。document/window 级监听器存活，
+        // 每个软导航后按 localStorage/系统偏好重落 dark 类并同步按钮文案。
+        document.addEventListener('astro:after-swap', applyTheme);
       })();
     </script>
 
