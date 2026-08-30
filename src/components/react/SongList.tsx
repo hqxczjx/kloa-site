@@ -17,7 +17,11 @@ export default function SongList() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const facets = useMemo(() => deriveFacets(songs), [songs]);
-  const visible = useMemo(() => sortSongs(filterSongs(songs, filter), sort), [songs, filter, sort]);
+  // P1-2: was a manual useMemo — React Compiler now auto-memoizes this
+  // computation keyed on [songs, filter, sort] (memo_cache slots visible in
+  // the compiled chunk), so the manual memo is redundant. Removed as a
+  // behavior probe; tests + e2e confirm identical behavior.
+  const visible = sortSongs(filterSongs(songs, filter), sort);
 
   const handleCopy = useCallback(async (song: Song) => {
     const key = songKey(song);
