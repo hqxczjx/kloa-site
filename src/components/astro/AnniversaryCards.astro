@@ -4,6 +4,12 @@
 //   由末尾 is:inline 内联脚本写入 data-anniv-days 节点（?raw 引入同源文件，单测直接跑它）。
 // - DOM 结构/类名与旧 React 版逐类对齐（glass 卡、hidden md:block md:fixed 定位、
 //   animate-fade-up、lucide 图标原 SVG），CSS 选择器与视觉不变。
+// - 卡片上显示的日期里的年份仅是展示文本：倒计时按「今年已过翻明年」自动滚动，
+//   跨年无需重新生成本组件（见 anniversary-countdown.js 的 rollover 逻辑）。
+// - 脚本标签必须带 data-astro-rerun：ClientRouter 按 textContent 去重内联脚本且
+//   默认不重执行（router 初始化即把首屏脚本记入已执行集合，软导航 swap 时跳过），
+//   离开首页再返回时新 SSR DOM 的「—」占位将无人回填；rerun 让每次 swap 重新执行
+//   （脚本纯重算幂等，重复执行无副作用）。
 import countdownScript from '../../scripts/anniversary-countdown.js?raw';
 
 const cards = [
@@ -46,4 +52,4 @@ const cards = [
   ))
 }
 
-<script is:inline set:html={countdownScript} />
+<script is:inline set:html={countdownScript} data-astro-rerun />

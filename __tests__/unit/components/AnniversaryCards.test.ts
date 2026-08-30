@@ -64,6 +64,13 @@ describe('AnniversaryCards 静态化（P2-2，倒计时内联脚本）', () => {
       expect(src).toContain('hidden md:block md:fixed md:bottom-64 md:right-6 md:w-48 md:z-20');
     });
 
+    it('内联脚本带 data-astro-rerun（软导航返回后重执行，「—」占位不滞留）', () => {
+      const src = readSrc('src/components/astro/AnniversaryCards.astro');
+      // ClientRouter 按 textContent 去重脚本且不重执行：离开首页再软导航返回时
+      // swap 进来的新 SSR DOM 无人回填天数——rerun 属性是 router 的重执行开关
+      expect(src).toContain('<script is:inline set:html={countdownScript} data-astro-rerun />');
+    });
+
     it('两卡日期/标签齐全且天数节点带 data-anniv-days 钩子', () => {
       const src = readSrc('src/components/astro/AnniversaryCards.astro');
       expect(src).toContain(`data-anniv-days={date}`);

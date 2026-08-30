@@ -140,4 +140,29 @@ test.describe('Home Page', () => {
     await expect(page).toHaveURL(/#songs/);
     await expect(page).not.toHaveURL(/\/music/);
   });
+
+  test('纪念日卡片倒计时在软导航往返后仍回填（data-astro-rerun）', async ({ page }) => {
+    // 回归：ClientRouter 按 textContent 去重内联脚本且软导航不重执行——离开首页
+    // 再返回时 swap 进来的是新 SSR DOM，两张卡的「距离 N 天」停在占位「—」。
+    // data-astro-rerun 让 router 在 swap 后重新执行内联倒计时（纯重算幂等）。
+    // 卡片 hidden md:block，仅桌面视口渲染，显式设桌面尺寸。
+    await page.setViewportSize({ width: 1280, height: 720 });
+
+    const days = page.locator('[data-anniv-days]');
+    await expect(days).toHaveCount(2);
+    // 初始硬加载：浏览器正常执行内联脚本，占位被覆盖
+    await expect(days).toHaveText([/天$/, /天$/]);
+
+    // 软导航去 /about（点站内链接触发 ClientRouter，非 page.goto）
+    await page.getByRole('link', { name: '关于' }).first().click();
+    await expect(page).toHaveURL(/\/about/);
+
+    // 软导航返回首页：等 swap 完成（URL + 内容都换成首页）
+    await page.getByRole('link', { name: '首页' }).first().click();
+    await expect(page).toHaveURL('/');
+    await expect(page.locator('h1')).toContainText('克罗雅');
+
+    // 新 SSR DOM 的占位被重执行的脚本回填，而非永久停留「—」
+    await expect(days).toHaveText([/天$/, /天$/]);
+  });
 });
