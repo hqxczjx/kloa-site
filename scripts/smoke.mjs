@@ -8,6 +8,9 @@
  *
  * 本地验证（若走代理需开 env proxy）：NODE_USE_ENV_PROXY=1 node scripts/smoke.mjs
  * CI runner 直连外网，无需代理。
+ *
+ * 响应头断言（安全五头/SWR/immutable）依赖部署后的 worker（SITE_URL 指向的
+ * 站点）——本地 dev server 无这些头，会失败；属预期。
  */
 const SITE_URL = process.env.SITE_URL ?? 'https://kloa.fans';
 
@@ -35,9 +38,36 @@ async function fetchText(url) {
   const hasTitle = /<title>[^<]+<\/title>/.test(text);
   report('首页可达且已渲染', res.status === 200 && hasLang && hasTitle,
     `status=${res.status} lang=${hasLang} title=${hasTitle}`);
+
+  // worker 落地的安全五头 + 边缘 SWR（真源 worker/index.ts，部署后回归）
+  const secHeaders = [
+    'x-content-type-options',
+    'referrer-policy',
+    'x-frame-options',
+    'permissions-policy',
+    'strict-transport-security',
+  ];
+  const missing = secHeaders.filter((h) => !res.headers.get(h));
+  const cdnCc = res.headers.get('cdn-cache-control') ?? '';
+  report('HTML 安全五头 + 边缘 SWR 头', missing.length === 0 && cdnCc.includes('stale-while-revalidate'),
+    `missing=[${missing.join(',')}] cdn-cache-control=${cdnCc || '(无)'}`);
 }
 
-// 2. 字体子集：serif 标题 variable 字体可加载且非空壳（>10KB 才含真实字形）
+// 2. /_astro/* 构建产物：immutable 单值（回归双值 cache-control）
+{
+  const { text: home } = await fetchText(SITE_URL + '/');
+  const asset = home.match(/\/_astro\/[\w.-]+\.(?:js|css|woff2)/)?.[0];
+  if (!asset) {
+    report('/_astro/* 资产头', false, '首页 HTML 未找到 /_astro/* 引用');
+  } else {
+    const res = await fetch(SITE_URL + asset, { headers: { 'user-agent': 'kloa-smoke/1.0' } });
+    const cc = res.headers.get('cache-control') ?? '';
+    report('/_astro/* 资产头', cc.includes('immutable') && !cc.includes('must-revalidate'),
+      `${asset} cache-control=${cc || '(无)'}`);
+  }
+}
+
+// 3. 字体子集：serif 标题 variable 字体可加载且非空壳（>10KB 才含真实字形）
 {
   const res = await fetch(SITE_URL + '/fonts/noto-serif-sc-var.woff2', { method: 'GET' });
   const buf = await res.arrayBuffer();
@@ -45,13 +75,13 @@ async function fetchText(url) {
     `status=${res.status} size=${(buf.byteLength / 1024).toFixed(1)}KB`);
 }
 
-// 3. sitemap：SEO 基础设施在线
+// 4. sitemap：SEO 基础设施在线
 {
   const { res, text } = await fetchText(SITE_URL + '/sitemap-index.xml');
   report('sitemap 在线', res.status === 200 && text.includes('sitemap'), `status=${res.status}`);
 }
 
-// 4. 投稿问卷存活：内容特征判断（非状态码）
+// 5. 投稿问卷存活：内容特征判断（非状态码）
 {
   const { res, text } = await fetchText(CONTRIBUTE_FORM_URL);
   const dead = FORM_DEAD_MARKERS.filter((m) => text.includes(m));

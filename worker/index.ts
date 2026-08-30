@@ -5,11 +5,13 @@ import { videoStatusHandler } from './api/video-status';
 import { storyboardHandler } from './api/storyboard';
 import type { Env } from './_lib/types';
 
-// ── 响应头策略（唯一真源）────────────────────────────────────────────
+// ── 响应头策略（唯一完全真源）────────────────────────────────────────
 // run_worker_first: true 下所有请求先入 Worker，Cloudflare 对「Worker 返回的
-// 响应」不应用 public/_headers 的自定义头（实测：HTML 无 CDN-Cache-Control、
-// /_astro/* 反而拼出双值 cache-control）。缓存策略与安全头必须在此落地；
-// _headers 文件保留作策略文档（改规则需两处同步）。
+// 响应」不应用 public/_headers 的 HTML/自定义头（实测：HTML 无 CDN-Cache-Control）；
+// 但 ASSETS 层仍会按 _headers 给非 HTML 资产注入 Cache-Control（实测：字体吃到
+// /* 的 must-revalidate、/_astro/* 拼出双值）。故缓存策略必须在此显式 SET 覆盖，
+// 未映射路径会漏出 _headers 的 /* 兜底值——新增静态资产目录需同步
+// pathCacheControl 与 _headers 两处。
 
 // P1-4 安全五头：全站所有响应（含 /api/*）。
 // ContributeDialog 嵌 wj.qq.com 的 iframe 是「我们嵌别人」；X-Frame-Options DENY
@@ -33,7 +35,14 @@ function pathCacheControl(pathname: string): string | undefined {
   if (pathname.startsWith('/_astro/')) {
     return 'public, max-age=31536000, immutable'; // 指纹化构建产物
   }
-  if (pathname === '/favicon.svg') {
+  // 文件名跨部署稳定（非指纹化）：favicon / 字体 / 图片缓存 7 天。
+  // fonts/images 若不显式覆盖，ASSETS 层会按 _headers 的 /* 兜底注入
+  // must-revalidate（P1-5 预加载字体每次重访都 304）。
+  if (
+    pathname === '/favicon.svg' ||
+    pathname.startsWith('/fonts/') ||
+    pathname.startsWith('/images/')
+  ) {
     return 'public, max-age=604800';
   }
   if (pathname === '/robots.txt' || /^\/sitemap[^/]*\.xml$/.test(pathname)) {
@@ -55,7 +64,10 @@ function withResponseHeaders(pathname: string, res: Response): Response {
     headers.set('cache-control', cc);
   } else if ((headers.get('content-type') ?? '').includes('text/html')) {
     headers.set('cache-control', HTML_CACHE_CONTROL);
-    headers.set('cdn-cache-control', HTML_CDN_CACHE_CONTROL);
+    // 边缘 SWR 只给 200：404 页进边缘缓存会延迟「部署后坏链恢复」的生效
+    if (res.ok) {
+      headers.set('cdn-cache-control', HTML_CDN_CACHE_CONTROL);
+    }
   }
 
   return new Response(res.body, { status: res.status, statusText: res.statusText, headers });

@@ -52,6 +52,19 @@ describe('资源与 SEO 补全', () => {
     expect(workerSrc).toMatch(/max-age=31536000,\s*immutable/);
   });
 
+  it('/fonts/*、/images/* 在 worker 有显式缓存策略（堵 ASSETS 层 _headers /* 兜底注入）', () => {
+    const workerSrc = readSrc('worker/index.ts');
+    // 未映射资产会被 ASSETS 层按 _headers 注入 /* 的 must-revalidate，
+    // 预加载字体（P1-5）每次重访都会 304——名称稳定的目录须显式覆盖。
+    expect(workerSrc).toMatch(/startsWith\('\/fonts\/'\)/);
+    expect(workerSrc).toMatch(/startsWith\('\/images\/'\)/);
+    expect(workerSrc).toMatch(/max-age=604800/);
+    // _headers 策略文档同步收录
+    const headers = readSrc('public/_headers');
+    expect(headers).toMatch(/\/fonts\/\*/);
+    expect(headers).toMatch(/\/images\/\*/);
+  });
+
   it('BaseLayout 预加载 variable 字体（P1-5：preload + font-display:swap 终态）', () => {
     const layout = readSrc('src/layouts/BaseLayout.astro');
     expect(layout).toMatch(

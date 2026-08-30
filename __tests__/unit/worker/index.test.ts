@@ -39,7 +39,7 @@ function call(url: string, env: Env, init?: RequestInit): Promise<Response> {
   return worker.fetch(new Request(url, init), env);
 }
 
-describe('worker fetch 路由与响应头（run_worker_first 下 _headers 不生效，此处才是真源）', () => {
+describe('worker fetch 路由与响应头（run_worker_first 下 HTML 不吃 _headers，此处才是完全真源）', () => {
   beforeEach(() => { vi.restoreAllMocks(); });
 
   it('HTML：浏览器 must-revalidate + 边缘 SWR + 安全五头（脏值被覆盖为单值）', async () => {
@@ -81,6 +81,21 @@ describe('worker fetch 路由与响应头（run_worker_first 下 _headers 不生
     }
   });
 
+  it('/fonts/*、/images/*：显式 7 天单值（堵 ASSETS 层按 _headers /* 兜底注入的 must-revalidate）', async () => {
+    // 线上实测：未映射资产会被 ASSETS 层注入 /* 的脏值，mock 预置同款验证 SET 覆盖
+    const env = makeEnv(() =>
+      new Response('x', {
+        headers: { 'content-type': 'font/woff2', 'cache-control': DIRTY_CACHE_CONTROL },
+      }),
+    );
+    for (const path of ['/fonts/noto-serif-sc-var.woff2', '/images/illustration.webp']) {
+      const res = await call(`https://kloa.fans${path}`, env);
+      expect(res.headers.get('cache-control'), path).toBe('public, max-age=604800');
+      expect(res.headers.get('cdn-cache-control'), path).toBeNull();
+      expectSecurityHeaders(res);
+    }
+  });
+
   it('未列入策略的静态资源：cache-control 原样透传，安全头照加', async () => {
     const env = makeEnv(() =>
       new Response('{}', {
@@ -104,6 +119,10 @@ describe('worker fetch 路由与响应头（run_worker_first 下 _headers 不生
     expect(res.status).toBe(404);
     expect(res.headers.get('x-custom')).toBe('kept');
     expect(await res.text()).toBe('page-body');
+    // 404 不吃边缘 SWR（否则坏链恢复要等边缘缓存过期）；浏览器层重校验照旧
+    expect(res.headers.get('cache-control')).toBe(HTML_CACHE_CONTROL);
+    expect(res.headers.get('cdn-cache-control')).toBeNull();
+    expectSecurityHeaders(res);
   });
 
   it('未知 /api/* 返回 404 且带安全五头', async () => {

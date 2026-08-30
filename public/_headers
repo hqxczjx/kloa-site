@@ -1,14 +1,20 @@
-# ⚠️ 本文件在 run_worker_first: true 下不生效——Cloudflare 对 Worker 返回的
-# 响应不应用 _headers 自定义头（实测：HTML 无 CDN-Cache-Control、/_astro/*
-# 拼出双值 cache-control）。唯一真源是 worker/index.ts 的 withResponseHeaders()；
-# 本文件仅作策略文档留存，改缓存规则需两处同步。
+# ⚠️ run_worker_first: true 下本文件对 HTML/Worker 路径不生效——Cloudflare 对
+# Worker 返回的响应不应用这些自定义头（实测：HTML 无 CDN-Cache-Control）。
+# 但非 HTML 资产的 Cache-Control 仍会被 ASSETS 层按本文件注入（实测：字体吃到
+# /* 的 must-revalidate、/_astro/* 拼出双值）。唯一完全真源是 worker/index.ts
+# 的 pathCacheControl()/withResponseHeaders()；本文件仅作策略文档留存，
+# 改缓存规则需两处同步。
 
 # Fingerprinted build assets — safe to cache forever
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Favicon
+# Favicon / 字体 / 图片——文件名跨部署稳定（非指纹化），缓存 7 天
 /favicon.svg
+  Cache-Control: public, max-age=604800
+/fonts/*
+  Cache-Control: public, max-age=604800
+/images/*
   Cache-Control: public, max-age=604800
 
 # Sitemap & robots
