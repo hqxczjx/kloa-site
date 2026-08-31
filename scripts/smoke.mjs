@@ -51,6 +51,13 @@ async function fetchText(url) {
   const cdnCc = res.headers.get('cdn-cache-control') ?? '';
   report('HTML 安全五头 + 边缘 SWR 头', missing.length === 0 && cdnCc.includes('stale-while-revalidate'),
     `missing=[${missing.join(',')}] cdn-cache-control=${cdnCc || '(无)'}`);
+
+  // CSP（P2-6）：内联脚本 hash 白名单生效。若 sitemap 爬取异常，worker 会
+  // 降级 script-src 'unsafe-inline'（保功能），此处断言及时暴露降级状态。
+  const csp = res.headers.get('content-security-policy') ?? '';
+  const scriptSrc = /(?:^|;\s*)script-src ([^;]+)/.exec(csp)?.[1] ?? '';
+  report('HTML CSP hash 白名单', csp.length > 0 && /'sha256-/.test(scriptSrc) && !scriptSrc.includes("'unsafe-inline'") && csp.includes('frame-src https://wj.qq.com'),
+    `script-src=${scriptSrc.slice(0, 60) || '(无 CSP)'}${scriptSrc.includes("'unsafe-inline'") ? '【已降级】' : ''}`);
 }
 
 // 2. /_astro/* 构建产物：immutable 单值（回归双值 cache-control）

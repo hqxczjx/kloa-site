@@ -3,6 +3,7 @@ import { imageHandler } from './api/image';
 import { createVideoHandler } from './api/video';
 import { videoStatusHandler } from './api/video-status';
 import { storyboardHandler } from './api/storyboard';
+import { CSP_NON_HTML, htmlCspFor } from './_lib/csp';
 import type { Env } from './_lib/types';
 
 // ── 响应头策略（唯一完全真源）────────────────────────────────────────
@@ -51,13 +52,14 @@ function pathCacheControl(pathname: string): string | undefined {
   return undefined;
 }
 
-// 统一收口：安全头全加；缓存头按路径/内容类型 SET（非 append——ASSETS 直通
-// 可能带来脏值，线上实测双值 "max-age=0, must-revalidate, public, max-age=…"）。
-function withResponseHeaders(pathname: string, res: Response): Response {
+// 统一收口：安全头 + CSP 全加；缓存头按路径/内容类型 SET（非 append——ASSETS
+// 直通可能带来脏值，线上实测双值 "max-age=0, must-revalidate, public, max-age=…"）。
+function withResponseHeaders(pathname: string, res: Response, csp: string): Response {
   const headers = new Headers(res.headers);
   for (const [name, value] of SECURITY_HEADERS) {
     headers.set(name, value);
   }
+  headers.set('content-security-policy', csp);
 
   const cc = pathCacheControl(pathname);
   if (cc !== undefined) {
@@ -92,9 +94,14 @@ export default {
     } else if (url.pathname.startsWith('/api/')) {
       res = new Response('Not Found', { status: 404 });
     } else {
-      // 其余请求交给静态资源
-      return withResponseHeaders(url.pathname, await env.ASSETS.fetch(request));
+      // 其余请求交给静态资源。HTML 的 CSP 需先算全站内联脚本 hash 并集
+      // （见 _lib/csp.ts），其余内容类型直接给非 HTML 封口策略。
+      const asset = await env.ASSETS.fetch(request);
+      const isHtml = (asset.headers.get('content-type') ?? '').includes('text/html');
+      const csp = isHtml ? await htmlCspFor(url, env) : CSP_NON_HTML;
+      return withResponseHeaders(url.pathname, asset, csp);
     }
-    return withResponseHeaders(url.pathname, res);
+    // API 响应（JSON/SSE）不作为文档渲染，给最紧封口
+    return withResponseHeaders(url.pathname, res, CSP_NON_HTML);
   },
 };
