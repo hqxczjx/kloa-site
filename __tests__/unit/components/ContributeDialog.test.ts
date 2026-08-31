@@ -112,18 +112,21 @@ describe('ContributeDialog 静态化（P2-4，投稿弹窗内联脚本）', () =
     expect(document.body.style.overflow).toBe('');
   });
 
-  it('关闭后重开不重复赋 src（幂等懒加载）', async () => {
+  it('关闭清 src、重开重赋（对齐旧 React 版卸载语义——重开是全新表单而非残留提交成功页）', async () => {
     await initDialogScript();
     const { trigger, closeBtn, dialog, iframe } = mountDialog();
     const setSrc = vi.spyOn(iframe, 'setAttribute');
     trigger.click();
+    expect(iframe.getAttribute('src')).toBe(FORM_URL);
     closeBtn.click();
+    // 关闭即卸载：src 移除（React 版 {open && ...} 关闭即卸载 iframe）
+    expect(iframe.getAttribute('src')).toBeNull();
     trigger.click();
     expect(dialog.style.display).toBe('');
-    // 仅首开赋一次 src，重开走已有值分支（不重复触发 iframe 加载）
-    const srcCalls = setSrc.mock.calls.filter((c) => c[0] === 'src');
-    expect(srcCalls).toHaveLength(1);
+    // 重开从 data-src 重挂，用户看到全新表单
     expect(iframe.getAttribute('src')).toBe(FORM_URL);
+    const srcCalls = setSrc.mock.calls.filter((c) => c[0] === 'src');
+    expect(srcCalls).toHaveLength(2);
   });
 
   it('iframe 常驻 DOM 但初始不可见：页面加载不预载问卷（对齐旧版打开才挂载）', () => {

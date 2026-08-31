@@ -696,8 +696,9 @@ expect(screen.getAllByRole('button')).toHaveLength(3);
 
 ### 13.3 已知架构不变量（改架构前必读）
 
-- **`/ai/*` 页面不挂 ToasterWrapper 岛**（`BaseLayout.astro` 按 `isAiPage` 条件渲染，省 32KB sonner chunk）。
-  sonner 在无 `<Toaster>` 挂载时是**静默 no-op**（无控制台报错）——若未来 AI studio 需要弹 toast，
+- **`/ai/*`、`/danmaku/`、`/about/` 页面不挂 ToasterWrapper 岛**（`BaseLayout.astro` 按 `noToastPage`
+  条件渲染，省 32KB sonner chunk + React 运行时——后两页零框架）。
+  sonner 在无 `<Toaster>` 挂载时是**静默 no-op**（无控制台报错）——若未来这些页面需要弹 toast，
   必须先把该页加回 ToasterWrapper，否则调用会无声失效。相关守卫见 `__tests__/unit/`（hydration 断言）。
 - **主题切换是 vanilla 脚本**（`BaseLayout.astro` body 末尾事件委托），不是 React 岛——
   改主题相关行为时在 e2e（theme.spec.ts）验证，单元测试里没有对应组件。

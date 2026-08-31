@@ -3,7 +3,9 @@
 // 纯静态展示组件——无状态、无副作用、无事件处理，SSR 直出即可，零脚本零岛。
 // DOM/类名/内联样式与旧 React 版 SSR 输出逐类对齐（含天使/恶魔双模式背景、
 // 声明卡、bento 卡片、底部装饰心），lucide/GithubIcon 图标原 SVG 内联。
-// 免责样式（disclaimer-*）仍由 about.astro 的 <style> 提供，类名未动。
+// 注意：about.astro 里 scoped 的 disclaimer-*/bun-* 样式实际从未命中过本组件
+// （旧 React 岛 SSR 不带 data-astro-cid，本组件带的是自己的 cid）——声明卡
+// 配色来自上面的内联样式，与线上一致。勿据那段死 CSS 推断视觉来源。
 
 // lucide 图标（与旧 React 版 SSR 输出逐属性一致）
 const shieldAlertIcon = (cls: string) =>

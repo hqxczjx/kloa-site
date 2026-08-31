@@ -36,6 +36,10 @@
     document.body.style.overflow = '';
     var trigger = findTrigger();
     if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    // 对齐旧 React 版的卸载语义：关闭即移除 src（openDialog 再从 data-src 重挂），
+    // 否则提交过一次后重开看到的是残留的"提交成功"页，而非全新表单
+    var iframe = dlg.querySelector('iframe[data-src]');
+    if (iframe) iframe.removeAttribute('src');
   }
 
   document.addEventListener('click', function (e) {

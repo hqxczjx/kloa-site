@@ -20,9 +20,11 @@ const yearDisplay = currentYear === startYear
   ? `${startYear}`
   : `${startYear} - ${currentYear}`;
 
-// /ai/* 页面的 studio 从不调用 toast（grep 证实 sonner 仅 SongList/DanmakuBoard 使用），
-// 不挂 ToasterWrapper 岛——这 4+1 页各省 32KB sonner chunk
-const isAiPage = /^\/ai(?:\/|$)/.test(Astro.url.pathname);
+// sonner 的调用方只剩 SongList（/ 与 /music/，P2-4 后 DanmakuBoard 用自研 toast，
+// /ai/* studio 从不弹 toast）——其余页面不挂 ToasterWrapper 岛即零框架零 React 运行时，
+// /ai/* 4+1 页 + /danmaku/ + /about/ 各省 32KB sonner chunk。sonner 在无 <Toaster>
+// 挂载时静默 no-op：未来这些页面要弹 toast 须先把它加回此白名单
+const noToastPage = /^(?:\/ai(?:\/|$)|\/danmaku\/?$|\/about\/?$)/.test(Astro.url.pathname);
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -130,8 +132,8 @@ const isAiPage = /^\/ai(?:\/|$)/.test(Astro.url.pathname);
       </p>
     </footer>
 
-    <!-- Sonner Toaster（/ai/* 页不挂——无 toast 调用，省 32KB chunk） -->
-    {!isAiPage && <ToasterWrapper client:idle />}
+    <!-- Sonner Toaster（无 toast 调用方的页面不挂，省 32KB chunk + React 运行时） -->
+    {!noToastPage && <ToasterWrapper client:idle />}
 
     <!-- Theme toggle（vanilla）：事件委托同时服务桌面 nav 与移动端两个按钮，
          替代原先每页 2 个 client:load React 岛。初始渲染由 head 内 FOUC 脚本负责。 -->
