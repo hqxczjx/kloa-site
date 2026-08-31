@@ -1,0 +1,242 @@
+---
+// 关于页（P2-4 静态化，取代 src/components/react/AboutPage.tsx）：
+// 纯静态展示组件——无状态、无副作用、无事件处理，SSR 直出即可，零脚本零岛。
+// DOM/类名/内联样式与旧 React 版 SSR 输出逐类对齐（含天使/恶魔双模式背景、
+// 声明卡、bento 卡片、底部装饰心），lucide/GithubIcon 图标原 SVG 内联。
+// 免责样式（disclaimer-*）仍由 about.astro 的 <style> 提供，类名未动。
+
+// lucide 图标（与旧 React 版 SSR 输出逐属性一致）
+const shieldAlertIcon = (cls: string) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-alert ${cls}" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="M12 8v4"></path><path d="M12 16h.01"></path></svg>`;
+
+const messageCircleIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle w-5 h-5" aria-hidden="true"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"></path></svg>';
+
+const zapIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap w-4 h-4 text-white" aria-hidden="true"><path d="M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z"></path></svg>';
+
+const layersIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layers w-4 h-4 text-white" aria-hidden="true"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"></path><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"></path><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"></path></svg>';
+
+const cpuIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cpu w-4 h-4 bun-icon" aria-hidden="true"><path d="M12 20v2"></path><path d="M12 2v2"></path><path d="M17 20v2"></path><path d="M17 2v2"></path><path d="M2 12h2"></path><path d="M2 17h2"></path><path d="M2 7h2"></path><path d="M20 12h2"></path><path d="M20 17h2"></path><path d="M20 7h2"></path><path d="M7 20v2"></path><path d="M7 2v2"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="8" y="8" width="8" height="8" rx="1"></rect></svg>';
+
+const mailIcon = (cls: string) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail ${cls}" aria-hidden="true"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"></path><rect x="2" y="4" width="20" height="16" rx="2"></rect></svg>`;
+
+// GithubIcon（src/components/ui/BrandIcons.tsx 的 SSR 输出，逐属性一致）
+const githubIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-github-icon lucide-github w-4 h-4"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>';
+---
+
+<div class="relative px-4 py-8 md:px-8 lg:px-16 overflow-hidden">
+  {/* Background Effects */}
+  <div class="fixed inset-0 pointer-events-none">
+    {/* Angel Mode: Floating Light Particles */}
+    <div class="hidden dark:block absolute top-20 left-10 w-32 h-32 rounded-full animate-pulse-slow" style="background: radial-gradient(circle, oklch(0.64 0.10 240 / 0.2), transparent)"></div>
+    <div class="hidden dark:block absolute top-40 right-20 w-24 h-24 rounded-full animate-pulse-slow" style="background: radial-gradient(circle, oklch(0.72 0.12 15 / 0.15), transparent); animation-delay: 1s"></div>
+    <div class="hidden dark:block absolute bottom-40 left-1/4 w-40 h-40 rounded-full animate-pulse-slow" style="background: radial-gradient(circle, oklch(0.64 0.10 240 / 0.15), transparent); animation-delay: 2s"></div>
+    <div class="hidden dark:block absolute bottom-20 right-1/3 w-28 h-28 rounded-full animate-pulse-slow" style="background: radial-gradient(circle, oklch(0.72 0.12 15 / 0.2), transparent); animation-delay: 1.5s"></div>
+
+    {/* Demon Mode: Neon Glows */}
+    <div class="dark:hidden absolute top-20 left-10 w-32 h-32 rounded-full animate-pulse-slow" style="background: radial-gradient(circle, oklch(0.72 0.12 15 / 0.15), transparent)"></div>
+    <div class="dark:hidden absolute top-40 right-20 w-24 h-24 rounded-full animate-pulse-slow" style="background: radial-gradient(circle, oklch(0.72 0.12 15 / 0.12), transparent); animation-delay: 1s"></div>
+    <div class="dark:hidden absolute bottom-40 left-1/4 w-40 h-40 rounded-full animate-pulse-slow" style="background: radial-gradient(circle, oklch(0.72 0.12 15 / 0.1), transparent); animation-delay: 2s"></div>
+    <div class="dark:hidden absolute bottom-20 right-1/3 w-28 h-28 rounded-full animate-pulse-slow" style="background: radial-gradient(circle, oklch(0.72 0.12 15 / 0.15), transparent); animation-delay: 1.5s"></div>
+  </div>
+
+  {/* Page Header */}
+  <div class="text-center mb-12 relative z-10 animate-fade-down">
+    <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mb-4" style="color: var(--accent-primary)">
+      关于本站
+    </h1>
+    {/* Decorative Heart */}
+    <div class="flex justify-center mt-6">
+      <div
+        class="w-8 h-8 animate-heart-beat"
+        style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart w-8 h-8 text-white" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"></path></svg>
+      </div>
+    </div>
+  </div>
+
+  {/* Bento Grid Layout */}
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-min">
+
+      {/* Card 1: Disclaimer (Full Width, Top Priority) */}
+      <div
+        class="col-span-1 md:col-span-2 lg:col-span-3 rounded-2xl p-6 md:p-8 border-2 relative overflow-hidden disclaimer-card animate-fade-up"
+        style="animation-delay: 0.1s"
+      >
+        {/* Warning Card - Light Mode */}
+        <div class="dark:hidden relative">
+          <div class="flex items-start gap-4">
+            <div class="shrink-0 w-12 h-12 rounded-full flex items-center justify-center disclaimer-icon-bg">
+              <Fragment set:html={shieldAlertIcon('w-6 h-6 disclaimer-icon')} />
+            </div>
+            <div class="flex-1">
+              <h2 class="font-serif text-xl md:text-2xl font-bold mb-4 disclaimer-title">
+                本站声明
+              </h2>
+              <div class="space-y-3 disclaimer-text">
+                <p class="text-base md:text-lg">
+                  本网站为 <a href="https://space.bilibili.com/38028857" target="_blank" rel="noopener noreferrer">@卿家ん</a> 出于临时起意而自发制作的非官方站点。
+                </p>
+                <p class="text-base md:text-lg">
+                  本站与 <strong>克罗雅</strong> 及相关公司无任何直接或许可关系。
+                </p>
+                <p class="text-base md:text-lg font-bold border-l-4 pl-4 py-2 rounded-r disclaimer-highlight">
+                  请勿就本网站的相关问题（如Bug、功能建议）去打扰主播本人或官方运营人员。
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* Decorative Warning Pattern */}
+          <div class="absolute top-0 right-0 w-32 h-32 opacity-5 disclaimer-pattern">
+            <Fragment set:html={shieldAlertIcon('w-full h-full')} />
+          </div>
+        </div>
+
+        {/* Warning Card - Dark Mode */}
+        <div class="hidden dark:block relative">
+          <div class="flex items-start gap-4">
+            <div class="shrink-0 w-12 h-12 rounded-full flex items-center justify-center disclaimer-icon-bg-dark">
+              <Fragment set:html={shieldAlertIcon('w-6 h-6 disclaimer-icon-dark')} />
+            </div>
+            <div class="flex-1">
+              <h2 class="font-serif text-xl md:text-2xl font-bold mb-4 disclaimer-title-dark">
+                本站声明
+              </h2>
+              <div class="space-y-3 disclaimer-text-dark">
+                <p class="text-base md:text-lg">
+                  本网站为粉丝出于喜爱而制作的非官方应援站点。
+                </p>
+                <p class="text-base md:text-lg">
+                  本站与 <strong>克罗雅</strong> 及相关公司无任何直接或许可关系。
+                </p>
+                <p class="text-base md:text-lg font-bold border-l-4 pl-4 py-2 rounded-r disclaimer-highlight-dark">
+                  请勿就本网站的相关问题（如Bug、功能建议）去打扰主播本人或官方运营人员。
+                </p>
+              </div>
+            </div>
+          </div>
+          {/* Decorative Warning Pattern */}
+          <div class="absolute top-0 right-0 w-32 h-32 opacity-5 disclaimer-pattern-dark">
+            <Fragment set:html={shieldAlertIcon('w-full h-full')} />
+          </div>
+        </div>
+      </div>
+
+      {/* Card 2: Dev Note (The 'Murmur') */}
+      <div
+        class="col-span-1 md:col-span-2 glass rounded-2xl p-6 hover:scale-[1.02] transition-transform duration-300 animate-fade-up"
+        style="animation-delay: 0.2s"
+      >
+        <h3 class="font-serif text-xl font-bold mb-4 flex items-center gap-2" style="color: var(--accent-primary)">
+          <Fragment set:html={messageCircleIcon} />
+          开发者碎碎念
+        </h3>
+        <div class="space-y-4 mb-6">
+          <p class="text-base md:text-lg" style="color: var(--text-primary)">
+            这个网站全靠爱发电，由我一人独立开发维护。
+          </p>
+          <p class="text-base md:text-lg" style="color: var(--text-primary)">
+            因为主播原歌单太神了，想试下弄个方便自己点歌用。
+          </p>
+          <p class="text-base md:text-lg" style="color: var(--text-primary)">
+            当了好多年前端也没试过自己部署网站，所以这算是个试验场，不确定什么时候爆炸。
+          </p>
+          <p class="text-base md:text-lg" style="color: var(--text-primary)">
+            如果遇到 Bug 或有数据补充，欢迎联系我！
+          </p>
+        </div>
+
+        {/* Tech Stack Icons (Subtle Footer) */}
+        <div class="pt-4 border-t" style="border-color: var(--glass-border)">
+          <p class="text-xs mb-3" style="color: var(--text-secondary)">Built with</p>
+          <div class="flex flex-wrap gap-3">
+            {/* Astro */}
+            <div
+              class="flex items-center gap-2 px-3 py-2 rounded-lg hover:scale-105 transition-transform duration-300"
+              style="background-color: var(--bg-secondary)"
+            >
+              <div class="w-6 h-6 rounded flex items-center justify-center" style="background: linear-gradient(135deg, #ff5d01, #ff8c00)">
+                <Fragment set:html={zapIcon} />
+              </div>
+              <span class="text-xs font-medium" style="color: var(--text-primary)">Astro</span>
+            </div>
+            {/* React */}
+            <div
+              class="flex items-center gap-2 px-3 py-2 rounded-lg hover:scale-105 transition-transform duration-300"
+              style="background-color: var(--bg-secondary)"
+            >
+              <div class="w-6 h-6 rounded flex items-center justify-center" style="background: linear-gradient(135deg, #61dafb, #21a1f1)">
+                <Fragment set:html={layersIcon} />
+              </div>
+              <span class="text-xs font-medium" style="color: var(--text-primary)">React</span>
+            </div>
+            {/* Bun */}
+            <div
+              class="flex items-center gap-2 px-3 py-2 rounded-lg hover:scale-105 transition-transform duration-300"
+              style="background-color: var(--bg-secondary)"
+            >
+              <div class="w-6 h-6 rounded flex items-center justify-center bun-gradient">
+                <Fragment set:html={cpuIcon} />
+              </div>
+              <span class="text-xs font-medium" style="color: var(--text-primary)">Bun</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Card 3: Contact Method */}
+      <div
+        class="col-span-1 glass rounded-2xl p-6 hover:scale-[1.02] transition-transform duration-300 animate-fade-up"
+        style="animation-delay: 0.3s"
+      >
+        <h3 class="font-serif text-xl font-bold mb-4 flex items-center gap-2" style="color: var(--accent-primary)">
+          <Fragment set:html={mailIcon('w-5 h-5')} />
+          联系方式
+        </h3>
+        <div class="space-y-4">
+          <p class="text-sm" style="color: var(--text-secondary)">
+            发现问题或有建议？欢迎反馈！
+          </p>
+          <a
+            href="mailto:qwqtest1@outlook.com"
+            class="flex items-center gap-3 w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105"
+            style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: white; box-shadow: 0 4px 15px var(--glow-color)"
+          >
+            <Fragment set:html={mailIcon('w-4 h-4')} />
+            Email Me
+          </a>
+          <a
+            href="https://github.com/hqxczjx/kloa-site"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 w-full px-4 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105"
+            style="background: var(--bg-secondary); border: 1px solid var(--glass-border); color: var(--accent-primary)"
+          >
+            <Fragment set:html={githubIcon} />
+            GitHub
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {/* Decorative Bottom Heart */}
+  <div
+    class="fixed bottom-24 md:bottom-8 left-1/2 z-0 pointer-events-none animate-fade-scale-center"
+    style="animation-delay: 0.6s"
+  >
+    <div
+      class="w-16 h-16 animate-blur-float"
+      style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); filter: blur(40px)"
+    >
+    </div>
+  </div>
+</div>

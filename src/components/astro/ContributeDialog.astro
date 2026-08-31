@@ -1,0 +1,71 @@
+---
+// 投稿弹窗（P2-4 静态化，取代 src/components/react/ContributeDialog.tsx）：
+// - DOM/类名与旧 React 版 SSR 输出逐类对齐（role=dialog / aria-modal / 遮罩 /
+//   叉钮 / wj.qq.com iframe），视觉与 CSS 选择器不变。
+// - 旧版「open 才挂载 iframe」在此等价为：SSR 常驻 DOM 但 display:none，
+//   iframe 只带 data-src，首开由脚本赋 src——不在页面加载时预载问卷。
+// - 开关/Escape/遮罩点击由末尾 is:inline 内联脚本以事件委托实现
+//   （?raw 引入同源文件，单测直接跑它）。
+import dialogScript from '../../scripts/contribute-dialog.js?raw';
+
+// 腾讯问卷公开填写链接：建好问卷后在「发布」处复制，替换下面的占位 URL。
+const CONTRIBUTE_FORM_URL = 'https://wj.qq.com/s2/27522632/db0v/';
+
+// lucide pen-line / x（与旧 React 版 SSR 输出逐属性一致）
+const penLineIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pen-line w-5 h-5" aria-hidden="true"><path d="M13 21h8"></path><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path></svg>';
+const xIcon =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x w-5 h-5" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>';
+---
+
+<button
+  type="button"
+  data-contribute-open
+  class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105 active:scale-95 glass"
+  style="color: var(--accent-primary)"
+  aria-haspopup="dialog"
+  aria-expanded="false"
+>
+  <Fragment set:html={penLineIcon} />
+  投稿
+</button>
+
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center p-4"
+  role="dialog"
+  aria-modal="true"
+  aria-label="弹幕投稿"
+  data-contribute-dialog
+  style="display: none"
+>
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-contribute-backdrop aria-hidden="true"></div>
+  <div class="relative glass rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+    <div class="flex items-center justify-between p-4">
+      <h2 class="text-lg font-serif font-bold" style="color: var(--text-primary)">
+        投稿新弹幕
+      </h2>
+      <button
+        type="button"
+        data-contribute-close
+        class="grid place-items-center w-8 h-8 rounded-full hover:bg-black/10 transition-colors"
+        style="color: var(--text-secondary)"
+        aria-label="关闭"
+      >
+        <Fragment set:html={xIcon} />
+      </button>
+    </div>
+    <div class="px-4 pb-4 overflow-auto">
+      <p class="text-sm mb-3" style="color: var(--text-secondary)">
+        想加什么应援 / 整活 / 纪念弹幕？填表提交，审核后加入文案库（普通弹幕 ≤40 字）。
+      </p>
+      <iframe
+        data-src={CONTRIBUTE_FORM_URL}
+        title="弹幕投稿表单"
+        class="mx-auto rounded-xl bg-white"
+        style="width: 800px; height: 918px; border: 0"
+      ></iframe>
+    </div>
+  </div>
+</div>
+
+<script is:inline set:html={dialogScript} />
