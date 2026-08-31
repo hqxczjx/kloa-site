@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import VideoStudio from '../../../../src/components/react/ai/VideoStudio';
 import { createVideo, getVideoStatus, ApiError } from '../../../../src/components/react/ai/api';
+import type { VideoStatusResponse } from '../../../../src/components/react/ai/types';
 
 // 保留真实 ApiError（polling.isTransientPollError 的 instanceof 依赖类对象同一）
 vi.mock('../../../../src/components/react/ai/api', async (importOriginal) => {
@@ -182,5 +183,22 @@ describe('VideoStudio', () => {
     await flush(); // 进入轮询，setTimeout 已排队
     unmount(); // 触发 cleanup：abort + clearTimeout（L22-23）
     await vi.advanceTimersByTimeAsync(20000); // 已清理，不应再触发 setState
+  });
+
+  // 成功路径中止检查：poll 成功 resolve 晚于 abort（卸载）时，不得应用结果、不得排下一轮
+  it('成功轮询返回晚于中止时停止循环，不再发起下一次轮询', async () => {
+    vi.useFakeTimers();
+    let resolvePoll!: (v: VideoStatusResponse) => void;
+    mockedGetVideoStatus.mockImplementation(
+      () => new Promise<VideoStatusResponse>((r) => { resolvePoll = r; }),
+    );
+    const { unmount } = render(<VideoStudio />);
+    generateSync();
+    await flush(); // createVideo 已决，attempt1 的 getVideoStatus 挂起中（尚未排 timer）
+    unmount(); // 触发 cleanup：abort + clearTimeout
+    resolvePoll({ status: 'in_progress', progress: 30 }); // “成功”返回发生在 abort 之后
+    await flush();
+    await vi.advanceTimersByTimeAsync(60000); // 越过下一档退避也不得再轮询
+    expect(mockedGetVideoStatus).toHaveBeenCalledTimes(1);
   });
 });

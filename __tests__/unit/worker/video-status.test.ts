@@ -104,10 +104,8 @@ describe('video status endpoint', () => {
     const res = await call('?id=rl_1', { AGNES_API_KEY: 'k' }, fetchMock, cache, limiter);
     expect(res.status).toBe(429);
     expect((await res.json()).error).toContain('频繁');
-    // Retry-After：binding 响应无重置时刻，保守取整个窗口（VIDEO_STATUS_RATE_LIMIT_WINDOW_SEC = 60）
-    const retryAfter = Number(res.headers.get('Retry-After'));
-    expect(retryAfter).toBeGreaterThan(0);
-    expect(retryAfter).toBeLessThanOrEqual(60);
+    // Retry-After 精确等于 binding 窗口周期（VIDEO_STATUS_RATE_LIMIT_WINDOW_SEC = 60，无取整/放大）
+    expect(res.headers.get('Retry-After')).toBe('60');
     expect(fetchMock).toHaveBeenCalledTimes(60);
   });
 

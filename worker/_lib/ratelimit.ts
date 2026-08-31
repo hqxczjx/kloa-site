@@ -12,8 +12,6 @@ export interface RateLimitOptions {
 
 export interface RateLimitResult {
   allowed: boolean;
-  // binding 不返回剩余配额（仅 success 布尔），无法像旧 cache 实现透出 remaining；调用方也均未使用
-  remaining?: number;
   retryAfterSec: number;
 }
 

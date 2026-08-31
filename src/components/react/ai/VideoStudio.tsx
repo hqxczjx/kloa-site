@@ -5,8 +5,8 @@ import { nextDelay, isTransientPollError } from './polling';
 import type { VideoStatus } from './types';
 
 // 轮询步长指数式拉长：5s → 10s → 20s → 40s → 60s 为限（替代固定 5s×36，
-// 下调 video-status 端点请量）。7 轮累计 5+10+20+40+60×3 = 255s ≈ 4m15s，
-// 生成约 1-3 分钟即可完成。nextDelay 与 429 重试共用 polling.ts
+// 下调 video-status 端点请量）。7 轮末次轮询在 195s（5+10+20+40+60+60），
+// 超时窗 255s（5+10+20+40+60×3）≈ 4m15s，生成约 1-3 分钟即可完成。nextDelay 与 429 重试共用 polling.ts
 const MAX_ATTEMPTS = 7;
 
 export default function VideoStudio() {
@@ -30,6 +30,8 @@ export default function VideoStudio() {
     if (attempt > MAX_ATTEMPTS) { setStatus('timeout'); setError('生成较久，请稍后再试'); return; }
     try {
       const s = await getVideoStatus(id, abortRef.current?.signal);
+      // 成功返回也可能晚于 abort（停止/卸载发生在 await 期间）：与 catch 分支同检，不应用结果也不排下一轮
+      if (abortRef.current?.signal.aborted) return;
       setProgress(s.progress);
       if (s.status === 'completed' && s.url) { setStatus('completed'); setUrl(s.url); return; }
       if (s.status === 'failed') { setStatus('failed'); setError('生成失败，请重试'); return; }

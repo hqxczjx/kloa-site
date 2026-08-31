@@ -17,10 +17,9 @@ function makeLimiter(limit: number) {
 }
 
 describe('ratelimit', () => {
-  it('窗口内未超阈值时放行（binding 不再提供 remaining）', async () => {
+  it('窗口内未超阈值时放行', async () => {
     const r = await checkRateLimit('1.2.3.4', makeLimiter(10));
     expect(r.allowed).toBe(true);
-    expect(r.remaining).toBeUndefined();
     expect(r.retryAfterSec).toBe(0);
   });
 
