@@ -1,4 +1,4 @@
-import { test, expect } from './test';
+import { test, expect, waitForHydration } from './test';
 
 test.describe('AI 绘图页', () => {
   test('选风格生成展示结果', async ({ page }) => {
@@ -11,7 +11,8 @@ test.describe('AI 绘图页', () => {
     );
 
     await page.goto('/ai/image/');
-    await page.waitForLoadState('networkidle');
+    // networkidle 只代表网络静默，不保证岛已水合（点风格按钮太早会丢点击）
+    await waitForHydration(page);
 
     await page.getByRole('button', { name: '水彩手绘' }).click();
     await page.getByRole('button', { name: /生成/ }).click();
@@ -29,7 +30,8 @@ test.describe('AI 绘图页', () => {
     );
 
     await page.goto('/ai/image/');
-    await page.waitForLoadState('networkidle');
+    // networkidle 只代表网络静默，不保证岛已水合（点风格按钮太早会丢点击）
+    await waitForHydration(page);
 
     await page.getByRole('button', { name: '水彩手绘' }).click();
     await page.getByRole('button', { name: /生成/ }).click();

@@ -1,4 +1,4 @@
-import { test, expect } from './test';
+import { test, expect, waitForHydration } from './test';
 
 const STORYBOARD = { frames: ['f0', 'f1', 'f2', 'f3'], motions: ['m0', 'm1', 'm2'] };
 
@@ -36,6 +36,8 @@ test.describe('AI 小剧场页', () => {
 
   test('全链路生成并连播', async ({ page }) => {
     await page.goto('/ai/story/');
+    // goto 后岛未水合前 fill 的值会被初始 state 重置吞掉（受控按钮保持 disabled）
+    await waitForHydration(page);
     const textarea = page.getByPlaceholder(/故事创意/);
     await textarea.click();
     await textarea.type('克罗雅在花园里追蝴蝶');
@@ -59,6 +61,8 @@ test.describe('AI 小剧场页', () => {
       })
     );
     await page.goto('/ai/story/');
+    // goto 后岛未水合前 fill 的值会被初始 state 重置吞掉（受控按钮保持 disabled）
+    await waitForHydration(page);
     const textarea = page.getByPlaceholder(/故事创意/);
     await textarea.click();
     await textarea.type('x');
