@@ -286,6 +286,20 @@ describe('worker CSP（P2-6）', () => {
     expect(res.headers.get('content-security-policy')).toContain('frame-src https://wj.qq.com');
   });
 
+  it('sitemap 正常但页面全部取回失败：同样降级 unsafe-inline（而非零 hash 白屏 CSP）', async () => {
+    // sitemap 列出的页面全部 404（本页 '/' 存在走 HTML 分支）——零 hash 的
+    // script-src 会拦掉全部内联脚本（白屏），必须走宽松兜底
+    const env = makeAssetsEnv({
+      '/': HOME_HTML,
+      '/sitemap-index.xml': '<sitemapindex><loc>https://kloa.fans/sitemap-0.xml</loc></sitemapindex>',
+      '/sitemap-0.xml': '<urlset><loc>https://kloa.fans/missing-page/</loc></urlset>',
+    });
+    const res = await call('https://kloa.fans/', env);
+    const scriptSrc = scriptSrcOf(res.headers.get('content-security-policy') ?? '');
+    expect(scriptSrc).toContain("'unsafe-inline'");
+    expect(scriptSrc).not.toContain("'sha256-");
+  });
+
   it('非 HTML 资产与 API：最紧封口 default-src none', async () => {
     const env = makeSiteEnv();
     const js = await call('https://kloa.fans/_astro/page.js', env);

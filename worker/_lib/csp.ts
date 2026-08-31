@@ -24,7 +24,9 @@ export const CSP_NON_HTML = "default-src 'none'; frame-ancestors 'none'";
 // agnes 生成媒体的返回域名（上游官方文档示例，仓库内留档 docs/ignore/）：
 // - 图片 https://storage.googleapis.com/agnes-aigc/xxx.png（agnes-image-2.1-flash.md）
 // - 视频 https://platform-outputs.agnes-ai.space/videos/...（agnes-video-v2.0.md）
-// 上游若更换 CDN 域需同步此处（scripts/smoke.mjs 的 CSP 断言兜底发现线上破窗）。
+// 上游若更换 CDN 域需同步此处。注意 scripts/smoke.mjs 只断言 CSP 头本身（能发现
+// unsafe-inline 降级），不会加载真实图片——换域裂图只能靠真实流量发现，
+// 根治是 roadmap P3-2（R2 中转自托管生成物）。
 const MEDIA_HOSTS = 'https://storage.googleapis.com https://platform-outputs.agnes-ai.space';
 
 // 内联 <script> 提取：非贪婪匹配到第一个 </script>，与 HTML 解析器的
@@ -57,15 +59,19 @@ function extractInlineScriptTexts(html: string): string[] {
 }
 
 interface ScriptHashUnion {
-  /** sitemap 是否成功读到至少一页（false = 部署异常，走宽松兜底保功能） */
+  /** 页面是否实际取回至少一页（false = sitemap 缺失或全取失败，走宽松兜底保功能） */
   ok: boolean;
   hashes: string[];
 }
 
 function cspWithScriptHashes(union: ScriptHashUnion): string {
-  // sitemap 缺失/爬取失败时的兜底：不带 hash 的 script-src 会拦掉全部内联脚本
-  // （白屏），降级为 'unsafe-inline' 保功能——其余指令照常生效。生产由
-  // smoke.mjs 断言「script-src 无 'unsafe-inline'」及时暴露该状态。
+  // sitemap 缺失/页面全部取回失败时的兜底：不带 hash 的 script-src 会拦掉全部
+  // 内联脚本（白屏），降级为 'unsafe-inline' 保功能——其余指令照常生效。
+  // 这是降级的唯一日志点（结果随后被缓存整个 isolate 生命周期，只打一次）；
+  // 生产另由 smoke.mjs 断言「script-src 无 'unsafe-inline'」暴露该状态。
+  if (!union.ok) {
+    console.error('[csp] sitemap/页面取回失败，script-src 降级为 unsafe-inline');
+  }
   const scriptSrc = union.ok
     ? `script-src 'self'${union.hashes.map((h) => ` 'sha256-${h}'`).join('')}`
     : "script-src 'self' 'unsafe-inline'";
@@ -129,15 +135,21 @@ async function unionScriptHashes(env: Env, origin: string): Promise<ScriptHashUn
   const pagePaths = await pagePathsFromSitemap(env, origin);
   if (pagePaths.length === 0) return { ok: false, hashes: [] };
   const htmls = await Promise.all(pagePaths.map((p) => assetText(env, origin, p)));
-  const scriptTexts = new Set(
-    htmls.filter((h): h is string => h !== null).flatMap(extractInlineScriptTexts),
-  );
+  const fetched = htmls.filter((h): h is string => h !== null);
+  // ok = 实际取回≥1 页（而非 sitemap 列出≥1 页）：全部取回失败（部署异常）时
+  // 必须走 unsafe-inline 兜底，否则会输出零 hash 的 script-src——拦掉全部内联
+  // 脚本是白屏而非降级。部分失败无碍：缺失页对应 404，本就没有要执行的脚本。
+  if (fetched.length === 0) return { ok: false, hashes: [] };
+  const scriptTexts = new Set(fetched.flatMap(extractInlineScriptTexts));
   const hashes = await Promise.all([...scriptTexts].map(sha256Base64));
   return { ok: true, hashes };
 }
 
 // 按 env 缓存（isolate 内 env 是同一对象；vitest 每个用例各自造 env 互不串）。
-// 失败不缓存（下个请求重试），本次请求拿到宽松兜底策略。
+// 注意：降级结果同样缓存整个 isolate 生命周期——本站页面恒有 sitemap，降级仅
+// 在部署异常时出现，与其每请求重爬不如固化；console.error（cspWithScriptHashes
+// 内）与每日 smoke 是该状态的两个观测面。唯一不缓存的是下方 .catch 分支：
+// assetText 自身吞异常，它只覆盖其之外的意外 throw，delete 后下个请求重试。
 const cspCache = new WeakMap<Env, Promise<string>>();
 
 export function htmlCspFor(url: URL, env: Env): Promise<string> {
