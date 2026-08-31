@@ -236,7 +236,8 @@
   /* Theme Transition（收敛自原 `*` 通配——全元素参与过渡是主题切换掉帧的直接来源）。
      白名单只覆盖颜色随 html.dark 翻转的表面/文字：
      - body 自带 background-color/color 过渡，未显式设色的文字经继承自动跟随；
-     - .glass / .song-row-grid / .sl-chip / .song-item 各自有过渡声明（位于本块之后，级联不变）；
+     - .glass / .song-row-grid / .sl-chip / .song-item 各自有过渡声明，白名单选择器
+     与之不相交（.glass 在本块之前，.song-row-grid/.sl-chip 在其后，.song-item 在 utilities 层）；
      - 行内 style 设色的小元素（AI studios、PersistentPlayer 文字等）接受瞬时切换——这是有意的取舍。
      prefers-reduced-motion 由文件末尾的全局 reduce 块统一兜底。 */
   .sl-bar, .song-table, .song-thead, .sort-col.is-active,
@@ -321,9 +322,10 @@
 
   /* P2-3：VirtualList 去 JS 虚拟化后，离屏行的布局/绘制交给浏览器原生
      content-visibility:auto 跳过（滚动零 React 重渲染）。
-     占位高度与 SongTable 的 itemHeight 一致：桌面表格行 52px / 移动卡片 108px
-     （断点 639px 与 useIsMobile 相同）；auto 前缀让浏览器记住首次渲染后的
-     真实尺寸，个别行内容换行也不产生滚动条抖动。 */
+     行高今天由 VirtualList 的内联 style（height: itemHeight）钉死，本声明平时
+     不参与尺寸计算，只是安全网——若内联高度日后被移除，离屏行占位仍有确定
+     高度：桌面表格行 52px / 移动卡片 108px（断点 639px 与 SongTable 的移动端
+     判定一致）。 */
   .cv-row {
     content-visibility: auto;
     contain-intrinsic-size: auto 52px;

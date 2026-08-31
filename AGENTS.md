@@ -72,7 +72,7 @@ Vsinger FanSite (Angel/Demon Edition) - Chinese Vtuber character fan site with d
 - Hooks: `useState`, `useEffect`, `useMemo`, `useCallback`, `useRef`
 - State management: React local state + CustomEvent (PersistentPlayer listens for the `playSong` window event); no global store
 - Event handlers: named functions (not inline) for performance
-- Avoid prop drilling - use context/store for shared state
+- Avoid prop drilling - use React context or window CustomEvent for shared state (no store library in the project)
 
 ### Styling (Tailwind v4)
 - Use @theme for color system (pink/blue duality)
