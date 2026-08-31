@@ -104,7 +104,7 @@ Vsinger FanSite (Angel/Demon Edition) - Chinese Vtuber character fan site with d
 ### Performance
 - Use `useMemo` for expensive computations
 - Use `useCallback` for event handlers passed to children
-- Virtualize long lists (VirtualList component)
+- Virtualize long lists (P2-3 后用 content-visibility：全量 SSR + CSS 跳过视口外渲染，VirtualList 仅存于旧回退路径)
 - Lazy load images and route segments
 - Minimize re-renders with proper dependency arrays
 
@@ -124,7 +124,7 @@ Vsinger FanSite (Angel/Demon Edition) - Chinese Vtuber character fan site with d
 - ThemeToggle: Halo/Horn icon switch
 - GlassCard: Glassmorphism cards
 - HeartSpinner: Heart-shaped loader
-- SongList: Virtualized list with pinyin search
+- SongList: Pinyin search, full SSR render with content-visibility（P2-3，非 JS 虚拟化）
 
 ### Accessibility
 - ARIA labels for interactive elements

@@ -16,6 +16,13 @@ import type { Env } from './types';
 // 实现：首个 HTML 请求时经 ASSETS binding 读 sitemap 爬全部页面（本机资产
 // 读取，毫秒级，每 isolate 仅一次；每次部署 = 新 isolate = 自动失效），对
 // 内联脚本去重后取 hash 并集。HTML body 全程流式透传，无需读回。
+// 已知残留窗口（union 方案固有）：部署 N 期间硬加载的页面，边缘 SWR 缓存
+// （≤10 分钟）内软导航到部署 N+1 改过内联脚本的页面时，新脚本不在旧 CSP
+// 白名单内会被拦——需整页重载自愈。窗口极窄（SWR 过期 + 脚本恰好变更同时
+// 成立），静态粉丝站可接受。
+// 构建侧守卫：astro.config.mjs 的 cspUnionGuard 在每次 build 时对账
+// 「dist 全部 HTML 的脚本并集 == sitemap 模拟运行时并集」，新页面漏进
+// sitemap 等缺口会让 build 直接失败。
 
 // 非 HTML（API JSON/SSE、JS/CSS/字体/图片资产）：文档才受 CSP 约束，
 // 这些响应永不作为文档渲染，给最紧的封口即可。
@@ -46,7 +53,9 @@ async function sha256Base64(text: string): Promise<string> {
   return btoa(String.fromCharCode(...new Uint8Array(digest)));
 }
 
-function extractInlineScriptTexts(html: string): string[] {
+// 导出供 astro.config.mjs 的 cspUnionGuard 复用（构建时对账用同一提取逻辑，
+// 防守卫与运行时两套正则各自漂移）
+export function extractInlineScriptTexts(html: string): string[] {
   const texts: string[] = [];
   for (const match of html.matchAll(INLINE_SCRIPT_RE)) {
     const attrs = match[1] ?? '';
