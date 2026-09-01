@@ -4,8 +4,9 @@ import { createStoryboard, generateImage, createKeyframeVideo, getVideoStatus } 
 import { nextDelay, isTransientPollError } from './polling';
 import type { VideoStatus } from './types';
 
-// 轮询步长与 429 重试共用 polling.ts：8 轮累计 5+10+20+40+60×4 = 315s ≈ 5m15s，
-// 段生成约 1-4 分钟即可完成。原先固定 5s×36（180s）时 3 段并发即 36 req/min，
+// 轮询步长与 429 重试共用 polling.ts：8 次轮询末次在 255s（5+10+20+40+60×3），
+// 超时窗 315s（5+10+20+40+60×4）≈ 5m15s，段生成约 1-4 分钟即可完成。
+// 原先固定 5s×36（180s）时 3 段并发即 36 req/min，
 // 再加 CGNAT 同 IP 多客户端即 429（限流 60/60s 每 IP）
 const MAX_ATTEMPTS = 8;
 
