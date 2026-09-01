@@ -8,10 +8,14 @@
  * 此脚本对比「现行源码字符集」与「子集清单快照 subset-chars.json」，发现缺口即失败，
  * 提示维护者本地跑 `bun run gen:fonts` 并提交产物。
  *
+ * 收集口径与 generate-font-subset.mjs 严格一致：先 stripComments 剔除注释
+ * （注释里的中文永不渲染、不该进子集），只收代码/字符串/模板文本。
+ *
  * 本地验证：node scripts/check-font-coverage.mjs
  */
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { stripComments } from './strip-comments.mjs';
 
 const ROOT = process.cwd();
 
@@ -25,11 +29,11 @@ function walk(dir) {
   return out;
 }
 
-// 与 generate-font-subset.mjs 完全一致的收集口径（仅源码，不含 data JSON）
+// 与 generate-font-subset.mjs 完全一致的收集口径（仅源码，不含 data JSON；同用 stripComments）
 const current = new Set();
 for (const f of walk(join(ROOT, 'src'))) {
-  const txt = readFileSync(f, 'utf-8');
-  for (const ch of txt) if (/[一-鿿]/.test(ch)) current.add(ch);
+  const code = stripComments(readFileSync(f, 'utf-8'));
+  for (const ch of code) if (/[一-鿿]/.test(ch)) current.add(ch);
 }
 
 let snapshot;

@@ -3,9 +3,12 @@
 // 源字体需先下载到 scripts/fonts/（见 .gitignore，不入库）。
 // 跑完后 git 提交 public/fonts/*.woff2 与 scripts/fonts/subset-chars.json，
 // 并由 scripts/check-font-coverage.mjs 在 CI 持续审计覆盖缺口（见其头部注释）。
+// 收集口径：先经 stripComments 剔除注释（注释里的中文永不渲染，2026-08 曾混入
+// ~105 字形 ≈12KB），只收代码/字符串/模板文本——与 check-font-coverage.mjs 严格同口径。
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import subsetFont from 'subset-font';
+import { stripComments } from './strip-comments.mjs';
 
 const ROOT = process.cwd();
 
@@ -33,8 +36,8 @@ const chars = new Set('Kloa0123456789- .');
 // 若未来改版将歌名放入标题类元素，把下方 walk 的正则改为 /\.(astro|tsx|json)$/
 // 并重跑本脚本即可。
 for (const f of walk(join(ROOT, 'src'))) {
-  const txt = readFileSync(f, 'utf-8');
-  for (const ch of txt) if (/[一-鿿]/.test(ch)) chars.add(ch);
+  const code = stripComments(readFileSync(f, 'utf-8'));
+  for (const ch of code) if (/[一-鿿]/.test(ch)) chars.add(ch);
 }
 const text = [...chars].join('');
 console.log(`subset text: ${text.length} chars`);
