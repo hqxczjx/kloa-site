@@ -11,18 +11,19 @@
 //   离开首页再返回时新 SSR DOM 的「—」占位将无人回填；rerun 让每次 swap 重新执行
 //   （脚本纯重算幂等，重复执行无副作用）。
 import countdownScript from '../../scripts/anniversary-countdown.js?raw';
+import { ANNIVERSARIES } from '../../data/anniversaries';
 
+// 日期/标签单一数据源：src/data/anniversaries.ts（单测期望值同源派生，见其头注释）。
+// 此处只保留展示层差异（定位/图标），按数组顺序与 ANNIVERSARIES 一一配对。
 const cards = [
   {
-    date: '2026-07-19',
-    label: '生日',
+    ...ANNIVERSARIES[0],
     className: 'hidden md:block md:fixed md:bottom-24 md:right-6 md:w-48 md:z-20',
     // lucide cake（与旧 React 版 SSR 输出逐属性一致）
     icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cake w-5 h-5 text-pink-500 dark:text-blue-500" aria-hidden="true"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"></path><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"></path><path d="M2 21h20"></path><path d="M7 8v3"></path><path d="M12 8v3"></path><path d="M17 8v3"></path><path d="M7 4h.01"></path><path d="M12 4h.01"></path><path d="M17 4h.01"></path></svg>',
   },
   {
-    date: '2026-01-16',
-    label: '出道日',
+    ...ANNIVERSARIES[1],
     className: 'hidden md:block md:fixed md:bottom-64 md:right-6 md:w-48 md:z-20',
     // lucide sparkles（与旧 React 版 SSR 输出逐属性一致）
     icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles w-5 h-5 text-pink-500 dark:text-blue-500" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>',

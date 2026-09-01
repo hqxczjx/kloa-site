@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { readSrc } from '../optimizations/helpers';
+import { ANNIVERSARIES } from '../../../src/data/anniversaries';
 
 // 页面内联与单测跑的是同一份源文件（AnniversaryCards.astro 经 ?raw + set:html 注入 HTML）
 async function runCountdown() {
@@ -12,6 +13,21 @@ function mountDays(...dates: string[]) {
   return Array.from(document.querySelectorAll<HTMLElement>('[data-anniv-days]'));
 }
 
+// 期望天数从「观察时间 + 纪念日期」派生（日期单一数据源 src/data/anniversaries.ts，
+// 原先 326/142 等字面期望与组件双维护，改日期必漏改一处的盲区）。
+// 口径与 anniversary-countdown.js 相同：Date.UTC 纯日历差 + 今年已过翻明年。
+// rollover 语义本身不靠它把关——下方「天数精确断言」组用合成日期手钉 268/0 字面值。
+function expectedDays(nowISO: string, dateISO: string): number {
+  const [y, m, d] = nowISO.split('-').map(Number);
+  const today = Date.UTC(y, m - 1, d);
+  const [, mm, dd] = dateISO.split('-').map(Number);
+  let next = Date.UTC(y, mm - 1, dd);
+  if (next < today) next = Date.UTC(y + 1, mm - 1, dd);
+  return Math.round((next - today) / 86400000);
+}
+
+const NOW = '2026-08-27';
+
 describe('AnniversaryCards 静态化（P2-2，倒计时内联脚本）', () => {
   afterEach(() => {
     vi.useRealTimers();
@@ -20,21 +36,21 @@ describe('AnniversaryCards 静态化（P2-2，倒计时内联脚本）', () => {
 
   it('SSR 占位「—」被覆盖为两卡各自的天数', async () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-08-27T00:00:00'));
-    const [birthday, debut] = mountDays('2026-07-19', '2026-01-16');
+    vi.setSystemTime(new Date(`${NOW}T00:00:00`));
+    const [birthday, debut] = mountDays(...ANNIVERSARIES.map((a) => a.date));
     await runCountdown();
     // 2026 生日已过 → 2027-07-19（326 天）；出道日 → 2027-01-16（142 天）
-    expect(birthday!.textContent).toBe('326 天');
-    expect(debut!.textContent).toBe('142 天');
+    expect(birthday!.textContent).toBe(`${expectedDays(NOW, ANNIVERSARIES[0].date)} 天`);
+    expect(debut!.textContent).toBe(`${expectedDays(NOW, ANNIVERSARIES[1].date)} 天`);
   });
 
   it('重复执行结果一致（幂等：纯重算覆盖 textContent）', async () => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-08-27T00:00:00'));
-    const [birthday] = mountDays('2026-07-19');
+    vi.setSystemTime(new Date(`${NOW}T00:00:00`));
+    const [birthday] = mountDays(...ANNIVERSARIES.map((a) => a.date));
     await runCountdown();
     await runCountdown();
-    expect(birthday!.textContent).toBe('326 天');
+    expect(birthday!.textContent).toBe(`${expectedDays(NOW, ANNIVERSARIES[0].date)} 天`);
   });
 
   describe('天数精确断言（rollover，移植自 AnniversaryCard.test.tsx）', () => {
@@ -71,13 +87,18 @@ describe('AnniversaryCards 静态化（P2-2，倒计时内联脚本）', () => {
       expect(src).toContain('<script is:inline set:html={countdownScript} data-astro-rerun />');
     });
 
-    it('两卡日期/标签齐全且天数节点带 data-anniv-days 钩子', () => {
+    it('两卡日期/标签取自单一数据源且天数节点带 data-anniv-days 钩子', () => {
       const src = readSrc('src/components/astro/AnniversaryCards.astro');
       expect(src).toContain(`data-anniv-days={date}`);
-      expect(src).toMatch(/date:\s*'2026-07-19'/);
-      expect(src).toMatch(/date:\s*'2026-01-16'/);
-      expect(src).toMatch(/label:\s*'生日'/);
-      expect(src).toMatch(/label:\s*'出道日'/);
+      // 组件消费数据模块（日期/标签不再在本文件内重复声明）
+      expect(src).toMatch(/import \{ ANNIVERSARIES \} from '\.\.\/\.\.\/data\/anniversaries'/);
+      expect(src).not.toMatch(/date:\s*'/);
+      // 数据源本身：两条 MM-DD 合法日期 + 非空标签
+      expect(ANNIVERSARIES).toHaveLength(2);
+      for (const { date, label } of ANNIVERSARIES) {
+        expect(date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        expect(label.trim().length).toBeGreaterThan(0);
+      }
     });
   });
 });
