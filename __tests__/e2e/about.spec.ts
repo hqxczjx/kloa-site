@@ -74,6 +74,15 @@ test.describe('About Page', () => {
     await expect(page).toHaveURL(/\/music/);
   });
 
+  // 点导航链接软导航进入本页（非 goto），断言页面专属内容可见，证明 swap 落定
+  test('should soft-navigate to about page from home (swap landed)', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: '关于', exact: true }).first().click();
+
+    await expect(page).toHaveURL(/\/about/);
+    await expect(page.getByText('关于本站')).toBeVisible();
+  });
+
   test('should display footer on desktop', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
 

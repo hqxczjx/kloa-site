@@ -31,5 +31,8 @@ test.describe('AI 入口聚合页', () => {
     await page.waitForLoadState('networkidle');
     await page.getByRole('link', { name: 'AI 实验室' }).first().click();
     await expect(page).toHaveURL(/\/ai\/$/);
+    // swap 落定证明：聚合页专属内容可见（非仅 URL 变化）
+    await expect(page.getByRole('heading', { name: 'AI 实验室' })).toBeVisible();
+    await expect(page.getByTestId('ai-disclaimer')).toBeVisible();
   });
 });

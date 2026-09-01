@@ -77,12 +77,12 @@ test.describe('Responsive Design', () => {
       const listContainer = page.locator('[data-testid="virtual-list"]');
       await expect(listContainer).toBeVisible();
       await expect(page.locator('[data-testid="song-row"]').first()).toBeVisible();
-      // 等 VirtualList 测量完容器高度（ResizeObserver 异步），容器才可滚动
+      // 容器为固定内联高度，等内容渲染即可（clientHeight > 0）
       await expect.poll(
         async () => await listContainer.evaluate((el: any) => el.clientHeight)
       ).toBeGreaterThan(0);
 
-      // 等容器完成布局测量（ResizeObserver 异步），确保内容溢出、可滚动
+      // 固定内联高度，等内容渲染即可：确保内容溢出、可滚动
       await expect.poll(
         async () => await listContainer.evaluate((el) => el.scrollHeight - el.clientHeight)
       ).toBeGreaterThan(0);
@@ -147,5 +147,15 @@ test.describe('Responsive Design', () => {
 
       await expect(page.locator('html')).toHaveClass(/dark/);
     });
+  });
+
+  // 默认视口（chromium project 的 Desktop Chrome 1280x720，桌面导航可见）：
+  // 点导航链接软导航回首页，断言首页专属内容可见，证明 ClientRouter swap 落定
+  test('should soft-navigate back to home (swap landed)', async ({ page }) => {
+    await page.goto('/about');
+    await page.getByRole('link', { name: '首页', exact: true }).first().click();
+
+    await expect(page).toHaveURL('/');
+    await expect(page.locator('h1')).toContainText('克罗雅');
   });
 });

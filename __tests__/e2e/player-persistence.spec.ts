@@ -1,4 +1,4 @@
-import { test, expect, type Page } from './test';
+import { test, expect, type Page, CHROMIUM_LAUNCH_ARGS } from './test';
 
 /**
  * P1-1 ClientRouter + PersistentPlayer transition:persist 续播验证。
@@ -11,15 +11,10 @@ import { test, expect, type Page } from './test';
 
 // Chromium 默认 autoplay 策略可能拦截无用户手势的 programmatic play()，
 // PersistentPlayer 收到事件后直接 audio.play()——放开策略保证「仍在播放」
-// 断言确定性成立（args 镜像 chromium project 配置，仅本 spec 生效）。
+// 断言确定性成立（公共 flags 走 CHROMIUM_LAUNCH_ARGS，此处仅追加本 spec 专属项）。
 test.use({
   launchOptions: {
-    args: [
-      '--disable-blink-features=AutomationControlled',
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--autoplay-policy=no-user-gesture-required',
-    ],
+    args: [...CHROMIUM_LAUNCH_ARGS, '--autoplay-policy=no-user-gesture-required'],
   },
 });
 
@@ -32,6 +27,10 @@ async function waitForPlayerHydrated(page: Page) {
     return el instanceof HTMLElement && !el.hasAttribute('ssr');
   });
 }
+
+/** 播放器 <audio>：scope 到 persist 岛内（页面级唯一），防未来页内其他 <audio> 误配 */
+const playerAudio = (page: Page) =>
+  page.locator('astro-island[data-astro-transition-persist] audio');
 
 /** 派发 playSong 事件，url 为页内构造的 12s 静音 WAV data URL */
 async function dispatchPlaySong(page: Page) {
@@ -86,7 +85,10 @@ async function playSongUntilPlayerVisible(page: Page) {
 
 /** audio.currentTime（无元素时 -1，暂停时也返回真实进度） */
 function audioTime(page: Page) {
-  return page.evaluate(() => document.querySelector('audio')?.currentTime ?? -1);
+  return page.evaluate(
+    () =>
+      document.querySelector('astro-island[data-astro-transition-persist] audio')?.currentTime ?? -1
+  );
 }
 
 test.describe('PersistentPlayer 续播（ClientRouter + transition:persist）', () => {
@@ -101,7 +103,7 @@ test.describe('PersistentPlayer 续播（ClientRouter + transition:persist）', 
 
     // 标记当前 <audio> 节点：续播必须移动的是同一个 DOM 节点
     await page.evaluate(() => {
-      const audio = document.querySelector('audio');
+      const audio = document.querySelector('astro-island[data-astro-transition-persist] audio');
       if (audio) audio.dataset.persistProbe = 'original';
     });
     const timeBeforeNav = await audioTime(page);
@@ -114,14 +116,14 @@ test.describe('PersistentPlayer 续播（ClientRouter + transition:persist）', 
 
     // 播放器 island 被移入新页面：标题仍在，且是同一个 <audio> 节点
     await expect(page.getByText(SONG_TITLE)).toBeVisible();
-    expect(await page.locator('audio').evaluate((el) => el.dataset.persistProbe)).toBe('original');
+    expect(await playerAudio(page).evaluate((el) => el.dataset.persistProbe)).toBe('original');
 
     // 仍在播放：未暂停、进度越过导航前的值
     await expect
       .poll(
         () =>
           page.evaluate(() => {
-            const a = document.querySelector('audio');
+            const a = document.querySelector('astro-island[data-astro-transition-persist] audio');
             if (!a) return -2;
             return a.paused ? -1 : a.currentTime;
           }),
@@ -143,7 +145,7 @@ test.describe('PersistentPlayer 续播（ClientRouter + transition:persist）', 
     // 此处播放器随旧 DOM 一起销毁（页面结构决定的预期行为）
     await page.getByRole('link', { name: '关于' }).first().click();
     await expect(page).toHaveURL(/\/about/);
-    await expect(page.locator('audio')).toHaveCount(0);
+    await expect(playerAudio(page)).toHaveCount(0);
     await expect(page.getByText(SONG_TITLE)).toHaveCount(0);
 
     // 返回首页：全新水合的 PersistentPlayer，currentSong 为空 → 不渲染播放器
@@ -151,26 +153,7 @@ test.describe('PersistentPlayer 续播（ClientRouter + transition:persist）', 
     await expect(page).toHaveURL('/');
     await expect(page.locator('h1')).toContainText('克罗雅');
     await waitForPlayerHydrated(page);
-    await expect(page.locator('audio')).toHaveCount(0);
+    await expect(playerAudio(page)).toHaveCount(0);
     await expect(page.getByText(SONG_TITLE)).toHaveCount(0);
-  });
-
-  test('ClientRouter 软导航后主题保持（astro:after-swap 重同步）', async ({ page }) => {
-    await page.emulateMedia({ colorScheme: 'light' });
-    await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
-    await page.reload();
-
-    const toggle = page.locator('button[data-theme-toggle]').first();
-    await toggle.click();
-    await expect(page.locator('html')).toHaveClass(/dark/);
-
-    // 软导航去 /music：swap 会用新文档的 SSR <html> 属性（恒天使态）覆盖当前，
-    // BaseLayout 的 astro:after-swap 监听需恢复 dark 并同步按钮文案
-    await page.getByRole('link', { name: '歌单', exact: true }).click();
-    await expect(page).toHaveURL(/\/music/);
-    await expect(page.locator('h1')).toContainText('歌单');
-    await expect(page.locator('html')).toHaveClass(/dark/);
-    await expect(toggle).toHaveAttribute('aria-label', '切换到天使模式');
   });
 });

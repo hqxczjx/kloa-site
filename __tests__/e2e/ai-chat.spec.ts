@@ -77,4 +77,15 @@ test.describe('AI 对话页', () => {
     await expect(page.getByText('选个话题或直接和她说点什么吧 ✨')).toBeVisible();
     await expect(page.getByText('AI 生成 · 二创')).toHaveCount(0);
   });
+
+  // 点导航/入口卡软导航进入本页（非 goto），断言页面专属元素可见，证明 swap 落定
+  test('软导航进入对话页（swap 内容落定）', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'AI 实验室', exact: true }).first().click();
+    await expect(page).toHaveURL(/\/ai\/$/);
+    await page.getByRole('link', { name: /和克罗雅聊天/ }).click();
+
+    await expect(page).toHaveURL(/\/ai\/chat\//);
+    await expect(page.getByPlaceholder(/说点什么/)).toBeVisible();
+  });
 });

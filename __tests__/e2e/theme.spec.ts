@@ -196,4 +196,23 @@ test.describe('Theme Toggle', () => {
     await page.keyboard.press('Enter');
     await expect(page.locator('html')).not.toHaveClass(/dark/);
   });
+
+  // 自 player-persistence 套件迁入：主题断言归 theme.spec，续播套件只管播放器
+  test('ClientRouter 软导航后主题保持（astro:after-swap 重同步）', async ({ page }) => {
+    // beforeEach 已 clear storage + light 系统偏好；reload 让 html 初始类与清空后的
+    // storage 对齐后再起测
+    await page.reload();
+
+    const toggle = page.locator('button[data-theme-toggle]').first();
+    await toggle.click();
+    await expect(page.locator('html')).toHaveClass(/dark/);
+
+    // 软导航去 /music：swap 会用新文档的 SSR <html> 属性（恒天使态）覆盖当前，
+    // BaseLayout 的 astro:after-swap 监听需恢复 dark 并同步按钮文案
+    await page.getByRole('link', { name: '歌单', exact: true }).click();
+    await expect(page).toHaveURL(/\/music/);
+    await expect(page.locator('h1')).toContainText('歌单');
+    await expect(page.locator('html')).toHaveClass(/dark/);
+    await expect(toggle).toHaveAttribute('aria-label', '切换到天使模式');
+  });
 });

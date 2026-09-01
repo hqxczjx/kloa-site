@@ -1,6 +1,18 @@
 import { test as base, expect } from '@playwright/test';
 
 /**
+ * 公共 chromium 启动参数：playwright.config.ts（顶层 use + chromium project）与
+ * 需要追加专属标志的 spec（如 player-persistence 的 autoplay 放开）共用同一份，
+ * 避免 --disable* 标志多处复制后漂移。追加时展开拼数组：
+ * `[...CHROMIUM_LAUNCH_ARGS, '--autoplay-policy=no-user-gesture-required']`。
+ */
+export const CHROMIUM_LAUNCH_ARGS = [
+  '--disable-blink-features=AutomationControlled',
+  '--no-sandbox',
+  '--disable-setuid-sandbox',
+] as const;
+
+/**
  * 共享 test fixture：所有 e2e 用例通过 `import { test, expect } from './test'` 使用。
  *
  * 拦截外部字体 CDN（fonts.loli.net）：该字体在 CI 或部分本地环境加载慢甚至不可达，

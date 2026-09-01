@@ -66,4 +66,13 @@ test.describe('Danmaku Page', () => {
       .poll(() => page.evaluate(() => document.body.style.overflow))
       .toBe('');
   });
+
+  // 点导航链接软导航进入本页（非 goto），断言页面专属内容可见，证明 swap 落定
+  test('软导航进入独轮车页（swap 内容落定）', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: '独轮车', exact: true }).first().click();
+
+    await expect(page).toHaveURL(/\/danmaku/);
+    await expect(page.getByRole('heading', { name: '独轮车弹幕复制' })).toBeVisible();
+  });
 });

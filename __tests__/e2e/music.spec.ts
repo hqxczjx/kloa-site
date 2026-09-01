@@ -73,4 +73,13 @@ test.describe('Music Page (重设计)', () => {
     await page.getByRole('link', { name: '返回首页' }).click();
     await expect(page).toHaveURL('/');
   });
+
+  // 点导航链接软导航进入本页（非 goto），断言页面专属元素可见，证明 swap 落定
+  test('软导航进入歌单页（swap 内容落定）', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: '歌单', exact: true }).first().click();
+
+    await expect(page).toHaveURL(/\/music/);
+    await expect(page.getByPlaceholder('搜索歌名 / 歌手 / 拼音…')).toBeVisible();
+  });
 });

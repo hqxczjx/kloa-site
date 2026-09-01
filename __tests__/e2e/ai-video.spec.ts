@@ -44,4 +44,15 @@ test.describe('AI 视频页', () => {
 
     await expect(page.getByText('繁忙').first()).toBeVisible();
   });
+
+  // 点导航/入口卡软导航进入本页（非 goto），断言页面专属元素可见，证明 swap 落定
+  test('软导航进入视频页（swap 内容落定）', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'AI 实验室', exact: true }).first().click();
+    await expect(page).toHaveURL(/\/ai\/$/);
+    await page.getByRole('link', { name: /让克罗雅动起来/ }).click();
+
+    await expect(page).toHaveURL(/\/ai\/video\//);
+    await expect(page.getByRole('button', { name: '微微笑' })).toBeVisible();
+  });
 });

@@ -69,4 +69,15 @@ test.describe('AI 小剧场页', () => {
     await page.getByRole('button', { name: /生成小剧场/ }).click();
     await expect(page.getByText('分镜生成失败，请重试')).toBeVisible();
   });
+
+  // 点导航/入口卡软导航进入本页（非 goto），断言页面专属元素可见，证明 swap 落定
+  test('软导航进入小剧场页（swap 内容落定）', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'AI 实验室', exact: true }).first().click();
+    await expect(page).toHaveURL(/\/ai\/$/);
+    await page.getByRole('link', { name: /克罗雅小剧场/ }).click();
+
+    await expect(page).toHaveURL(/\/ai\/story\//);
+    await expect(page.getByPlaceholder(/故事创意/)).toBeVisible();
+  });
 });

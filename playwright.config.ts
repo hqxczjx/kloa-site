@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { CHROMIUM_LAUNCH_ARGS } from './__tests__/e2e/test';
 
 export default defineConfig({
   testDir: './__tests__/e2e',
@@ -17,13 +18,7 @@ export default defineConfig({
     actionTimeout: 10000,
     navigationTimeout: 30000,
     launchOptions: {
-      args: [
-        '--disable-blink-features=AutomationControlled',
-        '--disable-extensions',
-        '--disable-dev-shm-usage',
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-      ],
+      args: [...CHROMIUM_LAUNCH_ARGS, '--disable-extensions', '--disable-dev-shm-usage'],
     },
   },
   projects: [
@@ -32,7 +27,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         launchOptions: {
-          args: ['--disable-blink-features=AutomationControlled', '--no-sandbox', '--disable-setuid-sandbox'],
+          args: [...CHROMIUM_LAUNCH_ARGS],
         },
       },
     },

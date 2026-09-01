@@ -38,4 +38,15 @@ test.describe('AI 绘图页', () => {
 
     await expect(page.getByText('繁忙')).toBeVisible();
   });
+
+  // 点导航/入口卡软导航进入本页（非 goto），断言页面专属元素可见，证明 swap 落定
+  test('软导航进入绘图页（swap 内容落定）', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'AI 实验室', exact: true }).first().click();
+    await expect(page).toHaveURL(/\/ai\/$/);
+    await page.getByRole('link', { name: /给克罗雅换装/ }).click();
+
+    await expect(page).toHaveURL(/\/ai\/image\//);
+    await expect(page.getByRole('button', { name: '水彩手绘' })).toBeVisible();
+  });
 });
