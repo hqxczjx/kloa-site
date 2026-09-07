@@ -93,7 +93,7 @@ jobs:
       - name: Deploy
         # 不指定 wrangler-version：action 复用项目已安装的 wrangler（^4.120.1，
         # 与 Workers Builds 所用版本一致）
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
