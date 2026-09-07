@@ -50,7 +50,7 @@
     "sharp": "^0.35.3",
     "subset-font": "^2.5.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10",
+    "vitest": "^5.0.0",
     "wrangler": "^4.120.1"
   },
   "dependencies": {
