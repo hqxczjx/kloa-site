@@ -1,5 +1,61 @@
 [
   {
+    "title": "如果有来生",
+    "artist": "谭维维",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行",
+      "民谣"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "陪你度过漫长岁月",
+    "artist": "陈奕迅",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "喜欢",
+    "artist": "龚爽",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "Jump Up, Super Star!",
+    "artist": "The Super Mario Players、Kate Davis",
+    "languages": [
+      "英语"
+    ],
+    "genres": [
+      "影视"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "太难唱了",
+    "artist": "彭佳慧",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
     "title": "甲乙丙丁",
     "artist": "李佳薇",
     "languages": [
@@ -268,17 +324,6 @@
     "artist": "Laufey",
     "languages": [
       "英语"
-    ],
-    "genres": [
-      "流行"
-    ],
-    "gifts": []
-  },
-  {
-    "title": "洋葱",
-    "artist": "杨宗纬",
-    "languages": [
-      "国语"
     ],
     "genres": [
       "流行"
@@ -1322,13 +1367,6 @@
     "genres": [
       "流行"
     ],
-    "gifts": []
-  },
-  {
-    "title": "如果有来生",
-    "artist": "谭维维",
-    "languages": [],
-    "genres": [],
     "gifts": []
   },
   {
