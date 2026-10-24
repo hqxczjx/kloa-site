@@ -1,5 +1,61 @@
 [
   {
+    "title": "如果有来生",
+    "artist": "谭维维",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行",
+      "民谣"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "陪你度过漫长岁月",
+    "artist": "陈奕迅",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "喜欢",
+    "artist": "龚爽",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "Jump Up, Super Star!",
+    "artist": "The Super Mario Players、Kate Davis",
+    "languages": [
+      "英语"
+    ],
+    "genres": [
+      "影视"
+    ],
+    "gifts": []
+  },
+  {
+    "title": "太难唱了",
+    "artist": "彭佳慧",
+    "languages": [
+      "国语"
+    ],
+    "genres": [
+      "流行"
+    ],
+    "gifts": []
+  },
+  {
     "title": "甲乙丙丁",
     "artist": "李佳薇",
     "languages": [
@@ -268,17 +324,6 @@
     "artist": "Laufey",
     "languages": [
       "英语"
-    ],
-    "genres": [
-      "流行"
-    ],
-    "gifts": []
-  },
-  {
-    "title": "洋葱",
-    "artist": "杨宗纬",
-    "languages": [
-      "国语"
     ],
     "genres": [
       "流行"
@@ -1325,13 +1370,6 @@
     "gifts": []
   },
   {
-    "title": "如果有来生",
-    "artist": "谭维维",
-    "languages": [],
-    "genres": [],
-    "gifts": []
-  },
-  {
     "title": "风吹麦浪",
     "artist": "李健",
     "languages": [
@@ -1480,9 +1518,9 @@
   },
   {
     "title": "偿还",
-    "artist": "王菲",
+    "artist": "邓丽君",
     "languages": [
-      "粤语"
+      "国语"
     ],
     "genres": [
       "流行"
@@ -2827,8 +2865,8 @@
     "gifts": []
   },
   {
-    "title": "Trouble",
-    "artist": "Ariana Grande",
+    "title": "Problem",
+    "artist": "Ariana Grande、Iggy Azalea",
     "languages": [
       "英语"
     ],
@@ -3526,13 +3564,13 @@
     "gifts": []
   },
   {
-    "title": "ハロ (光晕)",
-    "artist": "yama、ぼっちぼろまる",
+    "title": "ハロ/ハワユ",
+    "artist": "鹿乃",
     "languages": [
       "日语"
     ],
     "genres": [
-      "影视"
+      "二次元"
     ],
     "gifts": []
   },
@@ -4622,12 +4660,13 @@
   },
   {
     "title": "千年之恋",
-    "artist": "F.I.R.飞儿乐团",
+    "artist": "信乐团、戴爱玲",
     "languages": [
       "国语"
     ],
     "genres": [
-      "流行"
+      "流行",
+      "摇滚"
     ],
     "gifts": [
       "30 SC"
